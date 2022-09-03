@@ -100,7 +100,7 @@ public:
 		/*
 		 * 3.4 发送单聊自定义（信令）消息（最大支持 8KB）
 		 */
-		FString SendC2CCustomMessage(const V2TIMBuffer& customData, const V2TIMString& userID);
+		FString SendC2CCustomMessage(const V2TIMBuffer& customData, const FString& userID);
 
 		/*
 		 * 3.5 发送群聊普通文本消息（最大支持 8KB）
@@ -111,7 +111,7 @@ public:
 		/**
 		 *	3.6 发送群聊自定义（信令）消息（最大支持 8KB）
 		*/
-		FString SendGroupCustomMessage(const V2TIMBuffer& customData, const V2TIMString& groupID, V2TIMMessagePriority priority);
+		FString SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, V2TIMMessagePriority priority);
 
 		/*
 		 * 

@@ -186,13 +186,13 @@ void FTencentIMManage::FTencentIM::RemoveSimpleMsgListener(V2TIMSimpleMsgListene
 SendCallback SendCallbackIns;
 FString FTencentIMManage::FTencentIM::SendC2CTextMessage(FString text, FString userId)
 {
-	return ToFString(GetInstance()->SendC2CTextMessage(V2TIMString(), V2TIMString(), &SendCallbackIns));
+	return ToFString(GetInstance()->SendC2CTextMessage(ToIMString(text), ToIMString(userId), &SendCallbackIns));
 }
 
-FString FTencentIMManage::FTencentIM::SendC2CCustomMessage(const V2TIMBuffer& customData, const V2TIMString& userID)
+FString FTencentIMManage::FTencentIM::SendC2CCustomMessage(const V2TIMBuffer& customData, const FString& userID)
 {
 	//todo 返回代理
-	return ToFString(GetInstance()->SendC2CCustomMessage(customData, userID, nullptr));
+	return ToFString(GetInstance()->SendC2CCustomMessage(customData, ToIMString(userID), nullptr));
 }
 
 FString FTencentIMManage::FTencentIM::SendGroupTextMessage(const FString& text, const FString& groupID, V2TIMMessagePriority priority)
@@ -201,10 +201,10 @@ FString FTencentIMManage::FTencentIM::SendGroupTextMessage(const FString& text, 
 	return ToFString(GetInstance()->SendGroupTextMessage(ToIMString(text),ToIMString(groupID),priority,&callback));
 }
 
-FString FTencentIMManage::FTencentIM::SendGroupCustomMessage(const V2TIMBuffer& customData, const V2TIMString& groupID, V2TIMMessagePriority priority)
+FString FTencentIMManage::FTencentIM::SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, V2TIMMessagePriority priority)
 {
 	SendCallback callback;
-	return ToFString(GetInstance()->SendGroupCustomMessage(customData,groupID,priority,&callback));
+	return ToFString(GetInstance()->SendGroupCustomMessage(customData ,ToIMString(groupID),priority,&callback));
 }
 
 void FTencentIMManage::FTencentIM::AddGroupListener(V2TIMGroupListener* listener)
