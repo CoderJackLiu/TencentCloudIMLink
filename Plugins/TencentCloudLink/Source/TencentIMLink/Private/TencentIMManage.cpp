@@ -221,7 +221,7 @@ void FTencentIMManage::FTencentIM::RemoveGroupListener(V2TIMGroupListener* liste
 void FTencentIMManage::FTencentIM::CreateGroup(const FString& groupType, const FString& groupID, const FString& groupName,
                                                V2TIMValueCallback<V2TIMString>* callback) const
 {
-	//todo 参数类型转换
+	//todo 参数类型转换 V2TIMString
 
 	GetInstance()->CreateGroup(ToIMString(groupType), ToIMString(groupType), ToIMString(groupType), callback);
 }
@@ -245,7 +245,573 @@ void FTencentIMManage::FTencentIM::DismissGroup(const FString& groupID, V2TIMCal
 void FTencentIMManage::FTencentIM::GetUsersInfo(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMUserFullInfoVector>* callback)
 {
 	// GetInstance()->GetUsersInfo();
+
+	//todo 类型转换, 函数调用
+	V2TIMStringVector UserIDList;
+	// GetInstance()->GetUsersInfo(userIDList, , );
 }
+
+void FTencentIMManage::FTencentIM::SetSelfInfo(const V2TIMUserFullInfo& info, V2TIMCallback* callback)
+{
+	GetInstance()->SetSelfInfo(info, callback);
+}
+
+V2TIMMessageManager* FTencentIMManage::FTencentIM::GetMessageManager()
+{
+	return GetInstance()->GetMessageManager();
+}
+
+V2TIMGroupManager* FTencentIMManage::FTencentIM::GetGroupManager()
+{
+	return GetInstance()->GetGroupManager();
+}
+
+V2TIMConversationManager* FTencentIMManage::FTencentIM::GetConversationManager()
+{
+	return GetInstance()->GetConversationManager();
+}
+
+V2TIMFriendshipManager* FTencentIMManage::FTencentIM::GetFriendshipManager()
+{
+	return GetInstance()->GetFriendshipManager();
+}
+
+V2TIMSignalingManager* FTencentIMManage::FTencentIM::GetSignalingManager()
+{
+	return GetInstance()->GetSignalingManager();
+}
+
+void FTencentIMManage::FTencentIM::CallExperimentalAPI(const FString& api, const void* param, V2TIMValueCallback<V2TIMBaseObject>* callback)
+{
+	//todo callback
+	GetInstance()->CallExperimentalAPI(ToIMString(api), param, callback);
+}
+
+void FTencentIMManage::FTencentIM::AddAdvancedMsgListener(V2TIMAdvancedMsgListener* listener)
+{
+	GetMessageManager()->AddAdvancedMsgListener(listener);
+}
+
+
+//todo !!!!!!
+void FTencentIMManage::FTencentIM::RemoveAdvancedMsgListener(V2TIMAdvancedMsgListener* listener)
+{
+	GetMessageManager()->AddAdvancedMsgListener(listener);
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateTextMessage(const FString& text)
+{
+	return GetMessageManager()->CreateTextMessage(ToIMString(text));
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateTextAtMessage(const FString& text, const V2TIMStringVector& atUserList)
+{
+	return GetMessageManager()->CreateTextAtMessage(ToIMString(text), atUserList);
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateCustomMessage(const V2TIMBuffer& data)
+{
+	return GetMessageManager()->CreateCustomMessage(data);
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateCustomMessage(const V2TIMBuffer& data, const FString& description, const FString& extension)
+{
+	return GetMessageManager()->CreateCustomMessage(data, ToIMString(description), ToIMString(extension));
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateImageMessage(const FString& imagePath)
+{
+	return GetMessageManager()->CreateImageMessage(ToIMString(imagePath));
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateSoundMessage(const FString& soundPath, uint32_t duration)
+{
+	return GetMessageManager()->CreateSoundMessage(ToIMString(soundPath), duration);
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateVideoMessage(const FString& videoFilePath, const FString& type, uint32_t duration,
+                                                              const FString& snapshotPath)
+{
+	return GetMessageManager()->CreateVideoMessage(ToIMString(videoFilePath), ToIMString(type), duration, ToIMString(snapshotPath));
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateFileMessage(const FString& filePath, const FString& fileName)
+{
+	return GetMessageManager()->CreateFileMessage(ToIMString(filePath), ToIMString(fileName));
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateLocationMessage(const FString& desc, double longitude, double latitude)
+{
+	return GetMessageManager()->CreateLocationMessage(ToIMString(desc), longitude, latitude);
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateFaceMessage(uint32_t index, const V2TIMBuffer& data)
+{
+	return GetMessageManager()->CreateFaceMessage(index, data);
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateMergerMessage(const V2TIMMessageVector& messageList, const FString& title, const V2TIMStringVector& abstractList,
+                                                               const FString& compatibleText)
+{
+	return GetMessageManager()->CreateMergerMessage(messageList, ToIMString(title), abstractList, ToIMString(compatibleText));
+}
+
+V2TIMMessage FTencentIMManage::FTencentIM::CreateForwardMessage(const V2TIMMessage& message)
+{
+	return GetMessageManager()->CreateForwardMessage(message);
+}
+
+// V2TIMMessage FTencentIMManage::FTencentIM::CreateTargetedGroupMessage(const V2TIMMessage& message, const V2TIMStringVector& receiverList)
+// {
+// 	return GetMessageManager()->CreateTargetedGroupMessage(text);
+//
+// }
+
+FString FTencentIMManage::FTencentIM::SendMessage(V2TIMMessage& message, const FString& receiver, const FString& groupID, V2TIMMessagePriority priority,
+                                                  bool onlineUserOnly, const V2TIMOfflinePushInfo& offlinePushInfo, V2TIMSendCallback* callback)
+{
+	return ToFString(GetMessageManager()->SendMessage(message, ToIMString(receiver), ToIMString(groupID), priority, onlineUserOnly, offlinePushInfo, callback));
+}
+
+void FTencentIMManage::FTencentIM::SetC2CReceiveMessageOpt(const V2TIMStringVector& userIDList, V2TIMReceiveMessageOpt opt, V2TIMCallback* callback)
+{
+	GetMessageManager()->SetC2CReceiveMessageOpt(userIDList, opt, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetC2CReceiveMessageOpt(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMReceiveMessageOptInfoVector>* callback)
+{
+	GetMessageManager()->GetC2CReceiveMessageOpt(userIDList, callback);
+}
+
+void FTencentIMManage::FTencentIM::SetGroupReceiveMessageOpt(const FString& groupID, V2TIMReceiveMessageOpt opt, V2TIMCallback* callback)
+{
+	GetMessageManager()->SetGroupReceiveMessageOpt(ToIMString(groupID), opt, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetHistoryMessageList(const V2TIMMessageListGetOption& option, V2TIMValueCallback<V2TIMMessageVector>* callback)
+{
+	GetMessageManager()->GetHistoryMessageList(option, callback);
+}
+
+void FTencentIMManage::FTencentIM::RevokeMessage(const V2TIMMessage& message, V2TIMCallback* callback)
+{
+	GetMessageManager()->RevokeMessage(message, callback);
+}
+
+void FTencentIMManage::FTencentIM::MarkC2CMessageAsRead(const FString& userID, V2TIMCallback* callback)
+{
+	GetMessageManager()->MarkC2CMessageAsRead(ToIMString(userID), callback);
+}
+
+void FTencentIMManage::FTencentIM::MarkGroupMessageAsRead(const FString& groupID, V2TIMCallback* callback)
+{
+	GetMessageManager()->MarkGroupMessageAsRead(ToIMString(groupID), callback);
+}
+
+void FTencentIMManage::FTencentIM::MarkAllMessageAsRead(V2TIMCallback* callback)
+{
+	GetMessageManager()->MarkAllMessageAsRead(callback);
+}
+
+void FTencentIMManage::FTencentIM::DeleteMessages(const V2TIMMessageVector& messages, V2TIMCallback* callback)
+{
+	GetMessageManager()->DeleteMessages(messages, callback);
+}
+
+void FTencentIMManage::FTencentIM::ClearC2CHistoryMessage(const FString& userID, V2TIMCallback* callback)
+{
+	GetMessageManager()->ClearC2CHistoryMessage(ToIMString(userID), callback);
+}
+
+void FTencentIMManage::FTencentIM::ClearGroupHistoryMessage(const FString& groupID, V2TIMCallback* callback)
+{
+	GetMessageManager()->ClearGroupHistoryMessage(ToIMString(groupID), callback);
+}
+
+FString FTencentIMManage::FTencentIM::InsertGroupMessageToLocalStorage(V2TIMMessage& message, const FString& groupID, const FString& sender,
+                                                                       V2TIMValueCallback<V2TIMMessage>* callback)
+{
+	return ToFString(GetMessageManager()->InsertGroupMessageToLocalStorage(message, ToIMString(groupID), ToIMString(sender), callback));
+}
+
+FString FTencentIMManage::FTencentIM::InsertC2CMessageToLocalStorage(V2TIMMessage& message, const FString& userID, const FString& sender,
+                                                                     V2TIMValueCallback<V2TIMMessage>* callback)
+{
+	return ToFString(GetMessageManager()->InsertC2CMessageToLocalStorage(message, ToIMString(userID), ToIMString(sender), callback));
+}
+
+void FTencentIMManage::FTencentIM::FindMessages(const V2TIMStringVector& messageIDList, V2TIMValueCallback<V2TIMMessageVector>* callback)
+{
+	GetMessageManager()->FindMessages(messageIDList, callback);
+}
+
+void FTencentIMManage::FTencentIM::SearchLocalMessages(const V2TIMMessageSearchParam& searchParam, V2TIMValueCallback<V2TIMMessageSearchResult>* callback)
+{
+	GetMessageManager()->SearchLocalMessages(searchParam, callback);
+}
+
+//todo
+
+/**
+ * @brief 
+ * @param Group 操作 
+ * @param memberList 
+ * @param callback 
+ */
+void FTencentIMManage::FTencentIM::CreateGroup(const V2TIMGroupInfo& info, const V2TIMCreateGroupMemberInfoVector& memberList, V2TIMValueCallback<V2TIMString>* callback)
+{
+	//todo 类型转换
+	GetGroupManager()->CreateGroup(info, memberList, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetJoinedGroupList(V2TIMValueCallback<V2TIMGroupInfoVector>* callback)
+{
+	GetGroupManager()->GetJoinedGroupList(callback);
+}
+
+void FTencentIMManage::FTencentIM::GetGroupsInfo(const V2TIMStringVector& groupIDList, V2TIMValueCallback<V2TIMGroupInfoResultVector>* callback)
+{
+	GetGroupManager()->GetGroupsInfo(groupIDList, callback);
+}
+
+void FTencentIMManage::FTencentIM::SearchGroups(const V2TIMGroupSearchParam& searchParam, V2TIMValueCallback<V2TIMGroupInfoVector>* callback)
+{
+	GetGroupManager()->SearchGroups(searchParam, callback);
+}
+
+void FTencentIMManage::FTencentIM::SetGroupInfo(const V2TIMGroupInfo& info, V2TIMCallback* callback)
+{
+	GetGroupManager()->SetGroupInfo(info, callback);
+}
+
+void FTencentIMManage::FTencentIM::InitGroupAttributes(const FString& groupID, const V2TIMGroupAttributeMap& attributes, V2TIMCallback* callback)
+{
+	GetGroupManager()->InitGroupAttributes(ToIMString(groupID), attributes, callback);
+}
+
+void FTencentIMManage::FTencentIM::SetGroupAttributes(const FString& groupID, const V2TIMGroupAttributeMap& attributes, V2TIMCallback* callback)
+{
+	GetGroupManager()->SetGroupAttributes(ToIMString(groupID), attributes, callback);
+}
+
+void FTencentIMManage::FTencentIM::DeleteGroupAttributes(const FString& groupID, const V2TIMStringVector& keys, V2TIMCallback* callback)
+{
+	GetGroupManager()->DeleteGroupAttributes(ToIMString(groupID), keys, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetGroupAttributes(const FString& groupID, const V2TIMStringVector& keys, V2TIMValueCallback<V2TIMGroupAttributeMap>* callback)
+{
+	GetGroupManager()->GetGroupAttributes(ToIMString(groupID), keys, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetGroupOnlineMemberCount(const FString& groupID, V2TIMValueCallback<uint32_t>* callback)
+{
+	GetGroupManager()->GetGroupOnlineMemberCount(ToIMString(groupID), callback);
+}
+
+void FTencentIMManage::FTencentIM::GetGroupMemberList(const FString& groupID, uint32_t filter, uint64_t nextSeq, V2TIMValueCallback<V2TIMGroupMemberInfoResult>* callback)
+{
+	GetGroupManager()->GetGroupMemberList(ToIMString(groupID), filter, nextSeq, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetGroupMembersInfo(const FString& groupID, V2TIMStringVector memberList, V2TIMValueCallback<V2TIMGroupMemberFullInfoVector>* callback)
+{
+	GetGroupManager()->GetGroupMembersInfo(ToIMString(groupID), memberList, callback);
+}
+
+void FTencentIMManage::FTencentIM::SearchGroupMembers(const V2TIMGroupMemberSearchParam& param, V2TIMValueCallback<V2TIMGroupSearchGroupMembersMap>* callback)
+{
+	GetGroupManager()->SearchGroupMembers(param, callback);
+}
+
+void FTencentIMManage::FTencentIM::SetGroupMemberInfo(const FString& groupID, const V2TIMGroupMemberFullInfo& info, V2TIMCallback* callback)
+{
+	GetGroupManager()->SetGroupMemberInfo(ToIMString(groupID), info, callback);
+}
+
+void FTencentIMManage::FTencentIM::MuteGroupMember(const FString& groupID, const FString& userID, uint32_t seconds, V2TIMCallback* callback)
+{
+	GetGroupManager()->MuteGroupMember(ToIMString(groupID), ToIMString(userID), seconds, callback);
+}
+
+void FTencentIMManage::FTencentIM::InviteUserToGroup(const FString& groupID, const V2TIMStringVector& userList,
+                                                     V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback)
+{
+	GetGroupManager()->InviteUserToGroup(ToIMString(groupID), userList, callback);
+}
+
+void FTencentIMManage::FTencentIM::KickGroupMember(const FString& groupID, const V2TIMStringVector& memberList, const FString& reason,
+                                                   V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback)
+{
+	GetGroupManager()->KickGroupMember(ToIMString(groupID), memberList, ToIMString(reason), callback);
+}
+
+void FTencentIMManage::FTencentIM::SetGroupMemberRole(const FString& groupID, const FString& userID, uint32_t role, V2TIMCallback* callback)
+{
+	GetGroupManager()->SetGroupMemberRole(ToIMString(groupID), ToIMString(userID), role, callback);
+}
+
+// void FTencentIMManage::FTencentIM::MarkGroupMemberList(const FString& groupID, const V2TIMStringVector& memberList, uint32_t markType, bool enableMark,
+// 	V2TIMCallback* callback)
+// {
+// 	GetGroupManager()->MarkGroupMemberList(info, memberList,callback);
+//
+// }
+
+void FTencentIMManage::FTencentIM::TransferGroupOwner(const FString& groupID, const FString& userID, V2TIMCallback* callback)
+{
+	GetGroupManager()->TransferGroupOwner(ToIMString(groupID), ToIMString(userID), callback);
+}
+
+void FTencentIMManage::FTencentIM::GetGroupApplicationList(V2TIMValueCallback<V2TIMGroupApplicationResult>* callback)
+{
+	GetGroupManager()->GetGroupApplicationList(callback);
+}
+
+void FTencentIMManage::FTencentIM::AcceptGroupApplication(const V2TIMGroupApplication& application, const FString& reason, V2TIMCallback* callback)
+{
+	GetGroupManager()->AcceptGroupApplication(application, ToIMString(reason), callback);
+}
+
+void FTencentIMManage::FTencentIM::RefuseGroupApplication(const V2TIMGroupApplication& application, const FString& reason, V2TIMCallback* callback)
+{
+	GetGroupManager()->RefuseGroupApplication(application, ToIMString(reason), callback);
+}
+
+void FTencentIMManage::FTencentIM::SetGroupApplicationRead(V2TIMCallback* callback)
+{
+	GetGroupManager()->SetGroupApplicationRead(callback);
+}
+
+//////////////////////////////////////////////////////////
+///
+///IMSignalingManager
+//////////////////////////////////////////////////////////
+void FTencentIMManage::FTencentIM::AddSignalingListener(V2TIMSignalingListener* listener)
+{
+	GetSignalingManager()->AddSignalingListener(listener);
+}
+
+void FTencentIMManage::FTencentIM::RemoveSignalingListener(V2TIMSignalingListener* listener)
+{
+	GetSignalingManager()->RemoveSignalingListener(listener);
+}
+
+FString FTencentIMManage::FTencentIM::Invite(const FString& invitee, const FString& data, bool onlineUserOnly, const V2TIMOfflinePushInfo& offlinePushInfo, int timeout,
+                                             V2TIMCallback* callback)
+{
+	return ToFString(GetSignalingManager()->Invite(ToIMString(invitee), ToIMString(data), onlineUserOnly, offlinePushInfo, timeout, callback));
+}
+
+FString FTencentIMManage::FTencentIM::InviteInGroup(const FString& groupID, const V2TIMStringVector& inviteeList, const FString& data, bool onlineUserOnly, int timeout,
+                                                    V2TIMCallback* callback)
+{
+	return ToFString(GetSignalingManager()->InviteInGroup(ToIMString(groupID), inviteeList, ToIMString(data), onlineUserOnly, timeout, callback));
+}
+
+void FTencentIMManage::FTencentIM::Cancel(const FString& inviteID, const FString& data, V2TIMCallback* callback)
+{
+	GetSignalingManager()->Cancel(ToIMString(inviteID), ToIMString(data), callback);
+}
+
+void FTencentIMManage::FTencentIM::Accept(const FString& inviteID, const FString& data, V2TIMCallback* callback)
+{
+	GetSignalingManager()->Accept(ToIMString(inviteID), ToIMString(data), callback);
+}
+
+void FTencentIMManage::FTencentIM::Reject(const FString& inviteID, const FString& data, V2TIMCallback* callback)
+{
+	GetSignalingManager()->Reject(ToIMString(inviteID), ToIMString(data), callback);
+}
+
+V2TIMSignalingInfo FTencentIMManage::FTencentIM::GetSignalingInfo(const V2TIMMessage& msg)
+{
+	return GetSignalingManager()->GetSignalingInfo(msg);
+}
+
+void FTencentIMManage::FTencentIM::AddInvitedSignaling(const V2TIMSignalingInfo& info, V2TIMCallback* callback)
+{
+	GetSignalingManager()->AddInvitedSignaling(info, callback);
+}
+
+void FTencentIMManage::FTencentIM::AddConversationListener(V2TIMConversationListener* listener)
+{
+	GetConversationManager()->AddConversationListener(listener);
+}
+
+void FTencentIMManage::FTencentIM::RemoveConversationListener(V2TIMConversationListener* listener)
+{
+	GetConversationManager()->AddConversationListener(listener);
+}
+
+void FTencentIMManage::FTencentIM::GetConversationList(uint64_t nextSeq, uint32_t count, V2TIMValueCallback<V2TIMConversationResult>* callback)
+{
+	GetConversationManager()->GetConversationList(nextSeq, count, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetConversation(const FString& conversationID, V2TIMValueCallback<V2TIMConversation>* callback)
+{
+	GetConversationManager()->GetConversation(ToIMString(conversationID), callback);
+}
+
+void FTencentIMManage::FTencentIM::GetConversationList(const V2TIMStringVector& conversationIDList, V2TIMValueCallback<V2TIMVConversationVector>* callback)
+{
+	GetConversationManager()->GetConversationList(conversationIDList, callback);
+}
+
+void FTencentIMManage::FTencentIM::DeleteConversation(const FString& conversationID, V2TIMCallback* callback)
+{
+	GetConversationManager()->DeleteConversation(ToIMString(conversationID), callback);
+}
+
+void FTencentIMManage::FTencentIM::SetConversationDraft(const FString& conversationID, const FString& draftText, V2TIMCallback* callback)
+{
+	GetConversationManager()->SetConversationDraft(ToIMString(conversationID), ToIMString(draftText), callback);
+}
+
+void FTencentIMManage::FTencentIM::PinConversation(const FString& conversationID, bool isPinned, V2TIMCallback* callback)
+{
+	GetConversationManager()->PinConversation(ToIMString(conversationID), isPinned, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetTotalUnreadMessageCount(V2TIMValueCallback<uint64_t>* callback)
+{
+	GetConversationManager()->GetTotalUnreadMessageCount(callback);
+}
+
+////////////////////////////////////////////////////
+///		IMFriendshipManager
+///
+//////////////////////////
+void FTencentIMManage::FTencentIM::AddFriendListener(V2TIMFriendshipListener* listener)
+{
+	GetFriendshipManager()->AddFriendListener(listener);
+}
+
+void FTencentIMManage::FTencentIM::RemoveFriendListener(V2TIMFriendshipListener* listener)
+{
+	GetFriendshipManager()->AddFriendListener(listener);
+}
+
+void FTencentIMManage::FTencentIM::GetFriendList(V2TIMValueCallback<V2TIMFriendInfoVector>* callback)
+{
+	GetFriendshipManager()->GetFriendList(callback);
+}
+
+void FTencentIMManage::FTencentIM::GetFriendsInfo(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback)
+{
+	GetFriendshipManager()->GetFriendsInfo(userIDList, callback);
+}
+
+void FTencentIMManage::FTencentIM::SetFriendInfo(const V2TIMFriendInfo& info, V2TIMCallback* callback)
+{
+	GetFriendshipManager()->SetFriendInfo(info, callback);
+}
+
+void FTencentIMManage::FTencentIM::SearchFriends(const V2TIMFriendSearchParam& searchParam, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback)
+{
+	GetFriendshipManager()->SearchFriends(searchParam, callback);
+}
+
+void FTencentIMManage::FTencentIM::AddFriend(const V2TIMFriendAddApplication& application, V2TIMValueCallback<V2TIMFriendOperationResult>* callback)
+{
+	GetFriendshipManager()->AddFriend(application, callback);
+}
+
+void FTencentIMManage::FTencentIM::DeleteFromFriendList(const V2TIMStringVector& userIDList, V2TIMFriendType deleteType, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+{
+	GetFriendshipManager()->DeleteFromFriendList(userIDList, deleteType, callback);
+}
+
+void FTencentIMManage::FTencentIM::CheckFriend(const V2TIMStringVector& userIDList, V2TIMFriendType checkType, V2TIMValueCallback<V2TIMFriendCheckResultVector>* callback)
+{
+	GetFriendshipManager()->CheckFriend(userIDList, checkType, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetFriendApplicationList(V2TIMValueCallback<V2TIMFriendApplicationResult>* callback)
+{
+	GetFriendshipManager()->GetFriendApplicationList(callback);
+}
+
+void FTencentIMManage::FTencentIM::AcceptFriendApplication(const V2TIMFriendApplication& application, V2TIMFriendAcceptType acceptType, V2TIMValueCallback<V2TIMFriendOperationResult>* callback)
+{
+	GetFriendshipManager()->AcceptFriendApplication(application, acceptType, callback);
+}
+
+void FTencentIMManage::FTencentIM::RefuseFriendApplication(const V2TIMFriendApplication& application, V2TIMValueCallback<V2TIMFriendOperationResult>* callback)
+{
+	GetFriendshipManager()->RefuseFriendApplication(application, callback);
+}
+
+void FTencentIMManage::FTencentIM::DeleteFriendApplication(const V2TIMFriendApplication& application, V2TIMCallback* callback)
+{
+	GetFriendshipManager()->DeleteFriendApplication(application, callback);
+}
+
+void FTencentIMManage::FTencentIM::SetFriendApplicationRead(V2TIMCallback* callback)
+{
+	GetFriendshipManager()->SetFriendApplicationRead(callback);
+}
+
+void FTencentIMManage::FTencentIM::AddToBlackList(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+{
+	GetFriendshipManager()->AddToBlackList(userIDList, callback);
+}
+
+void FTencentIMManage::FTencentIM::DeleteFromBlackList(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+{
+	GetFriendshipManager()->DeleteFromBlackList(userIDList, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetBlackList(V2TIMValueCallback<V2TIMFriendInfoVector>* callback)
+{
+	GetFriendshipManager()->GetBlackList(callback);
+}
+
+void FTencentIMManage::FTencentIM::CreateFriendGroup(const FString& groupName, const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+{
+	GetFriendshipManager()->CreateFriendGroup(ToIMString(groupName), userIDList, callback);
+}
+
+void FTencentIMManage::FTencentIM::GetFriendGroups(const V2TIMStringVector& groupNameList, V2TIMValueCallback<V2TIMFriendGroupVector>* callback)
+{
+	GetFriendshipManager()->GetFriendGroups(groupNameList, callback);
+}
+
+void FTencentIMManage::FTencentIM::DeleteFriendGroup(const V2TIMStringVector& groupNameList, V2TIMCallback* callback)
+{
+	GetFriendshipManager()->DeleteFriendGroup(groupNameList, callback);
+}
+
+void FTencentIMManage::FTencentIM::RenameFriendGroup(const FString& oldName, const FString& newName, V2TIMCallback* callback)
+{
+	GetFriendshipManager()->RenameFriendGroup(ToIMString(oldName), ToIMString(newName), callback);
+}
+
+void FTencentIMManage::FTencentIM::AddFriendsToFriendGroup(const FString& groupName, const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+{
+	GetFriendshipManager()->AddFriendsToFriendGroup(ToIMString(groupName), userIDList, callback);
+}
+
+void FTencentIMManage::FTencentIM::DeleteFriendsFromFriendGroup(const FString& groupName, const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+{
+	GetFriendshipManager()->DeleteFriendsFromFriendGroup(ToIMString(groupName), userIDList, callback);
+}
+
+// void FTencentIMManage::FTencentIM::GetConversationGroupList(V2TIMValueCallback<V2TIMStringVector>* callback)
+// {
+// 	GetConversationManager()->GetConversationGroupList(listener);
+// }
+
+// void FTencentIMManage::FTencentIM::DeleteConversationGroup(const FString& groupName, V2TIMCallback* callback)
+// {
+// 	GetConversationManager()->DeleteConversationGroup(listener);
+// }
+
+// void FTencentIMManage::FTencentIM::RenameConversationGroup(const FString& oldName, const FString& newName, V2TIMCallback* callback)
+// {
+// 	GetConversationManager()->RenameConversationGroup(listener);
+// }
 
 
 V2TIMString FTencentIMManage::FTencentIM::ToIMString(const FString& InStr) const
