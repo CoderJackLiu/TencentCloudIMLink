@@ -31,41 +31,45 @@
 #endif
 
 
-
 /**
  * 
  */
 UCLASS()
-class UTimWidget : public UUserWidget,public V2TIMAdvancedMsgListener,public V2TIMCallback
+class UTimWidget : public UUserWidget, public V2TIMAdvancedMsgListener, public V2TIMCallback
 {
 	GENERATED_BODY()
 private:
 	UPROPERTY(VisibleAnywhere, Meta = (BindWidget))
-    UTextBlock* lblVersion;
+	UTextBlock* lblVersion;
 
 	V2TIMManager* timInstance;
 
-	void writeLblLog(const char *log);
-	void OnRecvNewMessage(const V2TIMMessage &message) override;
+	void writeLblLog(const char* log);
+	void OnRecvNewMessage(const V2TIMMessage& message) override;
 	UFUNCTION(BlueprintCallable, Category ="TimDemoFunction")
-		void sendMessageToGroup();
+	void sendMessageToGroup();
 
 public:
 	void NativeConstruct() override;
 	void NativeDestruct() override;
 
 	void OnSuccess() override;
-    void OnError(int error_code, const V2TIMString &error_message);
+	void OnError(int error_code, const V2TIMString& error_message);
 
 	UFUNCTION(BlueprintCallable, Category ="TimDemoFunction")
-		void timLogin();
+	void timLogin();
 	UFUNCTION(BlueprintCallable, Category ="TimDemoFunction")
-		void createGroupNAddListener();
+	void createGroupNAddListener();
 	UPROPERTY(VisibleAnywhere, Meta = (BindWidget))
-		UTextBlock* txtLog;
+	UTextBlock* txtLog;
 	UPROPERTY(VisibleAnywhere, Meta = (BindWidget))
-		UEditableTextBox* txtInputMessage;
+	UEditableTextBox* txtInputMessage;
 
 	UPROPERTY(VisibleAnywhere, Meta = (BindWidget))
-		UScrollBox* sbMessageList;
+	UScrollBox* sbMessageList;
+
+	UPROPERTY(VisibleAnywhere)
+	FString UserId="john";
+
+
 };
