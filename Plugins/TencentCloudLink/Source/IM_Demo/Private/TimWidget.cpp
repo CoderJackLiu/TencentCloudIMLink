@@ -97,6 +97,7 @@ void UTimWidget::timLogin()
 #else
 	const char* imTestUserId = TCHAR_TO_ANSI(*guidUser);
 #endif
+
 #if PLATFORM_ANDROID
   if (JNIEnv* Env = FAndroidApplication::GetJavaEnv()) {
       jmethodID GetPackageNameMethodID = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "genTestUserSig", "(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);

@@ -5,12 +5,6 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/TextBlock.h"
-#include "Components/EditableTextBox.h"
-#include "Components/VerticalBox.h"
-#include "Components/ScrollBox.h"
-#include "Components/TextBlock.h"
 
 #include "V2TIMBuffer.h"
 #include "V2TIMConversationManager.h"

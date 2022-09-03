@@ -67,7 +67,8 @@ public:
 
 	void OnSuccess(const V2TIMMessage& value) override
 	{
-		UE_LOG(LogTemp, Log, TEXT("<== logOut OnSuccess %s"),);
+		const std::string TempStr = value.nickName.CString();
+		UE_LOG(LogTemp, Log, TEXT("<== logOut OnSuccess %s"),*TempStr.c_str());
 	};
 
 	void OnError(int error_code, const V2TIMString& error_message) override
@@ -81,4 +82,3 @@ class TENCENTIMLINK_API UTencentCallBacks : public UObject
 {
 	GENERATED_BODY()
 };
-

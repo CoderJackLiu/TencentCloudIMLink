@@ -113,7 +113,8 @@ void FTencentIMManage::FTencentIM::LogIn(const FString& InUserId, const FString&
 	LoginCallback* login_callback_ = new LoginCallback();
 	const char* imTestUserId = TCHAR_TO_ANSI(*InUserId);
 #if PLATFORM_ANDROID
-	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv()) {
+	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
+	{
 		jmethodID GetPackageNameMethodID = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "genTestUserSig", "(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
 		jstring jsUserId = Env->NewStringUTF(imTestUserId);
 		jstring jsKey = Env->NewStringUTF(SECRETKEY);
@@ -121,13 +122,12 @@ void FTencentIMManage::FTencentIM::LogIn(const FString& InUserId, const FString&
 		FString FinalResult = FJavaHelper::FStringFromLocalRef(Env, JstringResult);
 		auto twoHundredAnsi = StringCast<ANSICHAR>(*FinalResult);
 		const char* userSig = twoHundredAnsi.Get();
-		timInstance->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
+		GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
 	}
 #else
 	const char* userSig = GenerateTestUserSig().genTestUserSig(imTestUserId, SDKAppID, SECRETKEY);
 	FString Test = userSig;
 	UE_LOG(LogTemp, Warning, TEXT("UserID::  %s"), *Test);
-
 	GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
 #endif
 }
@@ -184,33 +184,69 @@ void FTencentIMManage::FTencentIM::RemoveSimpleMsgListener(V2TIMSimpleMsgListene
 
 
 SendCallback SendCallbackIns;
-FString FTencentIMManage::FTencentIM::SendC2CTextMessage(FString text, FString userId)
+
+FString FTencentIMManage::FTencentIM::SendC2CTextMessage(FString text, FString userId) const
 {
 	return ToFString(GetInstance()->SendC2CTextMessage(ToIMString(text), ToIMString(userId), &SendCallbackIns));
 }
 
-FString FTencentIMManage::FTencentIM::SendC2CCustomMessage(const V2TIMBuffer& customData, const FString& userID)
+FString FTencentIMManage::FTencentIM::SendC2CCustomMessage(const V2TIMBuffer& customData, const FString& userID) const
 {
 	//todo 返回代理
 	return ToFString(GetInstance()->SendC2CCustomMessage(customData, ToIMString(userID), nullptr));
 }
 
-FString FTencentIMManage::FTencentIM::SendGroupTextMessage(const FString& text, const FString& groupID, V2TIMMessagePriority priority)
+FString FTencentIMManage::FTencentIM::SendGroupTextMessage(const FString& text, const FString& groupID, V2TIMMessagePriority priority) const
 {
 	SendCallback callback;
-	return ToFString(GetInstance()->SendGroupTextMessage(ToIMString(text),ToIMString(groupID),priority,&callback));
+	return ToFString(GetInstance()->SendGroupTextMessage(ToIMString(text), ToIMString(groupID), priority, &callback));
 }
 
-FString FTencentIMManage::FTencentIM::SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, V2TIMMessagePriority priority)
+FString FTencentIMManage::FTencentIM::SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, V2TIMMessagePriority priority) const
 {
 	SendCallback callback;
-	return ToFString(GetInstance()->SendGroupCustomMessage(customData ,ToIMString(groupID),priority,&callback));
+	return ToFString(GetInstance()->SendGroupCustomMessage(customData, ToIMString(groupID), priority, &callback));
 }
 
 void FTencentIMManage::FTencentIM::AddGroupListener(V2TIMGroupListener* listener)
 {
-	
+	GetInstance()->AddGroupListener(listener);
 }
+
+void FTencentIMManage::FTencentIM::RemoveGroupListener(V2TIMGroupListener* listener)
+{
+	GetInstance()->RemoveGroupListener(listener);
+}
+
+void FTencentIMManage::FTencentIM::CreateGroup(const FString& groupType, const FString& groupID, const FString& groupName,
+                                               V2TIMValueCallback<V2TIMString>* callback) const
+{
+	//todo 参数类型转换
+
+	GetInstance()->CreateGroup(ToIMString(groupType), ToIMString(groupType), ToIMString(groupType), callback);
+}
+
+void FTencentIMManage::FTencentIM::JoinGroup(const FString& groupID, const FString& message, V2TIMCallback* callback) const
+{
+	//todo 代理
+	GetInstance()->JoinGroup(ToIMString(groupID), ToIMString(message), callback);
+}
+
+void FTencentIMManage::FTencentIM::QuitGroup(const FString& groupID, V2TIMCallback* callback) const
+{
+	GetInstance()->QuitGroup(ToIMString(groupID), callback);
+}
+
+void FTencentIMManage::FTencentIM::DismissGroup(const FString& groupID, V2TIMCallback* callback) const
+{
+	GetInstance()->DismissGroup(ToIMString(groupID), callback);
+}
+
+void FTencentIMManage::FTencentIM::GetUsersInfo(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMUserFullInfoVector>* callback)
+{
+	// GetInstance()->GetUsersInfo();
+}
+
 
 V2TIMString FTencentIMManage::FTencentIM::ToIMString(const FString& InStr) const
 {
@@ -220,9 +256,6 @@ V2TIMString FTencentIMManage::FTencentIM::ToIMString(const FString& InStr) const
 
 FString FTencentIMManage::FTencentIM::ToFString(const V2TIMString& InStr) const
 {
-	const std::string tempStr=InStr.CString();
+	const std::string tempStr = InStr.CString();
 	return tempStr.c_str();
 }
-
-
-
