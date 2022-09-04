@@ -22,6 +22,7 @@
 #include <map>
 
 #include "TencentCallBacks.h"
+#include "TencentDataType.h"
 
 // #if PLATFORM_WINDOWS
 // #pragma optimize("",off) 
@@ -112,24 +113,24 @@ void FTencentIMManage::FTencentIM::LogIn(const FString& InUserId, const FString&
 	};
 	LoginCallback* login_callback_ = new LoginCallback();
 	const char* imTestUserId = TCHAR_TO_ANSI(*InUserId);
-// #if PLATFORM_ANDROID
-// 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
-// 	{
-// 		jmethodID GetPackageNameMethodID = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "genTestUserSig", "(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
-// 		jstring jsUserId = Env->NewStringUTF(imTestUserId);
-// 		jstring jsKey = Env->NewStringUTF(SECRETKEY);
-// 		jstring JstringResult = (jstring)FJavaWrapper::CallObjectMethod(Env, FJavaWrapper::GameActivityThis,GetPackageNameMethodID, SDKAppID, jsUserId, jsKey);
-// 		FString FinalResult = FJavaHelper::FStringFromLocalRef(Env, JstringResult);
-// 		auto twoHundredAnsi = StringCast<ANSICHAR>(*FinalResult);
-// 		const char* userSig = twoHundredAnsi.Get();
-// 		GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
-// 	}
-// #else
+	// #if PLATFORM_ANDROID
+	// 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
+	// 	{
+	// 		jmethodID GetPackageNameMethodID = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "genTestUserSig", "(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
+	// 		jstring jsUserId = Env->NewStringUTF(imTestUserId);
+	// 		jstring jsKey = Env->NewStringUTF(SECRETKEY);
+	// 		jstring JstringResult = (jstring)FJavaWrapper::CallObjectMethod(Env, FJavaWrapper::GameActivityThis,GetPackageNameMethodID, SDKAppID, jsUserId, jsKey);
+	// 		FString FinalResult = FJavaHelper::FStringFromLocalRef(Env, JstringResult);
+	// 		auto twoHundredAnsi = StringCast<ANSICHAR>(*FinalResult);
+	// 		const char* userSig = twoHundredAnsi.Get();
+	// 		GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
+	// 	}
+	// #else
 	const char* userSig = GenerateTestUserSig().genTestUserSig(imTestUserId, SDKAppID, SECRETKEY);
 	FString Test = userSig;
 	UE_LOG(LogTemp, Warning, TEXT("UserID::  %s"), *Test);
 	GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
-// #endif
+	// #endif
 }
 
 void FTencentIMManage::FTencentIM::LogOut()
@@ -166,10 +167,10 @@ FString FTencentIMManage::FTencentIM::GetLoginUser()
 	return OutUserName;
 }
 
-V2TIMLoginStatus FTencentIMManage::FTencentIM::GetLoginStatus()
+ELoginStatus FTencentIMManage::FTencentIM::GetLoginStatus()
 {
 	//todo return type
-	return GetInstance()->GetLoginStatus();
+	return GetLoginStatus(GetInstance()->GetLoginStatus());
 }
 
 void FTencentIMManage::FTencentIM::AddSimpleMsgListener(V2TIMSimpleMsgListener* listener)
@@ -196,16 +197,16 @@ FString FTencentIMManage::FTencentIM::SendC2CCustomMessage(const V2TIMBuffer& cu
 	return ToFString(GetInstance()->SendC2CCustomMessage(customData, ToIMString(userID), nullptr));
 }
 
-FString FTencentIMManage::FTencentIM::SendGroupTextMessage(const FString& text, const FString& groupID, V2TIMMessagePriority priority) const
+FString FTencentIMManage::FTencentIM::SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority)
 {
 	SendCallback callback;
-	return ToFString(GetInstance()->SendGroupTextMessage(ToIMString(text), ToIMString(groupID), priority, &callback));
+	return ToFString(GetInstance()->SendGroupTextMessage(ToIMString(text), ToIMString(groupID), GetMessagePriority(priority), &callback));
 }
 
-FString FTencentIMManage::FTencentIM::SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, V2TIMMessagePriority priority) const
+FString FTencentIMManage::FTencentIM::SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, EIMMessagePriority priority) 
 {
 	SendCallback callback;
-	return ToFString(GetInstance()->SendGroupCustomMessage(customData, ToIMString(groupID), priority, &callback));
+	return ToFString(GetInstance()->SendGroupCustomMessage(customData, ToIMString(groupID), GetMessagePriority(priority), &callback));
 }
 
 void FTencentIMManage::FTencentIM::AddGroupListener(V2TIMGroupListener* listener)
@@ -505,7 +506,6 @@ void FTencentIMManage::FTencentIM::GetGroupAttributes(const FString& groupID, co
 
 void FTencentIMManage::FTencentIM::GetGroupOnlineMemberCount(const FString& groupID, V2TIMValueCallback<uint32_t>* callback)
 {
-	
 	GetGroupManager()->GetGroupOnlineMemberCount(ToIMString(groupID), callback);
 }
 
@@ -537,7 +537,7 @@ void FTencentIMManage::FTencentIM::MuteGroupMember(const FString& groupID, const
 void FTencentIMManage::FTencentIM::InviteUserToGroup(const FString& groupID, const TArray<FString>& userList,
                                                      V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback)
 {
-	GetGroupManager()->InviteUserToGroup(ToIMString(groupID),ToIMStringArray( userList), callback);
+	GetGroupManager()->InviteUserToGroup(ToIMString(groupID), ToIMStringArray(userList), callback);
 }
 
 void FTencentIMManage::FTencentIM::KickGroupMember(const FString& groupID, const TArray<FString>& memberList, const FString& reason,
@@ -819,4 +819,44 @@ V2TIMStringVector FTencentIMManage::FTencentIM::ToIMStringArray(TArray<FString> 
 		StrVector.PushBack(ToIMString(Str));
 	}
 	return StrVector;
+}
+
+ELoginStatus FTencentIMManage::FTencentIM::GetLoginStatus(const V2TIMLoginStatus& Status)
+{
+	// FString AclString = UTF8_TO_TCHAR(ACLChar);
+	if (Status == V2TIM_STATUS_LOGINED)
+	{
+		return ELoginStatus::V2TIM_STATUS_LOGINED;
+	}
+	else if (Status == V2TIM_STATUS_LOGINING)
+	{
+		return ELoginStatus::V2TIM_STATUS_LOGINING;
+	}
+	else if (Status == V2TIM_STATUS_LOGOUT)
+	{
+		return ELoginStatus::V2TIM_STATUS_LOGOUT;
+	}
+
+	return ELoginStatus::V2TIM_STATUS_LOGOUT;
+}
+
+V2TIMMessagePriority FTencentIMManage::FTencentIM::GetMessagePriority(EIMMessagePriority InPriority)
+{
+	V2TIMMessagePriority Priority = V2TIM_PRIORITY_DEFAULT;
+	switch (InPriority)
+	{
+	case EIMMessagePriority::V2TIM_PRIORITY_DEFAULT:
+		Priority = V2TIMMessagePriority::V2TIM_PRIORITY_DEFAULT;
+		break;
+	case EIMMessagePriority::V2TIM_PRIORITY_HIGH:
+		Priority = V2TIMMessagePriority::V2TIM_PRIORITY_HIGH;
+		break;
+	case EIMMessagePriority::V2TIM_PRIORITY_NORMAL:
+		Priority = V2TIMMessagePriority::V2TIM_PRIORITY_NORMAL;
+		break;
+	case EIMMessagePriority::V2TIM_PRIORITY_LOW:
+		Priority = V2TIMMessagePriority::V2TIM_PRIORITY_LOW;
+		break;
+	}
+	return Priority;
 }

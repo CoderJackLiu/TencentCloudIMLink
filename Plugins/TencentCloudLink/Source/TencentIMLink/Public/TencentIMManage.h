@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "TencentDataType.h"
 using namespace std;
 #include "CoreMinimal.h"
 #include "Misc/Paths.h"
@@ -10,12 +11,7 @@ using namespace std;
 #include "V2TIMDefine.h"
 #include "V2TIMManager.h"
 #include "V2TIMMessage.h"
-#include "V2TIMMessageManager.h"
-#include "V2TIMGroupManager.h"
-#include "V2TIMFriendshipManager.h"
 #include "V2TIMSignaling.h"
-#include "V2TIMSignalingManager.h"
-#include "V2TIMMessageManager.h"
 #include "V2TIMConversation.h"
 
 #if PLATFORM_ANDROID
@@ -48,10 +44,10 @@ public:
 	static FTencentIMManage* Get();
 
 	static void Destroy();
-
+public:
 	struct TENCENTIMLINK_API FTencentIM
 	{
-		friend class TencentIMManage;
+		friend class FTencentIMManage;
 
 		FString GetSDKVersion();
 
@@ -83,7 +79,7 @@ public:
 		/*
 		 * 
 		 */
-		V2TIMLoginStatus GetLoginStatus();
+		ELoginStatus GetLoginStatus();
 
 		/*
 		 * 3.1 设置基本消息（文本消息和自定义消息）的事件监听器
@@ -109,12 +105,12 @@ public:
 		 * 3.5 发送群聊普通文本消息（最大支持 8KB）
 		 */
 
-		FString SendGroupTextMessage(const FString& text, const FString& groupID, V2TIMMessagePriority priority) const;
+		FString SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority);
 
 		/**
 		 *	3.6 发送群聊自定义（信令）消息（最大支持 8KB）
 		*/
-		FString SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, V2TIMMessagePriority priority) const;
+		FString SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, EIMMessagePriority priority);
 
 
 		/*
@@ -517,7 +513,9 @@ public:
 		V2TIMString ToIMString(const FString& InStr) const;
 		FString ToFString(const V2TIMString& InStr) const;
 		V2TIMStringVector ToIMStringArray(TArray<FString> InStrArray);
+		ELoginStatus GetLoginStatus(const V2TIMLoginStatus& Status);
 
+		V2TIMMessagePriority GetMessagePriority(EIMMessagePriority InPriority);
 	};
 
 	FORCEINLINE FTencentIM& GetIM() { return IM; }
@@ -527,4 +525,4 @@ private:
 	FTencentIM IM;
 };
 
-#define Tencent_IM TencentIMManage::Get()->GetIM()
+#define Tencent_IM FTencentIMManage::Get()->GetIM()

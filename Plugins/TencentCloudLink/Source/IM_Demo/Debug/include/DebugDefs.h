@@ -26,7 +26,7 @@ static const int SDKAppID = 1400724904;
  * 注意：该方案仅适用于调试Demo，正式上线前请将 UserSig 计算代码和密钥迁移到您的后台服务器上，以避免加密密钥泄露导致的流量盗用。
  * 文档：https://cloud.tencent.com/document/product/647/17275#Server
  */
-static const char *SECRETKEY = "";
+static const char *SECRETKEY = "86290e25517aeffcedc4b9df6df1418b22ca5cf95b3f12d3973a6965d7d2d213";
 
 /**
  *  签名过期时间，建议不要设置的过短
