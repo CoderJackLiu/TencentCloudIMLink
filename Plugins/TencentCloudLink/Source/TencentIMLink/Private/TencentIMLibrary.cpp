@@ -104,14 +104,14 @@ void UTencentIMLibrary::QuitGroup(const FString& groupID, FIMCallbackDelegate On
 		void OnSuccess() override
 		{
 			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
-			// QuitGroup_Delegate.ExecuteIfBound();
+			QuitGroup_Delegate.ExecuteIfBound();
 		};
 
 		void OnError(int error_code, const V2TIMString& error_message) override
 		{
 			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
 			std::string TempStr = error_message.CString();
-			// OnFailureDelegate.ExecuteIfBound(error_code,TempStr.c_str());
+			QuitGroup_Delegate2.ExecuteIfBound(error_code,TempStr.c_str());
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();

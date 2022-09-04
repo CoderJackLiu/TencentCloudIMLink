@@ -44,10 +44,11 @@ FTencentIMManage* FTencentIMManage::Get()
 	{
 		TencentIM = new FTencentIMManage();
 		V2TIMSDKConfig timConfig;
-		if (V2TIMManager::GetInstance()->InitSDK(SDKAppID, timConfig))
-		{
-			exit(1);
-		}
+		V2TIMManager::GetInstance()->InitSDK(SDKAppID, timConfig);
+		//if (V2TIMManager::GetInstance()->InitSDK(SDKAppID, timConfig))
+		// {
+		// 	exit(1);
+		// }
 
 		// Tencent_IM.InitLocalAccounts();
 	}

@@ -27,7 +27,7 @@ Func##_Delegate.ExecuteIfBound();\
 
 #define DECLARATION_FAILURE_CALLBACK_DELEGATE(Func) \
 FIMFailureCallbackDelegate Func##_Delegate2; \
-void Func##_Local2(int Code, FString Message) \
+void Func##_Local2(int Code,const FString& Message) \
 { \
 	FScopeLock ScopeLock(&TencentMutex); \
 	auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Code,Message]()\
