@@ -265,15 +265,15 @@ public:
 
 		V2TIMMessage CreateImageMessage(const FString& imagePath);
 
-		V2TIMMessage CreateSoundMessage(const FString& soundPath, uint32_t duration);
+		V2TIMMessage CreateSoundMessage(const FString& soundPath, int32 duration);
 
-		V2TIMMessage CreateVideoMessage(const FString& videoFilePath, const FString& type, uint32_t duration, const FString& snapshotPath);
+		V2TIMMessage CreateVideoMessage(const FString& videoFilePath, const FString& type, int32 duration, const FString& snapshotPath);
 
 		V2TIMMessage CreateFileMessage(const FString& filePath, const FString& fileName);
 
 		V2TIMMessage CreateLocationMessage(const FString& desc, double longitude, double latitude);
 
-		V2TIMMessage CreateFaceMessage(uint32_t index, const V2TIMBuffer& data);
+		V2TIMMessage CreateFaceMessage(int32 index, const V2TIMBuffer& data);
 
 		V2TIMMessage CreateMergerMessage(const V2TIMMessageVector& messageList, const FString& title, const TArray<FString>& abstractList,
 		                                 const FString& compatibleText);
@@ -324,7 +324,7 @@ public:
 
 		//void GetMessageReadReceipts(const V2TIMMessageVector& messageList, V2TIMValueCallback<V2TIMMessageReceiptVector>* callback);
 
-		// void GetGroupMessageReadMemberList(const V2TIMMessage& message, V2TIMGroupMessageReadMembersFilter filter, uint64_t nextSeq, uint32_t count,
+		// void GetGroupMessageReadMemberList(const V2TIMMessage& message, V2TIMGroupMessageReadMembersFilter filter, uint64_t nextSeq, int32 count,
 		//                                    V2TIMValueCallback<V2TIMGroupMessageReadMemberList>* callback);
 
 #pragma endregion IMMessageManager
@@ -351,7 +351,7 @@ public:
 
 		void GetGroupOnlineMemberCount(const FString& groupID, V2TIMValueCallback<uint32_t>* callback);
 
-		void GetGroupMemberList(const FString& groupID, uint32_t filter, uint64_t nextSeq, V2TIMValueCallback<V2TIMGroupMemberInfoResult>* callback);
+		void GetGroupMemberList(const FString& groupID, int32 filter, uint64_t nextSeq, V2TIMValueCallback<V2TIMGroupMemberInfoResult>* callback);
 
 		void GetGroupMembersInfo(const FString& groupID, TArray<FString> memberList, V2TIMValueCallback<V2TIMGroupMemberFullInfoVector>* callback);
 
@@ -359,16 +359,16 @@ public:
 
 		void SetGroupMemberInfo(const FString& groupID, const V2TIMGroupMemberFullInfo& info, V2TIMCallback* callback);
 
-		void MuteGroupMember(const FString& groupID, const FString& userID, uint32_t seconds, V2TIMCallback* callback);
+		void MuteGroupMember(const FString& groupID, const FString& userID, int32 seconds, V2TIMCallback* callback);
 
 		void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
 
 		void KickGroupMember(const FString& groupID, const TArray<FString>& memberList, const FString& reason,
 		                     V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
 
-		void SetGroupMemberRole(const FString& groupID, const FString& userID, uint32_t role, V2TIMCallback* callback);
+		void SetGroupMemberRole(const FString& groupID, const FString& userID, int32 role, V2TIMCallback* callback);
 
-		//void MarkGroupMemberList(const FString& groupID, const TArray<FString>& memberList, uint32_t markType, bool enableMark, V2TIMCallback* callback);
+		//void MarkGroupMemberList(const FString& groupID, const TArray<FString>& memberList, int32 markType, bool enableMark, V2TIMCallback* callback);
 
 		void TransferGroupOwner(const FString& groupID, const FString& userID, V2TIMCallback* callback);
 
@@ -421,7 +421,7 @@ public:
 
 		void RemoveConversationListener(V2TIMConversationListener* listener);
 
-		void GetConversationList(uint64_t nextSeq, uint32_t count, V2TIMValueCallback<V2TIMConversationResult>* callback);
+		void GetConversationList(uint64_t nextSeq, int32 count, V2TIMValueCallback<V2TIMConversationResult>* callback);
 
 		void GetConversation(const FString& conversationID, V2TIMValueCallback<V2TIMConversation>* callback);
 

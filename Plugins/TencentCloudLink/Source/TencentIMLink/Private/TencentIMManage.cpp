@@ -112,24 +112,24 @@ void FTencentIMManage::FTencentIM::LogIn(const FString& InUserId, const FString&
 	};
 	LoginCallback* login_callback_ = new LoginCallback();
 	const char* imTestUserId = TCHAR_TO_ANSI(*InUserId);
-#if PLATFORM_ANDROID
-	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
-	{
-		jmethodID GetPackageNameMethodID = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "genTestUserSig", "(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
-		jstring jsUserId = Env->NewStringUTF(imTestUserId);
-		jstring jsKey = Env->NewStringUTF(SECRETKEY);
-		jstring JstringResult = (jstring)FJavaWrapper::CallObjectMethod(Env, FJavaWrapper::GameActivityThis,GetPackageNameMethodID, SDKAppID, jsUserId, jsKey);
-		FString FinalResult = FJavaHelper::FStringFromLocalRef(Env, JstringResult);
-		auto twoHundredAnsi = StringCast<ANSICHAR>(*FinalResult);
-		const char* userSig = twoHundredAnsi.Get();
-		GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
-	}
-#else
+// #if PLATFORM_ANDROID
+// 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
+// 	{
+// 		jmethodID GetPackageNameMethodID = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "genTestUserSig", "(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
+// 		jstring jsUserId = Env->NewStringUTF(imTestUserId);
+// 		jstring jsKey = Env->NewStringUTF(SECRETKEY);
+// 		jstring JstringResult = (jstring)FJavaWrapper::CallObjectMethod(Env, FJavaWrapper::GameActivityThis,GetPackageNameMethodID, SDKAppID, jsUserId, jsKey);
+// 		FString FinalResult = FJavaHelper::FStringFromLocalRef(Env, JstringResult);
+// 		auto twoHundredAnsi = StringCast<ANSICHAR>(*FinalResult);
+// 		const char* userSig = twoHundredAnsi.Get();
+// 		GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
+// 	}
+// #else
 	const char* userSig = GenerateTestUserSig().genTestUserSig(imTestUserId, SDKAppID, SECRETKEY);
 	FString Test = userSig;
 	UE_LOG(LogTemp, Warning, TEXT("UserID::  %s"), *Test);
 	GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
-#endif
+// #endif
 }
 
 void FTencentIMManage::FTencentIM::LogOut()
@@ -324,12 +324,12 @@ V2TIMMessage FTencentIMManage::FTencentIM::CreateImageMessage(const FString& ima
 	return GetMessageManager()->CreateImageMessage(ToIMString(imagePath));
 }
 
-V2TIMMessage FTencentIMManage::FTencentIM::CreateSoundMessage(const FString& soundPath, uint32_t duration)
+V2TIMMessage FTencentIMManage::FTencentIM::CreateSoundMessage(const FString& soundPath, int32 duration)
 {
 	return GetMessageManager()->CreateSoundMessage(ToIMString(soundPath), duration);
 }
 
-V2TIMMessage FTencentIMManage::FTencentIM::CreateVideoMessage(const FString& videoFilePath, const FString& type, uint32_t duration,
+V2TIMMessage FTencentIMManage::FTencentIM::CreateVideoMessage(const FString& videoFilePath, const FString& type, int32 duration,
                                                               const FString& snapshotPath)
 {
 	return GetMessageManager()->CreateVideoMessage(ToIMString(videoFilePath), ToIMString(type), duration, ToIMString(snapshotPath));
@@ -345,7 +345,7 @@ V2TIMMessage FTencentIMManage::FTencentIM::CreateLocationMessage(const FString& 
 	return GetMessageManager()->CreateLocationMessage(ToIMString(desc), longitude, latitude);
 }
 
-V2TIMMessage FTencentIMManage::FTencentIM::CreateFaceMessage(uint32_t index, const V2TIMBuffer& data)
+V2TIMMessage FTencentIMManage::FTencentIM::CreateFaceMessage(int32 index, const V2TIMBuffer& data)
 {
 	return GetMessageManager()->CreateFaceMessage(index, data);
 }
@@ -452,12 +452,11 @@ void FTencentIMManage::FTencentIM::SearchLocalMessages(const V2TIMMessageSearchP
 
 //todo
 
-/**
- * @brief 
- * @param Group 操作 
- * @param memberList 
- * @param callback 
- */
+/////////////////////////////////////////
+///
+///
+/////////////////////////////////////////
+
 void FTencentIMManage::FTencentIM::CreateGroup(const V2TIMGroupInfo& info, const V2TIMCreateGroupMemberInfoVector& memberList, V2TIMValueCallback<V2TIMString>* callback)
 {
 	//todo 类型转换
@@ -506,10 +505,11 @@ void FTencentIMManage::FTencentIM::GetGroupAttributes(const FString& groupID, co
 
 void FTencentIMManage::FTencentIM::GetGroupOnlineMemberCount(const FString& groupID, V2TIMValueCallback<uint32_t>* callback)
 {
+	
 	GetGroupManager()->GetGroupOnlineMemberCount(ToIMString(groupID), callback);
 }
 
-void FTencentIMManage::FTencentIM::GetGroupMemberList(const FString& groupID, uint32_t filter, uint64_t nextSeq, V2TIMValueCallback<V2TIMGroupMemberInfoResult>* callback)
+void FTencentIMManage::FTencentIM::GetGroupMemberList(const FString& groupID, int32 filter, uint64_t nextSeq, V2TIMValueCallback<V2TIMGroupMemberInfoResult>* callback)
 {
 	GetGroupManager()->GetGroupMemberList(ToIMString(groupID), filter, nextSeq, callback);
 }
@@ -529,7 +529,7 @@ void FTencentIMManage::FTencentIM::SetGroupMemberInfo(const FString& groupID, co
 	GetGroupManager()->SetGroupMemberInfo(ToIMString(groupID), info, callback);
 }
 
-void FTencentIMManage::FTencentIM::MuteGroupMember(const FString& groupID, const FString& userID, uint32_t seconds, V2TIMCallback* callback)
+void FTencentIMManage::FTencentIM::MuteGroupMember(const FString& groupID, const FString& userID, int32 seconds, V2TIMCallback* callback)
 {
 	GetGroupManager()->MuteGroupMember(ToIMString(groupID), ToIMString(userID), seconds, callback);
 }
@@ -546,12 +546,12 @@ void FTencentIMManage::FTencentIM::KickGroupMember(const FString& groupID, const
 	GetGroupManager()->KickGroupMember(ToIMString(groupID), ToIMStringArray(memberList), ToIMString(reason), callback);
 }
 
-void FTencentIMManage::FTencentIM::SetGroupMemberRole(const FString& groupID, const FString& userID, uint32_t role, V2TIMCallback* callback)
+void FTencentIMManage::FTencentIM::SetGroupMemberRole(const FString& groupID, const FString& userID, int32 role, V2TIMCallback* callback)
 {
 	GetGroupManager()->SetGroupMemberRole(ToIMString(groupID), ToIMString(userID), role, callback);
 }
 
-// void FTencentIMManage::FTencentIM::MarkGroupMemberList(const FString& groupID, const TArray<FString>& memberList, uint32_t markType, bool enableMark,
+// void FTencentIMManage::FTencentIM::MarkGroupMemberList(const FString& groupID, const TArray<FString>& memberList, int32 markType, bool enableMark,
 // 	V2TIMCallback* callback)
 // {
 // 	GetGroupManager()->MarkGroupMemberList(info, memberList,callback);
@@ -644,7 +644,7 @@ void FTencentIMManage::FTencentIM::RemoveConversationListener(V2TIMConversationL
 	GetConversationManager()->AddConversationListener(listener);
 }
 
-void FTencentIMManage::FTencentIM::GetConversationList(uint64_t nextSeq, uint32_t count, V2TIMValueCallback<V2TIMConversationResult>* callback)
+void FTencentIMManage::FTencentIM::GetConversationList(uint64_t nextSeq, int32 count, V2TIMValueCallback<V2TIMConversationResult>* callback)
 {
 	GetConversationManager()->GetConversationList(nextSeq, count, callback);
 }
