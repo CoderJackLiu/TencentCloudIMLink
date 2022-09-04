@@ -247,7 +247,7 @@ void FTencentIMManage::FTencentIM::GetUsersInfo(const TArray<FString>& userIDLis
 	// GetInstance()->GetUsersInfo();
 
 	//todo 类型转换, 函数调用
-	V2TIMStringVector UserIDList;
+	TArray<FString> UserIDList;
 	// GetInstance()->GetUsersInfo(userIDList, , );
 }
 
@@ -304,9 +304,9 @@ V2TIMMessage FTencentIMManage::FTencentIM::CreateTextMessage(const FString& text
 	return GetMessageManager()->CreateTextMessage(ToIMString(text));
 }
 
-V2TIMMessage FTencentIMManage::FTencentIM::CreateTextAtMessage(const FString& text, const V2TIMStringVector& atUserList)
+V2TIMMessage FTencentIMManage::FTencentIM::CreateTextAtMessage(const FString& text, const TArray<FString>& atUserList)
 {
-	return GetMessageManager()->CreateTextAtMessage(ToIMString(text), atUserList);
+	return GetMessageManager()->CreateTextAtMessage(ToIMString(text), ToIMStringArray(atUserList));
 }
 
 V2TIMMessage FTencentIMManage::FTencentIM::CreateCustomMessage(const V2TIMBuffer& data)
@@ -350,10 +350,10 @@ V2TIMMessage FTencentIMManage::FTencentIM::CreateFaceMessage(uint32_t index, con
 	return GetMessageManager()->CreateFaceMessage(index, data);
 }
 
-V2TIMMessage FTencentIMManage::FTencentIM::CreateMergerMessage(const V2TIMMessageVector& messageList, const FString& title, const V2TIMStringVector& abstractList,
+V2TIMMessage FTencentIMManage::FTencentIM::CreateMergerMessage(const V2TIMMessageVector& messageList, const FString& title, const TArray<FString>& abstractList,
                                                                const FString& compatibleText)
 {
-	return GetMessageManager()->CreateMergerMessage(messageList, ToIMString(title), abstractList, ToIMString(compatibleText));
+	return GetMessageManager()->CreateMergerMessage(messageList, ToIMString(title), ToIMStringArray(abstractList), ToIMString(compatibleText));
 }
 
 V2TIMMessage FTencentIMManage::FTencentIM::CreateForwardMessage(const V2TIMMessage& message)
@@ -361,7 +361,7 @@ V2TIMMessage FTencentIMManage::FTencentIM::CreateForwardMessage(const V2TIMMessa
 	return GetMessageManager()->CreateForwardMessage(message);
 }
 
-// V2TIMMessage FTencentIMManage::FTencentIM::CreateTargetedGroupMessage(const V2TIMMessage& message, const V2TIMStringVector& receiverList)
+// V2TIMMessage FTencentIMManage::FTencentIM::CreateTargetedGroupMessage(const V2TIMMessage& message, const TArray<FString>& receiverList)
 // {
 // 	return GetMessageManager()->CreateTargetedGroupMessage(text);
 //
@@ -373,14 +373,14 @@ FString FTencentIMManage::FTencentIM::SendMessage(V2TIMMessage& message, const F
 	return ToFString(GetMessageManager()->SendMessage(message, ToIMString(receiver), ToIMString(groupID), priority, onlineUserOnly, offlinePushInfo, callback));
 }
 
-void FTencentIMManage::FTencentIM::SetC2CReceiveMessageOpt(const V2TIMStringVector& userIDList, V2TIMReceiveMessageOpt opt, V2TIMCallback* callback)
+void FTencentIMManage::FTencentIM::SetC2CReceiveMessageOpt(const TArray<FString>& userIDList, V2TIMReceiveMessageOpt opt, V2TIMCallback* callback)
 {
-	GetMessageManager()->SetC2CReceiveMessageOpt(userIDList, opt, callback);
+	GetMessageManager()->SetC2CReceiveMessageOpt(ToIMStringArray(userIDList), opt, callback);
 }
 
-void FTencentIMManage::FTencentIM::GetC2CReceiveMessageOpt(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMReceiveMessageOptInfoVector>* callback)
+void FTencentIMManage::FTencentIM::GetC2CReceiveMessageOpt(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMReceiveMessageOptInfoVector>* callback)
 {
-	GetMessageManager()->GetC2CReceiveMessageOpt(userIDList, callback);
+	GetMessageManager()->GetC2CReceiveMessageOpt(ToIMStringArray(userIDList), callback);
 }
 
 void FTencentIMManage::FTencentIM::SetGroupReceiveMessageOpt(const FString& groupID, V2TIMReceiveMessageOpt opt, V2TIMCallback* callback)
@@ -440,9 +440,9 @@ FString FTencentIMManage::FTencentIM::InsertC2CMessageToLocalStorage(V2TIMMessag
 	return ToFString(GetMessageManager()->InsertC2CMessageToLocalStorage(message, ToIMString(userID), ToIMString(sender), callback));
 }
 
-void FTencentIMManage::FTencentIM::FindMessages(const V2TIMStringVector& messageIDList, V2TIMValueCallback<V2TIMMessageVector>* callback)
+void FTencentIMManage::FTencentIM::FindMessages(const TArray<FString>& messageIDList, V2TIMValueCallback<V2TIMMessageVector>* callback)
 {
-	GetMessageManager()->FindMessages(messageIDList, callback);
+	GetMessageManager()->FindMessages(ToIMStringArray(messageIDList), callback);
 }
 
 void FTencentIMManage::FTencentIM::SearchLocalMessages(const V2TIMMessageSearchParam& searchParam, V2TIMValueCallback<V2TIMMessageSearchResult>* callback)
@@ -469,9 +469,9 @@ void FTencentIMManage::FTencentIM::GetJoinedGroupList(V2TIMValueCallback<V2TIMGr
 	GetGroupManager()->GetJoinedGroupList(callback);
 }
 
-void FTencentIMManage::FTencentIM::GetGroupsInfo(const V2TIMStringVector& groupIDList, V2TIMValueCallback<V2TIMGroupInfoResultVector>* callback)
+void FTencentIMManage::FTencentIM::GetGroupsInfo(const TArray<FString>& groupIDList, V2TIMValueCallback<V2TIMGroupInfoResultVector>* callback)
 {
-	GetGroupManager()->GetGroupsInfo(groupIDList, callback);
+	GetGroupManager()->GetGroupsInfo(ToIMStringArray(groupIDList), callback);
 }
 
 void FTencentIMManage::FTencentIM::SearchGroups(const V2TIMGroupSearchParam& searchParam, V2TIMValueCallback<V2TIMGroupInfoVector>* callback)
@@ -494,14 +494,14 @@ void FTencentIMManage::FTencentIM::SetGroupAttributes(const FString& groupID, co
 	GetGroupManager()->SetGroupAttributes(ToIMString(groupID), attributes, callback);
 }
 
-void FTencentIMManage::FTencentIM::DeleteGroupAttributes(const FString& groupID, const V2TIMStringVector& keys, V2TIMCallback* callback)
+void FTencentIMManage::FTencentIM::DeleteGroupAttributes(const FString& groupID, const TArray<FString>& keys, V2TIMCallback* callback)
 {
-	GetGroupManager()->DeleteGroupAttributes(ToIMString(groupID), keys, callback);
+	GetGroupManager()->DeleteGroupAttributes(ToIMString(groupID), ToIMStringArray(keys), callback);
 }
 
-void FTencentIMManage::FTencentIM::GetGroupAttributes(const FString& groupID, const V2TIMStringVector& keys, V2TIMValueCallback<V2TIMGroupAttributeMap>* callback)
+void FTencentIMManage::FTencentIM::GetGroupAttributes(const FString& groupID, const TArray<FString>& keys, V2TIMValueCallback<V2TIMGroupAttributeMap>* callback)
 {
-	GetGroupManager()->GetGroupAttributes(ToIMString(groupID), keys, callback);
+	GetGroupManager()->GetGroupAttributes(ToIMString(groupID), ToIMStringArray(keys), callback);
 }
 
 void FTencentIMManage::FTencentIM::GetGroupOnlineMemberCount(const FString& groupID, V2TIMValueCallback<uint32_t>* callback)
@@ -514,9 +514,9 @@ void FTencentIMManage::FTencentIM::GetGroupMemberList(const FString& groupID, ui
 	GetGroupManager()->GetGroupMemberList(ToIMString(groupID), filter, nextSeq, callback);
 }
 
-void FTencentIMManage::FTencentIM::GetGroupMembersInfo(const FString& groupID, V2TIMStringVector memberList, V2TIMValueCallback<V2TIMGroupMemberFullInfoVector>* callback)
+void FTencentIMManage::FTencentIM::GetGroupMembersInfo(const FString& groupID, TArray<FString> memberList, V2TIMValueCallback<V2TIMGroupMemberFullInfoVector>* callback)
 {
-	GetGroupManager()->GetGroupMembersInfo(ToIMString(groupID), memberList, callback);
+	GetGroupManager()->GetGroupMembersInfo(ToIMString(groupID), ToIMStringArray(memberList), callback);
 }
 
 void FTencentIMManage::FTencentIM::SearchGroupMembers(const V2TIMGroupMemberSearchParam& param, V2TIMValueCallback<V2TIMGroupSearchGroupMembersMap>* callback)
@@ -534,16 +534,16 @@ void FTencentIMManage::FTencentIM::MuteGroupMember(const FString& groupID, const
 	GetGroupManager()->MuteGroupMember(ToIMString(groupID), ToIMString(userID), seconds, callback);
 }
 
-void FTencentIMManage::FTencentIM::InviteUserToGroup(const FString& groupID, const V2TIMStringVector& userList,
+void FTencentIMManage::FTencentIM::InviteUserToGroup(const FString& groupID, const TArray<FString>& userList,
                                                      V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback)
 {
-	GetGroupManager()->InviteUserToGroup(ToIMString(groupID), userList, callback);
+	GetGroupManager()->InviteUserToGroup(ToIMString(groupID),ToIMStringArray( userList), callback);
 }
 
-void FTencentIMManage::FTencentIM::KickGroupMember(const FString& groupID, const V2TIMStringVector& memberList, const FString& reason,
+void FTencentIMManage::FTencentIM::KickGroupMember(const FString& groupID, const TArray<FString>& memberList, const FString& reason,
                                                    V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback)
 {
-	GetGroupManager()->KickGroupMember(ToIMString(groupID), memberList, ToIMString(reason), callback);
+	GetGroupManager()->KickGroupMember(ToIMString(groupID), ToIMStringArray(memberList), ToIMString(reason), callback);
 }
 
 void FTencentIMManage::FTencentIM::SetGroupMemberRole(const FString& groupID, const FString& userID, uint32_t role, V2TIMCallback* callback)
@@ -551,7 +551,7 @@ void FTencentIMManage::FTencentIM::SetGroupMemberRole(const FString& groupID, co
 	GetGroupManager()->SetGroupMemberRole(ToIMString(groupID), ToIMString(userID), role, callback);
 }
 
-// void FTencentIMManage::FTencentIM::MarkGroupMemberList(const FString& groupID, const V2TIMStringVector& memberList, uint32_t markType, bool enableMark,
+// void FTencentIMManage::FTencentIM::MarkGroupMemberList(const FString& groupID, const TArray<FString>& memberList, uint32_t markType, bool enableMark,
 // 	V2TIMCallback* callback)
 // {
 // 	GetGroupManager()->MarkGroupMemberList(info, memberList,callback);
@@ -603,10 +603,10 @@ FString FTencentIMManage::FTencentIM::Invite(const FString& invitee, const FStri
 	return ToFString(GetSignalingManager()->Invite(ToIMString(invitee), ToIMString(data), onlineUserOnly, offlinePushInfo, timeout, callback));
 }
 
-FString FTencentIMManage::FTencentIM::InviteInGroup(const FString& groupID, const V2TIMStringVector& inviteeList, const FString& data, bool onlineUserOnly, int timeout,
+FString FTencentIMManage::FTencentIM::InviteInGroup(const FString& groupID, const TArray<FString>& inviteeList, const FString& data, bool onlineUserOnly, int timeout,
                                                     V2TIMCallback* callback)
 {
-	return ToFString(GetSignalingManager()->InviteInGroup(ToIMString(groupID), inviteeList, ToIMString(data), onlineUserOnly, timeout, callback));
+	return ToFString(GetSignalingManager()->InviteInGroup(ToIMString(groupID), ToIMStringArray(inviteeList), ToIMString(data), onlineUserOnly, timeout, callback));
 }
 
 void FTencentIMManage::FTencentIM::Cancel(const FString& inviteID, const FString& data, V2TIMCallback* callback)
@@ -654,9 +654,9 @@ void FTencentIMManage::FTencentIM::GetConversation(const FString& conversationID
 	GetConversationManager()->GetConversation(ToIMString(conversationID), callback);
 }
 
-void FTencentIMManage::FTencentIM::GetConversationList(const V2TIMStringVector& conversationIDList, V2TIMValueCallback<V2TIMVConversationVector>* callback)
+void FTencentIMManage::FTencentIM::GetConversationList(const TArray<FString>& conversationIDList, V2TIMValueCallback<V2TIMVConversationVector>* callback)
 {
-	GetConversationManager()->GetConversationList(conversationIDList, callback);
+	GetConversationManager()->GetConversationList(ToIMStringArray(conversationIDList), callback);
 }
 
 void FTencentIMManage::FTencentIM::DeleteConversation(const FString& conversationID, V2TIMCallback* callback)
@@ -698,9 +698,9 @@ void FTencentIMManage::FTencentIM::GetFriendList(V2TIMValueCallback<V2TIMFriendI
 	GetFriendshipManager()->GetFriendList(callback);
 }
 
-void FTencentIMManage::FTencentIM::GetFriendsInfo(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback)
+void FTencentIMManage::FTencentIM::GetFriendsInfo(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback)
 {
-	GetFriendshipManager()->GetFriendsInfo(userIDList, callback);
+	GetFriendshipManager()->GetFriendsInfo(ToIMStringArray(userIDList), callback);
 }
 
 void FTencentIMManage::FTencentIM::SetFriendInfo(const V2TIMFriendInfo& info, V2TIMCallback* callback)
@@ -718,14 +718,14 @@ void FTencentIMManage::FTencentIM::AddFriend(const V2TIMFriendAddApplication& ap
 	GetFriendshipManager()->AddFriend(application, callback);
 }
 
-void FTencentIMManage::FTencentIM::DeleteFromFriendList(const V2TIMStringVector& userIDList, V2TIMFriendType deleteType, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+void FTencentIMManage::FTencentIM::DeleteFromFriendList(const TArray<FString>& userIDList, V2TIMFriendType deleteType, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
 {
-	GetFriendshipManager()->DeleteFromFriendList(userIDList, deleteType, callback);
+	GetFriendshipManager()->DeleteFromFriendList(ToIMStringArray(userIDList), deleteType, callback);
 }
 
-void FTencentIMManage::FTencentIM::CheckFriend(const V2TIMStringVector& userIDList, V2TIMFriendType checkType, V2TIMValueCallback<V2TIMFriendCheckResultVector>* callback)
+void FTencentIMManage::FTencentIM::CheckFriend(const TArray<FString>& userIDList, V2TIMFriendType checkType, V2TIMValueCallback<V2TIMFriendCheckResultVector>* callback)
 {
-	GetFriendshipManager()->CheckFriend(userIDList, checkType, callback);
+	GetFriendshipManager()->CheckFriend(ToIMStringArray(userIDList), checkType, callback);
 }
 
 void FTencentIMManage::FTencentIM::GetFriendApplicationList(V2TIMValueCallback<V2TIMFriendApplicationResult>* callback)
@@ -753,14 +753,14 @@ void FTencentIMManage::FTencentIM::SetFriendApplicationRead(V2TIMCallback* callb
 	GetFriendshipManager()->SetFriendApplicationRead(callback);
 }
 
-void FTencentIMManage::FTencentIM::AddToBlackList(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+void FTencentIMManage::FTencentIM::AddToBlackList(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
 {
-	GetFriendshipManager()->AddToBlackList(userIDList, callback);
+	GetFriendshipManager()->AddToBlackList(ToIMStringArray(userIDList), callback);
 }
 
-void FTencentIMManage::FTencentIM::DeleteFromBlackList(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+void FTencentIMManage::FTencentIM::DeleteFromBlackList(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
 {
-	GetFriendshipManager()->DeleteFromBlackList(userIDList, callback);
+	GetFriendshipManager()->DeleteFromBlackList(ToIMStringArray(userIDList), callback);
 }
 
 void FTencentIMManage::FTencentIM::GetBlackList(V2TIMValueCallback<V2TIMFriendInfoVector>* callback)
@@ -768,19 +768,19 @@ void FTencentIMManage::FTencentIM::GetBlackList(V2TIMValueCallback<V2TIMFriendIn
 	GetFriendshipManager()->GetBlackList(callback);
 }
 
-void FTencentIMManage::FTencentIM::CreateFriendGroup(const FString& groupName, const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+void FTencentIMManage::FTencentIM::CreateFriendGroup(const FString& groupName, const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
 {
-	GetFriendshipManager()->CreateFriendGroup(ToIMString(groupName), userIDList, callback);
+	GetFriendshipManager()->CreateFriendGroup(ToIMString(groupName), ToIMStringArray(userIDList), callback);
 }
 
-void FTencentIMManage::FTencentIM::GetFriendGroups(const V2TIMStringVector& groupNameList, V2TIMValueCallback<V2TIMFriendGroupVector>* callback)
+void FTencentIMManage::FTencentIM::GetFriendGroups(const TArray<FString>& groupNameList, V2TIMValueCallback<V2TIMFriendGroupVector>* callback)
 {
-	GetFriendshipManager()->GetFriendGroups(groupNameList, callback);
+	GetFriendshipManager()->GetFriendGroups(ToIMStringArray(groupNameList), callback);
 }
 
-void FTencentIMManage::FTencentIM::DeleteFriendGroup(const V2TIMStringVector& groupNameList, V2TIMCallback* callback)
+void FTencentIMManage::FTencentIM::DeleteFriendGroup(const TArray<FString>& groupNameList, V2TIMCallback* callback)
 {
-	GetFriendshipManager()->DeleteFriendGroup(groupNameList, callback);
+	GetFriendshipManager()->DeleteFriendGroup(ToIMStringArray(groupNameList), callback);
 }
 
 void FTencentIMManage::FTencentIM::RenameFriendGroup(const FString& oldName, const FString& newName, V2TIMCallback* callback)
@@ -788,30 +788,15 @@ void FTencentIMManage::FTencentIM::RenameFriendGroup(const FString& oldName, con
 	GetFriendshipManager()->RenameFriendGroup(ToIMString(oldName), ToIMString(newName), callback);
 }
 
-void FTencentIMManage::FTencentIM::AddFriendsToFriendGroup(const FString& groupName, const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+void FTencentIMManage::FTencentIM::AddFriendsToFriendGroup(const FString& groupName, const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
 {
-	GetFriendshipManager()->AddFriendsToFriendGroup(ToIMString(groupName), userIDList, callback);
+	GetFriendshipManager()->AddFriendsToFriendGroup(ToIMString(groupName), ToIMStringArray(userIDList), callback);
 }
 
-void FTencentIMManage::FTencentIM::DeleteFriendsFromFriendGroup(const FString& groupName, const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
+void FTencentIMManage::FTencentIM::DeleteFriendsFromFriendGroup(const FString& groupName, const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback)
 {
-	GetFriendshipManager()->DeleteFriendsFromFriendGroup(ToIMString(groupName), userIDList, callback);
+	GetFriendshipManager()->DeleteFriendsFromFriendGroup(ToIMString(groupName), ToIMStringArray(userIDList), callback);
 }
-
-// void FTencentIMManage::FTencentIM::GetConversationGroupList(V2TIMValueCallback<V2TIMStringVector>* callback)
-// {
-// 	GetConversationManager()->GetConversationGroupList(listener);
-// }
-
-// void FTencentIMManage::FTencentIM::DeleteConversationGroup(const FString& groupName, V2TIMCallback* callback)
-// {
-// 	GetConversationManager()->DeleteConversationGroup(listener);
-// }
-
-// void FTencentIMManage::FTencentIM::RenameConversationGroup(const FString& oldName, const FString& newName, V2TIMCallback* callback)
-// {
-// 	GetConversationManager()->RenameConversationGroup(listener);
-// }
 
 
 V2TIMString FTencentIMManage::FTencentIM::ToIMString(const FString& InStr) const
@@ -824,4 +809,14 @@ FString FTencentIMManage::FTencentIM::ToFString(const V2TIMString& InStr) const
 {
 	const std::string tempStr = InStr.CString();
 	return tempStr.c_str();
+}
+
+V2TIMStringVector FTencentIMManage::FTencentIM::ToIMStringArray(TArray<FString> InStrArray)
+{
+	V2TIMStringVector StrVector;
+	for (FString Str : InStrArray)
+	{
+		StrVector.PushBack(ToIMString(Str));
+	}
+	return StrVector;
 }

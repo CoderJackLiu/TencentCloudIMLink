@@ -198,7 +198,7 @@ public:
 		 * 当您批量查询时，接口只会返回查询成功的用户状态信息；当所有用户均查询失败时，接口会报错
 		 */
 		//todo 目前版本不支持6.3后支持；
-		//void GetUserStatus(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMUserStatusVector>* callback);
+		//void GetUserStatus(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMUserStatusVector>* callback);
 		//SetSelfStatus()
 		//SubscribeUserStatus()
 		//UnsubscribeUserStatus()
@@ -256,7 +256,7 @@ public:
 		 * atUserList 的总数不能超过默认最大数，包括 @ALL。
 		 * 直播群（AVChatRoom）不支持发送 @ 消息。
 		 */
-		V2TIMMessage CreateTextAtMessage(const FString& text, const V2TIMStringVector& atUserList);
+		V2TIMMessage CreateTextAtMessage(const FString& text, const TArray<FString>& atUserList);
 
 
 		V2TIMMessage CreateCustomMessage(const V2TIMBuffer& data);
@@ -275,19 +275,19 @@ public:
 
 		V2TIMMessage CreateFaceMessage(uint32_t index, const V2TIMBuffer& data);
 
-		V2TIMMessage CreateMergerMessage(const V2TIMMessageVector& messageList, const FString& title, const V2TIMStringVector& abstractList,
+		V2TIMMessage CreateMergerMessage(const V2TIMMessageVector& messageList, const FString& title, const TArray<FString>& abstractList,
 		                                 const FString& compatibleText);
 
 		V2TIMMessage CreateForwardMessage(const V2TIMMessage& message);
 
-		//V2TIMMessage CreateTargetedGroupMessage(const V2TIMMessage& message, const V2TIMStringVector& receiverList);
+		//V2TIMMessage CreateTargetedGroupMessage(const V2TIMMessage& message, const TArray<FString>& receiverList);
 
 		FString SendMessage(V2TIMMessage& message, const FString& receiver, const FString& groupID, V2TIMMessagePriority priority,
 		                    bool onlineUserOnly, const V2TIMOfflinePushInfo& offlinePushInfo, V2TIMSendCallback* callback);
 
-		void SetC2CReceiveMessageOpt(const V2TIMStringVector& userIDList, V2TIMReceiveMessageOpt opt, V2TIMCallback* callback);
+		void SetC2CReceiveMessageOpt(const TArray<FString>& userIDList, V2TIMReceiveMessageOpt opt, V2TIMCallback* callback);
 
-		void GetC2CReceiveMessageOpt(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMReceiveMessageOptInfoVector>* callback);
+		void GetC2CReceiveMessageOpt(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMReceiveMessageOptInfoVector>* callback);
 
 		void SetGroupReceiveMessageOpt(const FString& groupID, V2TIMReceiveMessageOpt opt, V2TIMCallback* callback);
 
@@ -316,7 +316,7 @@ public:
 		FString InsertC2CMessageToLocalStorage(V2TIMMessage& message, const FString& userID, const FString& sender,
 		                                       V2TIMValueCallback<V2TIMMessage>* callback);
 
-		void FindMessages(const V2TIMStringVector& messageIDList, V2TIMValueCallback<V2TIMMessageVector>* callback);
+		void FindMessages(const TArray<FString>& messageIDList, V2TIMValueCallback<V2TIMMessageVector>* callback);
 
 		void SearchLocalMessages(const V2TIMMessageSearchParam& searchParam, V2TIMValueCallback<V2TIMMessageSearchResult>* callback);
 
@@ -335,7 +335,7 @@ public:
 
 		void GetJoinedGroupList(V2TIMValueCallback<V2TIMGroupInfoVector>* callback);
 
-		void GetGroupsInfo(const V2TIMStringVector& groupIDList, V2TIMValueCallback<V2TIMGroupInfoResultVector>* callback);
+		void GetGroupsInfo(const TArray<FString>& groupIDList, V2TIMValueCallback<V2TIMGroupInfoResultVector>* callback);
 
 		void SearchGroups(const V2TIMGroupSearchParam& searchParam, V2TIMValueCallback<V2TIMGroupInfoVector>* callback);
 
@@ -345,15 +345,15 @@ public:
 
 		void SetGroupAttributes(const FString& groupID, const V2TIMGroupAttributeMap& attributes, V2TIMCallback* callback);
 
-		void DeleteGroupAttributes(const FString& groupID, const V2TIMStringVector& keys, V2TIMCallback* callback);
+		void DeleteGroupAttributes(const FString& groupID, const TArray<FString>& keys, V2TIMCallback* callback);
 
-		void GetGroupAttributes(const FString& groupID, const V2TIMStringVector& keys, V2TIMValueCallback<V2TIMGroupAttributeMap>* callback);
+		void GetGroupAttributes(const FString& groupID, const TArray<FString>& keys, V2TIMValueCallback<V2TIMGroupAttributeMap>* callback);
 
 		void GetGroupOnlineMemberCount(const FString& groupID, V2TIMValueCallback<uint32_t>* callback);
 
 		void GetGroupMemberList(const FString& groupID, uint32_t filter, uint64_t nextSeq, V2TIMValueCallback<V2TIMGroupMemberInfoResult>* callback);
 
-		void GetGroupMembersInfo(const FString& groupID, V2TIMStringVector memberList, V2TIMValueCallback<V2TIMGroupMemberFullInfoVector>* callback);
+		void GetGroupMembersInfo(const FString& groupID, TArray<FString> memberList, V2TIMValueCallback<V2TIMGroupMemberFullInfoVector>* callback);
 
 		void SearchGroupMembers(const V2TIMGroupMemberSearchParam& param, V2TIMValueCallback<V2TIMGroupSearchGroupMembersMap>* callback);
 
@@ -361,14 +361,14 @@ public:
 
 		void MuteGroupMember(const FString& groupID, const FString& userID, uint32_t seconds, V2TIMCallback* callback);
 
-		void InviteUserToGroup(const FString& groupID, const V2TIMStringVector& userList, V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
+		void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
 
-		void KickGroupMember(const FString& groupID, const V2TIMStringVector& memberList, const FString& reason,
+		void KickGroupMember(const FString& groupID, const TArray<FString>& memberList, const FString& reason,
 		                     V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
 
 		void SetGroupMemberRole(const FString& groupID, const FString& userID, uint32_t role, V2TIMCallback* callback);
 
-		//void MarkGroupMemberList(const FString& groupID, const V2TIMStringVector& memberList, uint32_t markType, bool enableMark, V2TIMCallback* callback);
+		//void MarkGroupMemberList(const FString& groupID, const TArray<FString>& memberList, uint32_t markType, bool enableMark, V2TIMCallback* callback);
 
 		void TransferGroupOwner(const FString& groupID, const FString& userID, V2TIMCallback* callback);
 
@@ -385,11 +385,11 @@ public:
 
 		// void 	CreateTopicInCommunity (const V2TIMString &groupID, const V2TIMTopicInfo &topicInfo, V2TIMValueCallback< V2TIMString > *callback);
 
-		// void 	DeleteTopicFromCommunity (const V2TIMString &groupID, const V2TIMStringVector &topicIDList, V2TIMValueCallback< V2TIMTopicOperationResultVector > *callback);
+		// void 	DeleteTopicFromCommunity (const V2TIMString &groupID, const TArray<FString> &topicIDList, V2TIMValueCallback< V2TIMTopicOperationResultVector > *callback);
 
 		//void 	SetTopicInfo (const V2TIMTopicInfo &topicInfo, V2TIMCallback *callback);
 
-		// void 	GetTopicInfoList (const V2TIMString &groupID, const V2TIMStringVector &topicIDList, V2TIMValueCallback< V2TIMTopicInfoResultVector > *callback);
+		// void 	GetTopicInfoList (const V2TIMString &groupID, const TArray<FString> &topicIDList, V2TIMValueCallback< V2TIMTopicInfoResultVector > *callback);
 
 #pragma endregion IMGroupManager
 
@@ -401,7 +401,7 @@ public:
 
 		FString Invite(const FString& invitee, const FString& data, bool onlineUserOnly, const V2TIMOfflinePushInfo& offlinePushInfo, int timeout, V2TIMCallback* callback);
 
-		FString InviteInGroup(const FString& groupID, const V2TIMStringVector& inviteeList, const FString& data, bool onlineUserOnly, int timeout, V2TIMCallback* callback);
+		FString InviteInGroup(const FString& groupID, const TArray<FString>& inviteeList, const FString& data, bool onlineUserOnly, int timeout, V2TIMCallback* callback);
 
 		void Cancel(const FString& inviteID, const FString& data, V2TIMCallback* callback);
 
@@ -426,7 +426,7 @@ public:
 		void GetConversation(const FString& conversationID, V2TIMValueCallback<V2TIMConversation>* callback);
 
 		//todo list
-		void GetConversationList(const V2TIMStringVector& conversationIDList, V2TIMValueCallback<V2TIMVConversationVector>* callback);
+		void GetConversationList(const TArray<FString>& conversationIDList, V2TIMValueCallback<V2TIMVConversationVector>* callback);
 
 		//void GetConversationListByFilter(const V2TIMConversationListFilter& filter, V2TIMValueCallback<V2TIMConversationResult>* callback);
 
@@ -434,25 +434,25 @@ public:
 
 		void SetConversationDraft(const FString& conversationID, const FString& draftText, V2TIMCallback* callback);
 
-		//void SetConversationCustomData(const V2TIMStringVector& conversationIDList, const V2TIMBuffer& customData, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
+		//void SetConversationCustomData(const TArray<FString>& conversationIDList, const V2TIMBuffer& customData, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 
 		void PinConversation(const FString& conversationID, bool isPinned, V2TIMCallback* callback);
 
-		//void MarkConversation(const V2TIMStringVector& conversationIDList, uint64_t markType, bool enableMark, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
+		//void MarkConversation(const TArray<FString>& conversationIDList, uint64_t markType, bool enableMark, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 
 		void GetTotalUnreadMessageCount(V2TIMValueCallback<uint64_t>* callback);
 
-		//void CreateConversationGroup(const FString& groupName, const V2TIMStringVector& conversationIDList, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
+		//void CreateConversationGroup(const FString& groupName, const TArray<FString>& conversationIDList, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 
-		//void GetConversationGroupList(V2TIMValueCallback<V2TIMStringVector>* callback);
+		//void GetConversationGroupList(V2TIMValueCallback<TArray<FString>>* callback);
 
 		//void DeleteConversationGroup(const FString& groupName, V2TIMCallback* callback);
 
 		//void RenameConversationGroup(const FString& oldName, const FString& newName, V2TIMCallback* callback);
 
-		//void AddConversationsToGroup(const FString& groupName, const V2TIMStringVector& conversationIDList, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
+		//void AddConversationsToGroup(const FString& groupName, const TArray<FString>& conversationIDList, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 
-		//void DeleteConversationsFromGroup(const FString& groupName, const V2TIMStringVector& conversationIDList, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
+		//void DeleteConversationsFromGroup(const FString& groupName, const TArray<FString>& conversationIDList, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 
 #pragma endregion IMConversationManager
 
@@ -464,7 +464,7 @@ public:
 
 		void GetFriendList(V2TIMValueCallback<V2TIMFriendInfoVector>* callback);
 
-		void GetFriendsInfo(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
+		void GetFriendsInfo(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
 
 		void SetFriendInfo(const V2TIMFriendInfo& info, V2TIMCallback* callback);
 
@@ -472,9 +472,9 @@ public:
 
 		void AddFriend(const V2TIMFriendAddApplication& application, V2TIMValueCallback<V2TIMFriendOperationResult>* callback);
 
-		void DeleteFromFriendList(const V2TIMStringVector& userIDList, V2TIMFriendType deleteType, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+		void DeleteFromFriendList(const TArray<FString>& userIDList, V2TIMFriendType deleteType, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
 
-		void CheckFriend(const V2TIMStringVector& userIDList, V2TIMFriendType checkType, V2TIMValueCallback<V2TIMFriendCheckResultVector>* callback);
+		void CheckFriend(const TArray<FString>& userIDList, V2TIMFriendType checkType, V2TIMValueCallback<V2TIMFriendCheckResultVector>* callback);
 
 		void GetFriendApplicationList(V2TIMValueCallback<V2TIMFriendApplicationResult>* callback);
 
@@ -486,23 +486,23 @@ public:
 
 		void SetFriendApplicationRead(V2TIMCallback* callback);
 
-		void AddToBlackList(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+		void AddToBlackList(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
 
-		void DeleteFromBlackList(const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+		void DeleteFromBlackList(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
 
 		void GetBlackList(V2TIMValueCallback<V2TIMFriendInfoVector>* callback);
 
-		void CreateFriendGroup(const FString& groupName, const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+		void CreateFriendGroup(const FString& groupName, const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
 
-		void GetFriendGroups(const V2TIMStringVector& groupNameList, V2TIMValueCallback<V2TIMFriendGroupVector>* callback);
+		void GetFriendGroups(const TArray<FString>& groupNameList, V2TIMValueCallback<V2TIMFriendGroupVector>* callback);
 
-		void DeleteFriendGroup(const V2TIMStringVector& groupNameList, V2TIMCallback* callback);
+		void DeleteFriendGroup(const TArray<FString>& groupNameList, V2TIMCallback* callback);
 
 		void RenameFriendGroup(const FString& oldName, const FString& newName, V2TIMCallback* callback);
 
-		void AddFriendsToFriendGroup(const FString& groupName, const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+		void AddFriendsToFriendGroup(const FString& groupName, const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
 
-		void DeleteFriendsFromFriendGroup(const FString& groupName, const V2TIMStringVector& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+		void DeleteFriendsFromFriendGroup(const FString& groupName, const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
 
 #pragma endregion IMFriendshipManager
 
@@ -516,6 +516,8 @@ public:
 	private:
 		V2TIMString ToIMString(const FString& InStr) const;
 		FString ToFString(const V2TIMString& InStr) const;
+		V2TIMStringVector ToIMStringArray(TArray<FString> InStrArray);
+
 	};
 
 	FORCEINLINE FTencentIM& GetIM() { return IM; }
