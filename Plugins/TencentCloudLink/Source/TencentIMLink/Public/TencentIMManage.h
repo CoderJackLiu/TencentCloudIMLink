@@ -69,7 +69,7 @@ public:
 		/*
 		 * 
 		 */
-		void LogOut();
+		// void LogOut();
 
 		/*
 		 * 
@@ -94,23 +94,23 @@ public:
 		/*
 		 * 
 		 */
-		FString SendC2CTextMessage(FString text, FString userId) const;
+		//FString SendC2CTextMessage(FString text, FString userId) const;
 
 		/*
 		 * 3.4 发送单聊自定义（信令）消息（最大支持 8KB）
 		 */
-		FString SendC2CCustomMessage(const V2TIMBuffer& customData, const FString& userID) const;
+		//FString SendC2CCustomMessage(const V2TIMBuffer& customData, const FString& userID) const;
 
 		/*
 		 * 3.5 发送群聊普通文本消息（最大支持 8KB）
 		 */
 
-		FString SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority);
+		//FString SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority);
 
 		/**
 		 *	3.6 发送群聊自定义（信令）消息（最大支持 8KB）
 		*/
-		FString SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, EIMMessagePriority priority);
+		//FString SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, EIMMessagePriority priority);
 
 
 		/*

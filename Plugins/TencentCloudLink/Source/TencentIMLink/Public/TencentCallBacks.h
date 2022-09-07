@@ -50,32 +50,32 @@ using namespace std;
  * 
  */
 
-class SendCallback : public V2TIMSendCallback
-{
-public:
-	SendCallback()
-	{
-	};
-
-	~SendCallback()
-	{
-	};
-
-	void OnProgress(uint32_t progress) override
-	{
-	}
-
-	void OnSuccess(const V2TIMMessage& value) override
-	{
-		const std::string TempStr = value.nickName.CString();
-		UE_LOG(LogTemp, Log, TEXT("<== logOut OnSuccess %s"),*TempStr.c_str());
-	};
-
-	void OnError(int error_code, const V2TIMString& error_message) override
-	{
-		UE_LOG(LogTemp, Log, TEXT("<== logOut failed OnError ======: %d"), error_code);
-	};
-};
+// class SendCallback : public V2TIMSendCallback
+// {
+// public:
+// 	SendCallback()
+// 	{
+// 	};
+//
+// 	~SendCallback()
+// 	{
+// 	};
+//
+// 	void OnProgress(uint32_t progress) override
+// 	{
+// 	}
+//
+// 	void OnSuccess(const V2TIMMessage& value) override
+// 	{
+// 		const std::string TempStr = value.nickName.CString();
+// 		UE_LOG(LogTemp, Log, TEXT("<== logOut OnSuccess %s"),*TempStr.c_str());
+// 	};
+//
+// 	void OnError(int error_code, const V2TIMString& error_message) override
+// 	{
+// 		UE_LOG(LogTemp, Log, TEXT("<== logOut failed OnError ======: %d"), error_code);
+// 	};
+// };
 
 UCLASS()
 class TENCENTIMLINK_API UTencentCallBacks : public UObject

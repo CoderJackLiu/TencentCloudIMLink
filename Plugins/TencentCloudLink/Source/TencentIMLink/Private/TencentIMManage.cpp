@@ -134,32 +134,11 @@ void FTencentIMManage::FTencentIM::LogIn(const FString& InUserId, const FString&
 	// #endif
 }
 
-void FTencentIMManage::FTencentIM::LogOut()
-{
-	class LogOutCallback : public V2TIMCallback
-	{
-	public:
-		LogOutCallback()
-		{
-		};
-
-		~LogOutCallback()
-		{
-		};
-
-		void OnSuccess() override
-		{
-			UE_LOG(LogTemp, Log, TEXT("<== logOut OnSuccess"));
-		};
-
-		void OnError(int error_code, const V2TIMString& error_message) override
-		{
-			UE_LOG(LogTemp, Log, TEXT("<== logOut failed OnError ======: %d"), error_code);
-		};
-	};
-	LogOutCallback* LogOut_callback_ = new LogOutCallback();
-	GetInstance()->Logout(LogOut_callback_);
-}
+// void FTencentIMManage::FTencentIM::LogOut()
+// {
+//
+// 	// GetInstance()->Logout();
+// }
 
 FString FTencentIMManage::FTencentIM::GetLoginUser()
 {
@@ -185,30 +164,30 @@ void FTencentIMManage::FTencentIM::RemoveSimpleMsgListener(V2TIMSimpleMsgListene
 }
 
 
-SendCallback SendCallbackIns;
+// SendCallback SendCallbackIns;
 
-FString FTencentIMManage::FTencentIM::SendC2CTextMessage(FString text, FString userId) const
-{
-	return ToFString(GetInstance()->SendC2CTextMessage(ToIMString(text), ToIMString(userId), &SendCallbackIns));
-}
-
-FString FTencentIMManage::FTencentIM::SendC2CCustomMessage(const V2TIMBuffer& customData, const FString& userID) const
-{
-	//todo 返回代理
-	return ToFString(GetInstance()->SendC2CCustomMessage(customData, ToIMString(userID), nullptr));
-}
-
-FString FTencentIMManage::FTencentIM::SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority)
-{
-	SendCallback callback;
-	return ToFString(GetInstance()->SendGroupTextMessage(ToIMString(text), ToIMString(groupID), GetMessagePriority(priority), &callback));
-}
-
-FString FTencentIMManage::FTencentIM::SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, EIMMessagePriority priority) 
-{
-	SendCallback callback;
-	return ToFString(GetInstance()->SendGroupCustomMessage(customData, ToIMString(groupID), GetMessagePriority(priority), &callback));
-}
+// FString FTencentIMManage::FTencentIM::SendC2CTextMessage(FString text, FString userId) const
+// {
+// 	return ToFString(GetInstance()->SendC2CTextMessage(ToIMString(text), ToIMString(userId), &SendCallbackIns));
+// }
+//
+// FString FTencentIMManage::FTencentIM::SendC2CCustomMessage(const V2TIMBuffer& customData, const FString& userID) const
+// {
+// 	//todo 返回代理
+// 	return ToFString(GetInstance()->SendC2CCustomMessage(customData, ToIMString(userID), nullptr));
+// }
+//
+// FString FTencentIMManage::FTencentIM::SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority)
+// {
+// 	SendCallback callback;
+// 	return ToFString(GetInstance()->SendGroupTextMessage(ToIMString(text), ToIMString(groupID), GetMessagePriority(priority), &callback));
+// }
+//
+// FString FTencentIMManage::FTencentIM::SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, EIMMessagePriority priority) 
+// {
+// 	SendCallback callback;
+// 	return ToFString(GetInstance()->SendGroupCustomMessage(customData, ToIMString(groupID), GetMessagePriority(priority), &callback));
+// }
 
 void FTencentIMManage::FTencentIM::AddGroupListener(V2TIMGroupListener* listener)
 {

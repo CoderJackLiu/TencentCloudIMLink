@@ -11,7 +11,8 @@
  */
 DECLARE_DYNAMIC_DELEGATE(FIMCallbackDelegate);
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FIMFailureCallbackDelegate, int, ErrorCode, FString, CodeStr);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FIMFailureCallback, int, ErrorCode, FString, CodeStr);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FIMProgressCallback, uint32, Code);
 
 #define DECLARATION_CALLBACK_DELEGATE(Func) \
 FIMCallbackDelegate Func##_Delegate; \
@@ -26,13 +27,24 @@ Func##_Delegate.ExecuteIfBound();\
 }
 
 #define DECLARATION_FAILURE_CALLBACK_DELEGATE(Func) \
-FIMFailureCallbackDelegate Func##_Delegate2; \
+FIMFailureCallback Func##_FailureDelegate; \
 void Func##_Local2(int Code,const FString& Message) \
 { \
 	FScopeLock ScopeLock(&TencentMutex); \
 	auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Code,Message]()\
 	{\
-	Func##_Delegate2.ExecuteIfBound(Code, Message);\
+	Func##_FailureDelegate.ExecuteIfBound(Code, Message);\
+	}, TStatId(), nullptr, ENamedThreads::GameThread);\
+}
+
+#define DECLARATION_Progress_CALLBACK_DELEGATE(Func) \
+FIMProgressCallback Func##_ProgressDelegate; \
+void Func##_Local2(uint32 Code) \
+{ \
+	FScopeLock ScopeLock(&TencentMutex); \
+	auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Code]()\
+	{\
+	Func##_ProgressDelegate.ExecuteIfBound(Code);\
 	}, TStatId(), nullptr, ENamedThreads::GameThread);\
 }
 
