@@ -117,6 +117,47 @@ FString UTencentIMLibrary::SendGroupCustomMessage(const V2TIMBuffer& customData,
 }
 
 
+//todo create group
+
+DECLARATION_CALLBACK_DELEGATE(CreateGroup)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(CreateGroup)
+
+void UTencentIMLibrary::CreateGroup(const FString& groupType, const FString& groupID, const FString& groupName, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	CreateGroup_Delegate = OnSuccessDelegate;
+	CreateGroup_FailureDelegate = OnFailureDelegate;
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<V2TIMString>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMString& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			CreateGroup_Delegate.ExecuteIfBound();
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			CreateGroup_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.CreateGroup(groupType, groupID, groupName, CallBack);
+}
+
+
 DECLARATION_CALLBACK_DELEGATE(JoinGroup)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(JoinGroup)
 
@@ -189,6 +230,76 @@ void UTencentIMLibrary::QuitGroup(const FString& groupID, FIMCallbackDelegate On
 	Tencent_IM.QuitGroup(groupID, Callback);
 }
 
+DECLARATION_CALLBACK_DELEGATE(DismissGroup)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(DismissGroup)
+
+void UTencentIMLibrary::DismissGroup(const FString& groupID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	DismissGroup_Delegate = OnSuccessDelegate;
+	DismissGroup_FailureDelegate = OnFailureDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			DismissGroup_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			std::string TempStr = error_message.CString();
+			DismissGroup_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	Tencent_IM.QuitGroup(groupID, Callback);
+}
+
+DECLARATION_UserInfo_CALLBACK_DELEGATE(GetUsersInfo)
+void UTencentIMLibrary::GetUsersInfo(const TArray<FString>& userIDList, FIMUserFullInfoCallback UserInfoDelegate)
+{
+	GetUsersInfo_UserFullInfoDelegate = UserInfoDelegate;
+	class FValueCallBack : public V2TIMValueCallback<V2TIMUserFullInfoVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMUserFullInfoVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+
+			GetUsersInfo_UserFullInfoDelegate.ExecuteIfBound(ToTIMUserFullInfoArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			CreateGroup_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	//todo logic lack
+}
+
+
 V2TIMString UTencentIMLibrary::ToIMString(const FString& InStr)
 {
 	const char* OutIMString = TCHAR_TO_ANSI(*InStr);
@@ -211,7 +322,7 @@ V2TIMStringVector UTencentIMLibrary::ToIMStringArray(TArray<FString> InStrArray)
 	return StrVector;
 }
 
-ELoginStatus UTencentIMLibrary::GetLoginStatus(const V2TIMLoginStatus& Status)
+ELoginStatus UTencentIMLibrary::ToTIMLoginStatus(const V2TIMLoginStatus& Status)
 {
 	// FString AclString = UTF8_TO_TCHAR(ACLChar);
 	if (Status == V2TIM_STATUS_LOGINED)
@@ -251,8 +362,81 @@ V2TIMMessagePriority UTencentIMLibrary::GetMessagePriority(EIMMessagePriority In
 	return Priority;
 }
 
+FTIMUserFullInfo UTencentIMLibrary::ToTIMUserFullInfo(const V2TIMUserFullInfo& info)
+{
+	FTIMUserFullInfo UserInfo=FTIMUserFullInfo();
+	UserInfo.userID = ToFString(info.userID);
+	UserInfo.nickName = ToFString(info.nickName);
+	UserInfo.faceURL = ToFString(info.faceURL);
+	UserInfo.selfSignature = ToFString(info.selfSignature);
+	UserInfo.role = info.role;
+	UserInfo.level = info.level;
+	UserInfo.birthday = info.birthday;
+	UserInfo.allowType = ToTIMAllowType(info.allowType);
+	UserInfo.customInfo = ToTIMCustomInfo(info.customInfo);
+	UserInfo.modifyFlag = info.modifyFlag;
+	return UserInfo;
+}
+
 
 ELoginStatus UTencentIMLibrary::GetLoginStatus()
 {
 	return Tencent_IM.GetLoginStatus();
+}
+
+ETIMGender UTencentIMLibrary::ToTIMGender(V2TIMGender Gender)
+{
+	switch (Gender)
+	{
+	case V2TIM_GENDER_UNKNOWN:
+		return ETIMGender::V2TIM_GENDER_UNKNOWN;
+		break;
+	case V2TIM_GENDER_MALE:
+		return ETIMGender::V2TIM_GENDER_MALE;
+		break;
+	case V2TIM_GENDER_FEMALE:
+		return ETIMGender::V2TIM_GENDER_FEMALE;
+		break;
+	default:
+		return ETIMGender::V2TIM_GENDER_UNKNOWN;
+	}
+}
+
+ETIMFriendAllowType UTencentIMLibrary::ToTIMAllowType(V2TIMFriendAllowType AllowType)
+{
+	switch (AllowType)
+	{
+	case V2TIM_FRIEND_ALLOW_ANY:
+		return ETIMFriendAllowType::V2TIM_FRIEND_ALLOW_ANY;
+		break;
+	case V2TIM_FRIEND_NEED_CONFIRM:
+		return ETIMFriendAllowType::V2TIM_FRIEND_NEED_CONFIRM;
+		break;
+	case V2TIM_FRIEND_DENY_ANY:
+		return ETIMFriendAllowType::V2TIM_FRIEND_DENY_ANY;
+		break;
+	default:
+		return ETIMFriendAllowType::V2TIM_FRIEND_NEED_CONFIRM;
+	}
+}
+
+TMap<FString, V2TIMBuffer> UTencentIMLibrary::ToTIMCustomInfo(V2TIMCustomInfo CustomInfo)
+{
+	TMap<FString, V2TIMBuffer> OutCustomInfo;
+	for (int32 i=0;i<CustomInfo.AllKeys().Size();i++)
+	{
+		V2TIMString Key=CustomInfo.AllKeys()[i];
+		OutCustomInfo.Add(ToFString(Key),CustomInfo.Get(Key));
+	}
+	return OutCustomInfo;
+}
+
+TArray<FTIMUserFullInfo> UTencentIMLibrary::ToTIMUserFullInfoArray(const V2TIMUserFullInfoVector& FullInfoVector)
+{
+	TArray<FTIMUserFullInfo> Info;
+	for (int32 i=0;i<FullInfoVector.Size();i++)
+	{
+		Info.Add(ToTIMUserFullInfo(FullInfoVector[i]));
+	}
+	return Info;
 }

@@ -516,6 +516,8 @@ public:
 		ELoginStatus GetLoginStatus(const V2TIMLoginStatus& Status);
 
 		V2TIMMessagePriority GetMessagePriority(EIMMessagePriority InPriority);
+		
+				
 	};
 
 	FORCEINLINE FTencentIM& GetIM() { return IM; }

@@ -202,8 +202,7 @@ void FTencentIMManage::FTencentIM::RemoveGroupListener(V2TIMGroupListener* liste
 void FTencentIMManage::FTencentIM::CreateGroup(const FString& groupType, const FString& groupID, const FString& groupName,
                                                V2TIMValueCallback<V2TIMString>* callback) const
 {
-	//todo 参数类型转换 V2TIMString
-
+	
 	GetInstance()->CreateGroup(ToIMString(groupType), ToIMString(groupType), ToIMString(groupType), callback);
 }
 
@@ -840,3 +839,4 @@ V2TIMMessagePriority FTencentIMManage::FTencentIM::GetMessagePriority(EIMMessage
 	}
 	return Priority;
 }
+
