@@ -231,10 +231,14 @@ public:
 	注意
 	其他限制请参考 V2TIMManager.createGroup 注释 
 	*/
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	static void CreateGroup(const V2TIMGroupInfo& info, const V2TIMCreateGroupMemberInfoVector& memberList, V2TIMValueCallback<V2TIMString>* callback);
+	// todo :::::name is same ,so i changed it
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void CreateGroupByMemBer(const FTIMGroupInfo& info, const TArray<FTIMCreateGroupMemberInfo>& memberList, FIMCallbackTextDelegate OnSuccessCallback,FIMFailureCallback OnFailureDelegate);
 
 
+
+
+	
 	/* 
 	1.2 获取当前用户已经加入的群列表
 
@@ -242,10 +246,13 @@ public:
 	直播群(AVChatRoom) 不支持该 API。
 	该接口有频限检测，SDK 限制调用频率为1 秒 10 次，超过限制后会报 ERR_SDK_COMM_API_CALL_FREQUENCY_LIMIT （7008）错误
 	*/
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	static void GetJoinedGroupList(V2TIMValueCallback<V2TIMGroupInfoVector>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void GetJoinedGroupList(FIMGroupInfoArrayCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 
 
+	static TArray<FTIMGroupInfo> ToGroupInfoArray(const V2TIMGroupInfoVector& GroupInfoVector);
+	static V2TIMGroupInfoVector ToTIMGroupInfoVector(const TArray<FTIMGroupInfo>&GroupInfo);
+	
 	// 	/* 
 	// 	2.1 拉取群资料
 	//
@@ -918,6 +925,8 @@ public:
 
 
 public:
+	//------------
+	//Base function
 	static V2TIMString ToIMString(const FString& InStr);
 
 	static FString ToFString(const V2TIMString& InStr);
@@ -973,8 +982,10 @@ public:
 	static V2TIMMessageSearchParam ToTIMessageSearchParam(const FTIMMessageSearchParam& MessageSearchParam);
 
 	static ETIMKeywordListMatchType ToKeywordListMatchType(const V2TIMKeywordListMatchType& MessageSearchParam);
+	
 	static V2TIMKeywordListMatchType ToTIMKeywordListMatchType(const ETIMKeywordListMatchType& MessageSearchParam);
 
+	
 	static V2TIMElemType ToTIMElemType(const ETIMElemType& MessageSearchParam);
 
 	static ETIMElemType ToElemType(const V2TIMElemType& MessageSearchParam);
@@ -989,5 +1000,18 @@ public:
 
 	static FTIMMessageSearchResultItem ToMessageSearchResultItem( const V2TIMMessageSearchResultItem& TIMMessageSearchResultItem);
 
+	//-------------------------
+	//Group Info
+	static FTIMGroupInfo ToGroupInfo(const V2TIMGroupInfo& GroupInfo);
+	
+	static V2TIMGroupInfo ToTIMGroupInfo(const FTIMGroupInfo& GroupInfo);
+	
 
+
+	static TArray<FTIMCreateGroupMemberInfo> ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector);
+	static V2TIMCreateGroupMemberInfoVector ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector);
+
+	
+	
+	
 };

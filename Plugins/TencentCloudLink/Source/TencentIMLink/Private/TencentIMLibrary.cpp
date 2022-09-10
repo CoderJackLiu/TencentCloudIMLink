@@ -847,7 +847,7 @@ FString UTencentIMLibrary::InsertGroupMessageToLocalStorage(FTIMMessage& message
 	};
 
 	FValueCallBack* CallBack = new FValueCallBack();
-	V2TIMMessage OutMessage=ToIMMessage(message);
+	V2TIMMessage OutMessage = ToIMMessage(message);
 	return ToFString(Tencent_IM.GetInstance()->GetMessageManager()->InsertGroupMessageToLocalStorage(OutMessage, ToIMString(groupID), ToIMString(sender), CallBack));
 }
 
@@ -887,7 +887,7 @@ FString UTencentIMLibrary::InsertC2CMessageToLocalStorage(FTIMMessage& message, 
 	};
 
 	FValueCallBack* CallBack = new FValueCallBack();
-	V2TIMMessage OutMessage=ToIMMessage(message);
+	V2TIMMessage OutMessage = ToIMMessage(message);
 	return ToFString(Tencent_IM.GetInstance()->GetMessageManager()->InsertGroupMessageToLocalStorage(OutMessage, ToIMString(userID), ToIMString(sender), CallBack));
 }
 
@@ -969,6 +969,123 @@ void UTencentIMLibrary::SearchLocalMessages(const FTIMMessageSearchParam& search
 	Tencent_IM.GetInstance()->GetMessageManager()->SearchLocalMessages(ToTIMessageSearchParam(searchParam), CallBack);
 }
 
+
+DECLARATION_FAILURE_CALLBACK_DELEGATE(CreateGroupByMemBer)
+DECLARATION_StringCALLBACK_DELEGATE(CreateGroupByMemBer)
+
+void UTencentIMLibrary::CreateGroupByMemBer(const FTIMGroupInfo& info, const TArray<FTIMCreateGroupMemberInfo>& memberList, FIMCallbackTextDelegate OnSuccessCallback,
+                                            FIMFailureCallback OnFailureDelegate)
+{
+	CreateGroupByMemBer_TextDelegate = OnSuccessCallback;
+	CreateGroupByMemBer_FailureDelegate = OnFailureDelegate;
+
+	class FValueCallBack : public V2TIMValueCallback<V2TIMString>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMString& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			CreateGroupByMemBer_TextDelegate.ExecuteIfBound(ToFString(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnError ======"));
+			CreateGroupByMemBer_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetGroupManager()->CreateGroup(ToTIMGroupInfo(info), ToCreateGroupMemberInfoVector(memberList), CallBack);
+}
+
+DECLARATION_GroupInfoArray_DELEGATE(GetJoinedGroupList)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetJoinedGroupList)
+void UTencentIMLibrary::GetJoinedGroupList(FIMGroupInfoArrayCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate)
+{
+	GetJoinedGroupList_GroupInfoArrayDelegate = OnSuccessDelegate;
+	GetJoinedGroupList_FailureDelegate = OnFailureDelegate;
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<V2TIMGroupInfoVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMGroupInfoVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetJoinedGroupList_GroupInfoArrayDelegate.ExecuteIfBound(ToGroupInfoArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			GetJoinedGroupList_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+
+	Tencent_IM.GetInstance()->GetGroupManager()->GetJoinedGroupList(CallBack);
+}
+
+TArray<FTIMGroupInfo> UTencentIMLibrary::ToGroupInfoArray(const V2TIMGroupInfoVector& GroupInfoVector)
+{
+	//todo finish
+
+	return TArray<FTIMGroupInfo>();
+}
+
+V2TIMGroupInfoVector UTencentIMLibrary::ToTIMGroupInfoVector(const TArray<FTIMGroupInfo>& GroupInfo)
+{
+	//todo finish
+	
+	return V2TIMGroupInfoVector();
+}
+
+
+TArray<FTIMCreateGroupMemberInfo> UTencentIMLibrary::ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector)
+{
+	//todo finish
+	return TArray<FTIMCreateGroupMemberInfo>();
+}
+
+V2TIMCreateGroupMemberInfoVector UTencentIMLibrary::ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector)
+{
+	//todo finish
+	return V2TIMCreateGroupMemberInfoVector();
+}
+
+
+FTIMGroupInfo UTencentIMLibrary::ToGroupInfo(const V2TIMGroupInfo& GroupInfo)
+{
+	return FTIMGroupInfo();
+}
+
+V2TIMGroupInfo UTencentIMLibrary::ToTIMGroupInfo(const FTIMGroupInfo& GroupInfo)
+{
+	return V2TIMGroupInfo();
+}
 
 //------------------------------------------------------
 //base convert function
@@ -1449,9 +1566,8 @@ TArray<FTIMMessageSearchResultItem> UTencentIMLibrary::ToMessageResultItem(const
 FTIMMessageSearchResultItem UTencentIMLibrary::ToMessageSearchResultItem(const V2TIMMessageSearchResultItem& TIMMessageSearchResultItem)
 {
 	FTIMMessageSearchResultItem Result;
-	Result.messageCount=TIMMessageSearchResultItem.messageCount;
-	Result.messageList=ToMessageArray(TIMMessageSearchResultItem.messageList);
-	Result.conversationID=ToFString(TIMMessageSearchResultItem.conversationID);
+	Result.messageCount = TIMMessageSearchResultItem.messageCount;
+	Result.messageList = ToMessageArray(TIMMessageSearchResultItem.messageList);
+	Result.conversationID = ToFString(TIMMessageSearchResultItem.conversationID);
 	return Result;
 }
-

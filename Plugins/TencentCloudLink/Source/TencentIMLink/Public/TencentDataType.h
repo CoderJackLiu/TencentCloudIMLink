@@ -34,6 +34,8 @@ enum class EIMMessagePriority :uint8
 	V2TIM_PRIORITY_LOW = 3,
 };
 
+
+
 UCLASS()
 class UMyClass : public UObject
 {
@@ -41,32 +43,7 @@ class UMyClass : public UObject
 public:
 };
 
-//todo unknown custom Info for sun shi jia
-// UCLASS(Blueprintable,BlueprintType)
-// class TENCENTIMLINK_API UTIMBuffer: public UObject
-// {
-// public:		
-// 	GENERATED_BODY()
-//
-// 	UTIMBuffer();
-//
-// 	UTIMBuffer(const UTIMBuffer& buffer);
-//
-// 	UTIMBuffer(const uint8* data, uint64 size);
-//
-// 	virtual ~UTIMBuffer() override;
-//
-// 	const uint8* Data() const;
-//
-// 	uint64 Size() const;
-//
-// 	UTIMBuffer& operator=(const UTIMBuffer& buffer);
-//
-// private:
-// 	
-// 	uint8* buffer_;
-// 	uint64 length_;
-// };
+
 
 USTRUCT(Blueprintable)
 struct TENCENTIMLINK_API FV2TIMSDKConfig
@@ -681,6 +658,118 @@ struct TENCENTIMLINK_API FTIMMessageSearchResult
 	// V2TIMMessageSearchResult(const V2TIMMessageSearchResult &);
 	// V2TIMMessageSearchResult &operator=(const V2TIMMessageSearchResult &);
 	// ~V2TIMMessageSearchResult();
+};
+
+/// 加群选项
+UENUM(Blueprintable, BlueprintType)
+enum class ETIMGroupAddOpt:uint8
+{
+	/// 禁止加群
+	V2TIM_GROUP_ADD_FORBID = 0,
+	/// 需要管理员审批
+	V2TIM_GROUP_ADD_AUTH = 1,
+	/// 任何人可以加入
+	V2TIM_GROUP_ADD_ANY = 2,
+};
+
+// UENUM(Blueprintable, BlueprintType)
+// enum class EReceiveMessageOpt:uint8
+// {
+// 	///< 在线正常接收消息，离线时会进行 APNs 推送
+// 	V2TIM_RECEIVE_MESSAGE = 0,
+// 	///< 不会接收到消息，离线不会有推送通知
+// 	V2TIM_NOT_RECEIVE_MESSAGE = 1,
+// 	///< 在线正常接收消息，离线不会有推送通知
+// 	V2TIM_RECEIVE_NOT_NOTIFY_MESSAGE = 2,
+// };
+
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMGroupInfo
+{
+	GENERATED_BODY()
+	/// 群组 ID
+	/// 自定义群组 ID 必须为可打印 ASCII 字符（0x20-0x7e），最长48个字节，且前缀不能为
+	/// @TGS#（避免与默认分配的群组 ID 混淆）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	FString groupID;
+	/// 群类型
+	FString groupType;
+	/// 群名称
+	/// 群名称最长30字节
+	FString groupName;
+	/// 群公告
+	/// 群公告最长300字节
+	FString notification;
+	/// 群简介
+	/// 群简介最长240字节
+	FString introduction;
+	/// 群头像
+	/// 群头像 URL 最长100字节
+	FString faceURL;
+	/// 是否全员禁言
+	bool allMuted;
+	/// 设置群自定义字段需要两个步骤：
+	/// 1.在 [控制台](https://console.cloud.tencent.com/im) (功能配置 -> 群自定义字段)
+	/// 配置群自定义字段的 key 值，Key 为 V2TIMString 类型，长度不超过 16 字节。 2.调用 SetGroupInfo
+	/// 接口设置该字段，value 为 V2TIMSBuffer 数据，长度不超过 512 字节。
+	V2TIMCustomInfo customInfo;
+	/// 群创建人/管理员
+	FString owner;
+	/// 群创建时间
+	uint32_t createTime;
+	/// 加群是否需要管理员审批，工作群（Work）不能主动加入，不支持此设置项
+	ETIMGroupAddOpt groupAddOpt;
+	/// 群最近一次群资料修改时间
+	uint32_t lastInfoTime;
+	/// 群最近一次发消息时间
+	uint32_t lastMessageTime;
+	/// 已加入的群成员数量
+	uint32_t memberCount;
+	/// 在线的群成员数量
+	uint32_t onlineCount;
+	/// 最多允许加入的群成员数量
+	/// 各类群成员人数限制详见:
+	/// https://cloud.tencent.com/document/product/269/1502#.E7.BE.A4.E7.BB.84.E9.99.90.E5.88.B6.E5.B7.AE.E5.BC.82
+	uint32_t memberMaxCount;
+	/// 当前用户在此群组中的角色，切换角色请调用 setGroupMemberRole 接口
+	uint32_t role;
+	/// 当前用户在此群组中的消息接收选项,修改群消息接收选项请调用 SetGroupReceiveMessageOpt 接口
+	ETIMReceiveMessageOpt recvOpt;
+	/// 当前用户在此群中的加入时间，不支持设置，系统自动生成
+	uint32_t joinTime;
+	// 群资料修改标记位
+	// 枚举 V2TIMGroupInfoModifyFlag 列出哪些字段支持修改，如果您修改群资料，请设置这个字段值
+	// 如果您同时修改多个字段，多个枚举值按位或 | 组合，例如，同时修改群名称和头像
+	// info.groupName = "new group name";
+	// info.faceURL = "new face url";
+	// info.modifyFlag = V2TIM_GROUP_INFO_MODIFY_FLAG_GROUP_NAME |
+	// V2TIM_GROUP_INFO_MODIFY_FLAG_FACE_URL;
+	uint32_t modifyFlag;
+
+	// V2TIMGroupInfo();
+	// V2TIMGroupInfo(const V2TIMGroupInfo& groupInfo);
+	// ~V2TIMGroupInfo();
+};
+
+/// 创建群时指定群成员
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMCreateGroupMemberInfo
+{
+	GENERATED_BODY()
+
+	// 被操作成员
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	FString userID;
+	/// 群成员类型，需要注意一下事项：
+	/// 1. role 不设置或则设置为 V2TIM_GROUP_MEMBER_UNDEFINED，进群后默认为群成员。
+	/// 2. 工作群（Work）不支持设置 role 为管理员。
+	/// 3. 所有的群都不支持设置 role 为群主。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	int64 role;
+
+
 };
 
 

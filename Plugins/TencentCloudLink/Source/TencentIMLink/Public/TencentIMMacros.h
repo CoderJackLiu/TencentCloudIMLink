@@ -15,8 +15,13 @@
 DECLARE_DYNAMIC_DELEGATE(FIMCallbackDelegate);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMCallbackTextDelegate,FString,Text);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FMessage_ArrayCallbackTextDelegate,const TArray<FTIMReceiveMessageOptInfo>&,Messages);
+
 //userinfo
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMUserFullInfoCallback, const TArray<FTIMUserFullInfo>&, UserInfos);
+
+//groupInfos
+DECLARE_DYNAMIC_DELEGATE_OneParam(FIMGroupInfoArrayCallback, const TArray<FTIMGroupInfo>&, GroupInfos);
+
 
 //
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMGroupMessageInfoCallback, const TArray<FTIMMessage>& , Messages);
@@ -49,17 +54,17 @@ Func##_Delegate.ExecuteIfBound();\
 }
 
 //todo success with FString para
-// #define DECLARATION_StringCALLBACK_DELEGATE(Func) \
-// FIMCallbackTextDelegate Func##_TextDelegate; \
-// void Func##_Local(const FString& Message) \
-// { \
-// FScopeLock ScopeLock(&TencentMutex); \
-// auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Message]()\
-// {\
-// Func##_TextDelegate.ExecuteIfBound(Message);\
-// }, TStatId(), nullptr, ENamedThreads::GameThread);\
-// /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
-// }
+#define DECLARATION_StringCALLBACK_DELEGATE(Func) \
+FIMCallbackTextDelegate Func##_TextDelegate; \
+void Func##_Local(const FString& Message) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Message]()\
+{\
+Func##_TextDelegate.ExecuteIfBound(Message);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
 
 //todo success Receive Message option Arrays
 #define DECLARATION_MessageOptCALLBACK_DELEGATE(Func) \
@@ -108,6 +113,18 @@ FScopeLock ScopeLock(&TencentMutex); \
 auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Result]()\
 {\
 Func##_MsgSearchReaultDelegate.ExecuteIfBound(Result);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+#define DECLARATION_GroupInfoArray_DELEGATE(Func) \
+FIMGroupInfoArrayCallback Func##_GroupInfoArrayDelegate; \
+void Func##_Local8(const TArray<FTIMGroupInfo>& GroupInfos) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([GroupInfos]()\
+{\
+Func##_GroupInfoArrayDelegate.ExecuteIfBound(GroupInfos);\
 }, TStatId(), nullptr, ENamedThreads::GameThread);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
