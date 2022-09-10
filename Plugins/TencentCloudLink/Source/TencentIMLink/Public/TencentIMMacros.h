@@ -13,9 +13,9 @@
 DECLARE_DYNAMIC_DELEGATE(FIMCallbackDelegate);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMCallbackTextDelegate,FString,Text);
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FIMFailureCallback, int, ErrorCode, FString, CodeStr);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FIMProgressCallback, uint32, Code);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FIMUserFullInfoCallback, TArray<FTIMUserFullInfo>, Code);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FIMFailureCallback, int, ErrorCode, FString, ErrorMassage);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FIMProgressCallback, uint32, Progress);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FIMUserFullInfoCallback, TArray<FTIMUserFullInfo>, UserInfos);
 
 //todo Success with no para
 #define DECLARATION_CALLBACK_DELEGATE(Func) \

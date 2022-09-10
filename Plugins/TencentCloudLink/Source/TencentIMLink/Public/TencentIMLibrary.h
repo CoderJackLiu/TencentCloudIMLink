@@ -138,31 +138,47 @@ public:
 
 	//--------------------------------------------
 	//User func
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Group")
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|User")
 	static void GetUsersInfo(const TArray<FString>& userIDList, FIMUserFullInfoCallback UserInfoDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|User")
+	static void SetSelfInfo(const FTIMUserFullInfo& Info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	//------------------------------
+	//AddAdvancedMsgListener
+
+	/*
+	 * 2.1 创建文本消息
+	 */
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	//  FTIMMessage CreateTextMessage(const FString& text);
 
 
 public:
 	static V2TIMString ToIMString(const FString& InStr);
-	
+
 	static FString ToFString(const V2TIMString& InStr);
-	
+
 	static V2TIMStringVector ToIMStringArray(TArray<FString> InStrArray);
-	
+
 	static ELoginStatus ToTIMLoginStatus(const V2TIMLoginStatus& Status);
 
 	static V2TIMMessagePriority GetMessagePriority(EIMMessagePriority InPriority);
 
 	static FTIMUserFullInfo ToTIMUserFullInfo(const V2TIMUserFullInfo& info);
-	
+
+	static V2TIMUserFullInfo ToV2TIMUserFullInfo(const FTIMUserFullInfo& info);
+
 	static ETIMGender ToTIMGender(V2TIMGender Gender);
-	
+
 	static ETIMFriendAllowType ToTIMAllowType(V2TIMFriendAllowType AllowType);
-	
-	static TMap<FString,V2TIMBuffer> ToTIMCustomInfo(V2TIMCustomInfo CustomInfo);
-	
+
+	static V2TIMFriendAllowType ToV2TIMAllowType(const ETIMFriendAllowType& AllowType);
+
+	static TMap<FString, V2TIMBuffer> ToTIMCustomInfo(V2TIMCustomInfo CustomInfo);
+
+	static V2TIMCustomInfo ToV2TIMCustomInfo(TMap<FString, V2TIMBuffer> CustomInfo);
+
 	static TArray<FTIMUserFullInfo> ToTIMUserFullInfoArray(const V2TIMUserFullInfoVector& FullInfoVector);
-
-
 };
-

@@ -266,6 +266,7 @@ void UTencentIMLibrary::DismissGroup(const FString& groupID, FIMCallbackDelegate
 }
 
 DECLARATION_UserInfo_CALLBACK_DELEGATE(GetUsersInfo)
+
 void UTencentIMLibrary::GetUsersInfo(const TArray<FString>& userIDList, FIMUserFullInfoCallback UserInfoDelegate)
 {
 	GetUsersInfo_UserFullInfoDelegate = UserInfoDelegate;
@@ -296,10 +297,53 @@ void UTencentIMLibrary::GetUsersInfo(const TArray<FString>& userIDList, FIMUserF
 			CreateGroup_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
 		}
 	};
-	//todo logic lack
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetUsersInfo(userIDList, CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(SetSelfInfo)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(SetSelfInfo)
+void UTencentIMLibrary::SetSelfInfo(const FTIMUserFullInfo& Info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	SetSelfInfo_FailureDelegate=OnFailureDelegate;
+	SetSelfInfo_Delegate=OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			SetSelfInfo_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			SetSelfInfo_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	Tencent_IM.GetInstance()->SetSelfInfo(ToV2TIMUserFullInfo(Info), Callback);
 }
 
 
+// FTIMMessage UTencentIMLibrary::CreateTextMessage(const FString& text)
+// {
+// 	return Tencent_IM.GetInstance()->GetMessageManager()->CreateTextMessage(ToIMString(text));
+// }
+
+
+//------------------------------------------------------
+//base function
 V2TIMString UTencentIMLibrary::ToIMString(const FString& InStr)
 {
 	const char* OutIMString = TCHAR_TO_ANSI(*InStr);
@@ -364,7 +408,7 @@ V2TIMMessagePriority UTencentIMLibrary::GetMessagePriority(EIMMessagePriority In
 
 FTIMUserFullInfo UTencentIMLibrary::ToTIMUserFullInfo(const V2TIMUserFullInfo& info)
 {
-	FTIMUserFullInfo UserInfo=FTIMUserFullInfo();
+	FTIMUserFullInfo UserInfo = FTIMUserFullInfo();
 	UserInfo.userID = ToFString(info.userID);
 	UserInfo.nickName = ToFString(info.nickName);
 	UserInfo.faceURL = ToFString(info.faceURL);
@@ -374,6 +418,22 @@ FTIMUserFullInfo UTencentIMLibrary::ToTIMUserFullInfo(const V2TIMUserFullInfo& i
 	UserInfo.birthday = info.birthday;
 	UserInfo.allowType = ToTIMAllowType(info.allowType);
 	UserInfo.customInfo = ToTIMCustomInfo(info.customInfo);
+	UserInfo.modifyFlag = info.modifyFlag;
+	return UserInfo;
+}
+
+V2TIMUserFullInfo UTencentIMLibrary::ToV2TIMUserFullInfo(const FTIMUserFullInfo& info)
+{
+	V2TIMUserFullInfo UserInfo = V2TIMUserFullInfo();
+	UserInfo.userID = ToIMString(info.userID);
+	UserInfo.nickName = ToIMString(info.nickName);
+	UserInfo.faceURL = ToIMString(info.faceURL);
+	UserInfo.selfSignature = ToIMString(info.selfSignature);
+	UserInfo.role = info.role;
+	UserInfo.level = info.level;
+	UserInfo.birthday = info.birthday;
+	UserInfo.allowType = ToV2TIMAllowType(info.allowType);
+	UserInfo.customInfo = ToV2TIMCustomInfo(info.customInfo);
 	UserInfo.modifyFlag = info.modifyFlag;
 	return UserInfo;
 }
@@ -420,13 +480,44 @@ ETIMFriendAllowType UTencentIMLibrary::ToTIMAllowType(V2TIMFriendAllowType Allow
 	}
 }
 
+V2TIMFriendAllowType UTencentIMLibrary::ToV2TIMAllowType(const ETIMFriendAllowType& AllowType)
+{
+	switch (AllowType)
+	{
+	case ETIMFriendAllowType::V2TIM_FRIEND_ALLOW_ANY:
+		return V2TIMFriendAllowType::V2TIM_FRIEND_ALLOW_ANY;
+		break;
+	case ETIMFriendAllowType::V2TIM_FRIEND_NEED_CONFIRM:
+		return V2TIMFriendAllowType::V2TIM_FRIEND_NEED_CONFIRM;
+		break;
+	case ETIMFriendAllowType::V2TIM_FRIEND_DENY_ANY:
+		return V2TIMFriendAllowType::V2TIM_FRIEND_DENY_ANY;
+		break;
+	default:
+		return V2TIMFriendAllowType::V2TIM_FRIEND_NEED_CONFIRM;
+	}
+}
+
 TMap<FString, V2TIMBuffer> UTencentIMLibrary::ToTIMCustomInfo(V2TIMCustomInfo CustomInfo)
 {
 	TMap<FString, V2TIMBuffer> OutCustomInfo;
-	for (int32 i=0;i<CustomInfo.AllKeys().Size();i++)
+	for (int32 i = 0; i < CustomInfo.AllKeys().Size(); i++)
 	{
-		V2TIMString Key=CustomInfo.AllKeys()[i];
-		OutCustomInfo.Add(ToFString(Key),CustomInfo.Get(Key));
+		V2TIMString Key = CustomInfo.AllKeys()[i];
+		OutCustomInfo.Add(ToFString(Key), CustomInfo.Get(Key));
+	}
+	return OutCustomInfo;
+}
+
+V2TIMCustomInfo UTencentIMLibrary::ToV2TIMCustomInfo(TMap<FString, V2TIMBuffer> CustomInfo)
+{
+	V2TIMCustomInfo OutCustomInfo;
+	TArray<FString> Keys;
+	CustomInfo.GetKeys(Keys);
+	for (int32 i = 0; i < Keys.Num(); i++)
+	{
+		FString Key = Keys[i];
+		OutCustomInfo.Insert(ToIMString(Key), CustomInfo.FindRef(Key));
 	}
 	return OutCustomInfo;
 }
@@ -434,7 +525,7 @@ TMap<FString, V2TIMBuffer> UTencentIMLibrary::ToTIMCustomInfo(V2TIMCustomInfo Cu
 TArray<FTIMUserFullInfo> UTencentIMLibrary::ToTIMUserFullInfoArray(const V2TIMUserFullInfoVector& FullInfoVector)
 {
 	TArray<FTIMUserFullInfo> Info;
-	for (int32 i=0;i<FullInfoVector.Size();i++)
+	for (int32 i = 0; i < FullInfoVector.Size(); i++)
 	{
 		Info.Add(ToTIMUserFullInfo(FullInfoVector[i]));
 	}
