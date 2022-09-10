@@ -283,8 +283,8 @@ void UTencentIMLibrary::GetUsersInfo(const TArray<FString>& userIDList, FIMUserF
 		virtual void OnSuccess(const V2TIMUserFullInfoVector& message) override
 		{
 			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
-
-			GetUsersInfo_UserFullInfoDelegate.ExecuteIfBound(ToTIMUserFullInfoArray(message));
+			TArray<FTIMUserFullInfo> Test = ToTIMUserFullInfoArray(message);
+			GetUsersInfo_UserFullInfoDelegate.ExecuteIfBound(Test);
 		};
 		/**
 		 * 出错时回调
@@ -401,15 +401,577 @@ FTIMMessage UTencentIMLibrary::CreateForwardMessage(const FTIMMessage& message)
 }
 
 FString UTencentIMLibrary::SendMessage(FTIMMessage& message, const FString& receiver, const FString& groupID, V2TIMMessagePriority priority, bool onlineUserOnly,
-	const V2TIMOfflinePushInfo& offlinePushInfo, V2TIMSendCallback* callback)
+                                       const V2TIMOfflinePushInfo& offlinePushInfo, V2TIMSendCallback* callback)
 {
 	//todo
 	return "";
 }
 
+DECLARATION_CALLBACK_DELEGATE(SetC2CReceiveMessageOpt)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(SetC2CReceiveMessageOpt)
+
+void UTencentIMLibrary::SetC2CReceiveMessageOpt(const TArray<FString>& userIDList, ETIMReceiveMessageOpt opt, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	SetC2CReceiveMessageOpt_Delegate = OnSuccessDelegate;
+	SetC2CReceiveMessageOpt_FailureDelegate = OnFailureDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		};
+
+		~NormalCallback()
+		{
+		};
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== SetC2CReceiveMessageOpt OnSuccess"));
+			SetC2CReceiveMessageOpt_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== SetC2CReceiveMessageOpt failed OnError ======: %d"), error_code);
+			SetC2CReceiveMessageOpt_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		};
+	};
+	NormalCallback* Normal_callback_ = new NormalCallback();
+
+	Tencent_IM.GetInstance()->GetMessageManager()->SetC2CReceiveMessageOpt(ToIMStringArray(userIDList), ToTIMReceiveMessageOpt(opt), Normal_callback_);
+}
+
+DECLARATION_MessageOptCALLBACK_DELEGATE(GetC2CReceiveMessageOpt)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetC2CReceiveMessageOpt)
+
+void UTencentIMLibrary::GetC2CReceiveMessageOpt(const TArray<FString>& userIDList, FMessage_ArrayCallbackTextDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	GetC2CReceiveMessageOpt_MessageArrayDelegate = OnSuccessDelegate;
+	GetC2CReceiveMessageOpt_FailureDelegate = OnFailureDelegate;
+
+	class FValueCallBack : public V2TIMValueCallback<V2TIMReceiveMessageOptInfoVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMReceiveMessageOptInfoVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetC2CReceiveMessageOpt_MessageArrayDelegate.ExecuteIfBound(ToReceiveMessageOptInfoArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetC2CReceiveMessageOpt_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetMessageManager()->GetC2CReceiveMessageOpt(ToIMStringArray(userIDList), CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(SetGroupReceiveMessageOpt)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(SetGroupReceiveMessageOpt)
+
+void UTencentIMLibrary::SetGroupReceiveMessageOpt(const FString& groupID, ETIMReceiveMessageOpt opt, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	SetGroupReceiveMessageOpt_Delegate = OnSuccessDelegate;
+	SetGroupReceiveMessageOpt_FailureDelegate = OnFailureDelegate;
+
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			JoinGroup_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			std::string TempStr = error_message.CString();
+			JoinGroup_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+
+	NormalCallback* CallBack = new NormalCallback();
+	Tencent_IM.GetInstance()->GetMessageManager()->SetGroupReceiveMessageOpt(ToIMString(groupID), ToTIMReceiveMessageOpt(opt), CallBack);
+}
+
+DECLARATION_GroupMessageCALLBACK_DELEGATE(GetHistoryMessageList)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetHistoryMessageList)
+
+void UTencentIMLibrary::GetHistoryMessageList(const FTIMMessageListGetOption& option, FIMGroupMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	GetHistoryMessageList_GroupMessageArrayDelegate = OnSuccessDelegate;
+	GetHistoryMessageList_FailureDelegate = OnFailureDelegate;
+
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<V2TIMMessageVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMMessageVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetHistoryMessageList_GroupMessageArrayDelegate.ExecuteIfBound(ToMessageArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnError ======"));
+			GetHistoryMessageList_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetMessageManager()->GetHistoryMessageList(ToIMMessageListGetOption(option), CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(RevokeMessage)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(RevokeMessage)
+
+void UTencentIMLibrary::RevokeMessage(const FTIMMessage& message, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	RevokeMessage_Delegate = OnSuccessDelegate;
+	RevokeMessage_FailureDelegate = OnFailureDelegate;
+
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			RevokeMessage_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			std::string TempStr = error_message.CString();
+			RevokeMessage_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+
+	NormalCallback* CallBack = new NormalCallback();
+	Tencent_IM.GetInstance()->GetMessageManager()->RevokeMessage(ToIMMessage(message), CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(MarkC2CMessageAsRead)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(MarkC2CMessageAsRead)
+
+void UTencentIMLibrary::MarkC2CMessageAsRead(const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	MarkC2CMessageAsRead_Delegate = OnSuccessDelegate;
+	MarkC2CMessageAsRead_FailureDelegate = OnFailureDelegate;
+
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			MarkC2CMessageAsRead_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			std::string TempStr = error_message.CString();
+			MarkC2CMessageAsRead_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+
+	NormalCallback* CallBack = new NormalCallback();
+	Tencent_IM.GetInstance()->GetMessageManager()->MarkC2CMessageAsRead(ToIMString(userID), CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(MarkGroupMessageAsRead)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(MarkGroupMessageAsRead)
+
+void UTencentIMLibrary::MarkGroupMessageAsRead(const FString& groupID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	MarkGroupMessageAsRead_Delegate = OnSuccessDelegate;
+	MarkGroupMessageAsRead_FailureDelegate = OnFailureDelegate;
+
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			MarkGroupMessageAsRead_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			std::string TempStr = error_message.CString();
+			MarkGroupMessageAsRead_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+
+	NormalCallback* CallBack = new NormalCallback();
+	Tencent_IM.GetInstance()->GetMessageManager()->MarkGroupMessageAsRead(ToIMString(groupID), CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(MarkAllMessageAsRead)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(MarkAllMessageAsRead)
+
+void UTencentIMLibrary::MarkAllMessageAsRead(FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	MarkAllMessageAsRead_Delegate = OnSuccessDelegate;
+	MarkAllMessageAsRead_FailureDelegate = OnFailureDelegate;
+
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			MarkAllMessageAsRead_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			std::string TempStr = error_message.CString();
+			MarkAllMessageAsRead_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+
+	NormalCallback* CallBack = new NormalCallback();
+	Tencent_IM.GetInstance()->GetMessageManager()->MarkAllMessageAsRead(CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(DeleteMessages)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(DeleteMessages)
+
+void UTencentIMLibrary::DeleteMessages(const TArray<FTIMMessage>& messages, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	DeleteMessages_Delegate = OnSuccessDelegate;
+	DeleteMessages_FailureDelegate = OnFailureDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			DeleteMessages_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			std::string TempStr = error_message.CString();
+			DeleteMessages_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* CallBack = new NormalCallback();
+	Tencent_IM.GetInstance()->GetMessageManager()->DeleteMessages(ToV2IMMessageArray(messages), CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(ClearC2CHistoryMessage)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(ClearC2CHistoryMessage)
+
+void UTencentIMLibrary::ClearC2CHistoryMessage(const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	ClearC2CHistoryMessage_Delegate = OnSuccessDelegate;
+	ClearC2CHistoryMessage_FailureDelegate = OnFailureDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			ClearC2CHistoryMessage_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			std::string TempStr = error_message.CString();
+			ClearC2CHistoryMessage_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* CallBack = new NormalCallback();
+	Tencent_IM.GetInstance()->GetMessageManager()->ClearC2CHistoryMessage(ToIMString(userID), CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(ClearGroupHistoryMessage)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(ClearGroupHistoryMessage)
+
+void UTencentIMLibrary::ClearGroupHistoryMessage(const FString& groupID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	ClearGroupHistoryMessage_Delegate = OnSuccessDelegate;
+	ClearGroupHistoryMessage_FailureDelegate = OnFailureDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			ClearGroupHistoryMessage_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			std::string TempStr = error_message.CString();
+			ClearGroupHistoryMessage_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* CallBack = new NormalCallback();
+	Tencent_IM.GetInstance()->GetMessageManager()->ClearGroupHistoryMessage(ToIMString(groupID), CallBack);
+}
+
+DECLARATION_MessageCALLBACK_DELEGATE(InsertGroupMessageToLocalStorage)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(InsertGroupMessageToLocalStorage)
+
+FString UTencentIMLibrary::InsertGroupMessageToLocalStorage(FTIMMessage& message, const FString& groupID, const FString& sender, FIMMessageInfoCallback OnSuccessDelegate,
+                                                            FIMFailureCallback OnFailureDelegate)
+{
+	InsertGroupMessageToLocalStorage_MessageDelegate = OnSuccessDelegate;
+	InsertGroupMessageToLocalStorage_FailureDelegate = OnFailureDelegate;
+	class FValueCallBack : public V2TIMValueCallback<V2TIMMessage>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMMessage& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			InsertGroupMessageToLocalStorage_MessageDelegate.ExecuteIfBound(ToMessage(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			InsertGroupMessageToLocalStorage_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+
+	FValueCallBack* CallBack = new FValueCallBack();
+	V2TIMMessage OutMessage=ToIMMessage(message);
+	return ToFString(Tencent_IM.GetInstance()->GetMessageManager()->InsertGroupMessageToLocalStorage(OutMessage, ToIMString(groupID), ToIMString(sender), CallBack));
+}
+
+DECLARATION_MessageCALLBACK_DELEGATE(InsertC2CMessageToLocalStorage)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(InsertC2CMessageToLocalStorage)
+
+FString UTencentIMLibrary::InsertC2CMessageToLocalStorage(FTIMMessage& message, const FString& userID, const FString& sender, FIMMessageInfoCallback OnSuccessDelegate,
+                                                          FIMFailureCallback OnFailureDelegate)
+{
+	InsertC2CMessageToLocalStorage_MessageDelegate = OnSuccessDelegate;
+	InsertC2CMessageToLocalStorage_FailureDelegate = OnFailureDelegate;
+	class FValueCallBack : public V2TIMValueCallback<V2TIMMessage>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMMessage& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			CreateGroup_Delegate.ExecuteIfBound();
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			CreateGroup_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+
+	FValueCallBack* CallBack = new FValueCallBack();
+	V2TIMMessage OutMessage=ToIMMessage(message);
+	return ToFString(Tencent_IM.GetInstance()->GetMessageManager()->InsertGroupMessageToLocalStorage(OutMessage, ToIMString(userID), ToIMString(sender), CallBack));
+}
+
+DECLARATION_GroupMessageCALLBACK_DELEGATE(FindMessages)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(FindMessages)
+
+void UTencentIMLibrary::FindMessages(const TArray<FString>& messageIDList, FIMGroupMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	FindMessages_GroupMessageArrayDelegate = OnSuccessDelegate;
+	FindMessages_FailureDelegate = OnFailureDelegate;
+
+	class FValueCallBack : public V2TIMValueCallback<V2TIMMessageVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMMessageVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			FindMessages_GroupMessageArrayDelegate.ExecuteIfBound(ToMessageArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnError ======"));
+			FindMessages_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetMessageManager()->FindMessages(ToIMStringArray(messageIDList), CallBack);
+}
+
+DECLARATION_FAILURE_CALLBACK_DELEGATE(SearchLocalMessages)
+DECLARATION_MessageSearchResultCALLBACK_DELEGATE(SearchLocalMessages)
+
+void UTencentIMLibrary::SearchLocalMessages(const FTIMMessageSearchParam& searchParam, FMessageSearchResultCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	SearchLocalMessages_MsgSearchReaultDelegate = OnSuccessDelegate;
+	SearchLocalMessages_FailureDelegate = OnFailureDelegate;
+
+	class FValueCallBack : public V2TIMValueCallback<V2TIMMessageSearchResult>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMMessageSearchResult& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			SearchLocalMessages_MsgSearchReaultDelegate.ExecuteIfBound(ToMessageSearchResult(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnError ======"));
+			SearchLocalMessages_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetMessageManager()->SearchLocalMessages(ToTIMessageSearchParam(searchParam), CallBack);
+}
+
 
 //------------------------------------------------------
-//base function
+//base convert function
 V2TIMString UTencentIMLibrary::ToIMString(const FString& InStr)
 {
 	const char* OutIMString = TCHAR_TO_ANSI(*InStr);
@@ -604,11 +1166,10 @@ V2TIMMessage UTencentIMLibrary::ToIMMessage(const FTIMMessage& TimMessage)
 	OutTimMessage.msgID = ToIMString(TimMessage.msgID);
 	OutTimMessage.timestamp = TimMessage.timestamp;
 	OutTimMessage.sender = ToIMString(TimMessage.sender);
-	
+
 	//todo DingLuckyGirl
 
-	
-	
+
 	return OutTimMessage;
 }
 
@@ -616,12 +1177,12 @@ FTIMMessage UTencentIMLibrary::ToMessage(const V2TIMMessage& TimMessage)
 {
 	//todo DingLuckyGirl
 	FTIMMessage OutTIMMessage;
-	OutTIMMessage.msgID=ToFString(TimMessage.msgID);
-	
+	OutTIMMessage.msgID = ToFString(TimMessage.msgID);
+
 	return OutTIMMessage;
 }
 
-TArray<FTIMMessage> UTencentIMLibrary::ToIMMessageArray(const V2TIMMessageVector& MessageVector)
+TArray<FTIMMessage> UTencentIMLibrary::ToMessageArray(const V2TIMMessageVector& MessageVector)
 {
 	//todo
 	TArray<FTIMMessage> IMMessages;
@@ -641,3 +1202,256 @@ V2TIMMessageVector UTencentIMLibrary::ToV2IMMessageArray(const TArray<FTIMMessag
 	}
 	return IMMessageVector;
 }
+
+V2TIMReceiveMessageOpt UTencentIMLibrary::ToTIMReceiveMessageOpt(const ETIMReceiveMessageOpt& MsgOpt)
+{
+	switch (MsgOpt)
+	{
+	case ETIMReceiveMessageOpt::V2TIM_RECEIVE_MESSAGE:
+		return V2TIMReceiveMessageOpt::V2TIM_RECEIVE_MESSAGE;
+	case ETIMReceiveMessageOpt::V2TIM_NOT_RECEIVE_MESSAGE:
+		return V2TIMReceiveMessageOpt::V2TIM_NOT_RECEIVE_MESSAGE;
+	case ETIMReceiveMessageOpt::V2TIM_RECEIVE_NOT_NOTIFY_MESSAGE:
+		return V2TIMReceiveMessageOpt::V2TIM_RECEIVE_NOT_NOTIFY_MESSAGE;
+	default:
+		return V2TIMReceiveMessageOpt::V2TIM_RECEIVE_MESSAGE;
+	}
+}
+
+ETIMReceiveMessageOpt UTencentIMLibrary::ToReceiveMessageOpt(const V2TIMReceiveMessageOpt& MsgOpt)
+{
+	switch (MsgOpt)
+	{
+	case V2TIM_RECEIVE_MESSAGE:
+		return ETIMReceiveMessageOpt::V2TIM_RECEIVE_MESSAGE;
+	case V2TIM_NOT_RECEIVE_MESSAGE:
+		return ETIMReceiveMessageOpt::V2TIM_NOT_RECEIVE_MESSAGE;
+	case V2TIM_RECEIVE_NOT_NOTIFY_MESSAGE:
+		return ETIMReceiveMessageOpt::V2TIM_RECEIVE_NOT_NOTIFY_MESSAGE;
+	default:
+		return ETIMReceiveMessageOpt::V2TIM_RECEIVE_MESSAGE;
+	}
+}
+
+FTIMReceiveMessageOptInfo UTencentIMLibrary::ToReceiveMessageOptInfo(const V2TIMReceiveMessageOptInfo& OptInfo)
+{
+	FTIMReceiveMessageOptInfo MsgInfo = FTIMReceiveMessageOptInfo();
+	MsgInfo.receiveOpt = ToReceiveMessageOpt(OptInfo.receiveOpt);
+	MsgInfo.userID = ToFString(OptInfo.userID);
+	return MsgInfo;
+}
+
+V2TIMReceiveMessageOptInfo UTencentIMLibrary::ToTIMReceiveMessageOptInfo(const FTIMReceiveMessageOptInfo& OptInfo)
+{
+	V2TIMReceiveMessageOptInfo MsgInfo = V2TIMReceiveMessageOptInfo();
+	MsgInfo.receiveOpt = ToTIMReceiveMessageOpt(OptInfo.receiveOpt);
+	MsgInfo.userID = ToIMString(OptInfo.userID);
+	return MsgInfo;
+}
+
+
+TArray<FTIMReceiveMessageOptInfo> UTencentIMLibrary::ToReceiveMessageOptInfoArray(const V2TIMReceiveMessageOptInfoVector& MessageOptInfoVector)
+{
+	TArray<FTIMReceiveMessageOptInfo> OutOpt;
+	for (int32 i = 0; i < MessageOptInfoVector.Size(); i++)
+	{
+		OutOpt.Add(ToReceiveMessageOptInfo(MessageOptInfoVector[i]));
+	}
+	return OutOpt;
+}
+
+V2TIMMessageListGetOption UTencentIMLibrary::ToIMMessageListGetOption(const FTIMMessageListGetOption& Option)
+{
+	V2TIMMessageListGetOption ListenOption = V2TIMMessageListGetOption();
+	ListenOption.getType = ToTIMMessageGetType(Option.getType);
+	ListenOption.userID = ToIMString(Option.userID);
+	ListenOption.groupID = ToIMString(Option.groupID);
+	ListenOption.count = Option.count;
+	*ListenOption.lastMsg = ToIMMessage(Option.lastMsg);
+	return ListenOption;
+}
+
+ETIMMessageGetType UTencentIMLibrary::ToMessageGetType(V2TIMMessageGetType& MessageType)
+{
+	switch (MessageType)
+	{
+	case V2TIM_GET_CLOUD_OLDER_MSG:
+		return ETIMMessageGetType::V2TIM_GET_CLOUD_OLDER_MSG;
+	case V2TIM_GET_CLOUD_NEWER_MSG:
+		return ETIMMessageGetType::V2TIM_GET_CLOUD_NEWER_MSG;
+	case V2TIM_GET_LOCAL_OLDER_MSG:
+		return ETIMMessageGetType::V2TIM_GET_LOCAL_OLDER_MSG;
+	case V2TIM_GET_LOCAL_NEWER_MSG:
+		return ETIMMessageGetType::V2TIM_GET_LOCAL_NEWER_MSG;
+	default:
+		return ETIMMessageGetType::V2TIM_GET_CLOUD_OLDER_MSG;
+	}
+}
+
+V2TIMMessageGetType UTencentIMLibrary::ToTIMMessageGetType(const ETIMMessageGetType& MessageType)
+{
+	switch (MessageType)
+	{
+	case ETIMMessageGetType::V2TIM_GET_CLOUD_OLDER_MSG:
+		return V2TIMMessageGetType::V2TIM_GET_CLOUD_OLDER_MSG;
+	case ETIMMessageGetType::V2TIM_GET_CLOUD_NEWER_MSG:
+		return V2TIMMessageGetType::V2TIM_GET_CLOUD_NEWER_MSG;
+	case ETIMMessageGetType::V2TIM_GET_LOCAL_OLDER_MSG:
+		return V2TIMMessageGetType::V2TIM_GET_LOCAL_OLDER_MSG;
+	case ETIMMessageGetType::V2TIM_GET_LOCAL_NEWER_MSG:
+		return V2TIMMessageGetType::V2TIM_GET_LOCAL_NEWER_MSG;
+	default:
+		return V2TIMMessageGetType::V2TIM_GET_CLOUD_OLDER_MSG;
+	}
+}
+
+V2TIMMessageSearchParam UTencentIMLibrary::ToTIMessageSearchParam(const FTIMMessageSearchParam& MessageSearchParam)
+{
+	V2TIMMessageSearchParam OutParam = V2TIMMessageSearchParam();
+	OutParam.keywordList = ToIMStringArray(MessageSearchParam.keywordList);
+	OutParam.keywordListMatchType = ToTIMKeywordListMatchType(MessageSearchParam.keywordListMatchType);
+	OutParam.senderUserIDList = ToIMStringArray(MessageSearchParam.senderUserIDList);
+	OutParam.messageTypeList = ToTIMElemTypeVector(MessageSearchParam.messageTypeList);
+	OutParam.conversationID = ToIMString(MessageSearchParam.conversationID);
+	OutParam.searchTimePosition = MessageSearchParam.searchTimePosition;
+	OutParam.searchTimePeriod = MessageSearchParam.searchTimePeriod;
+	OutParam.pageIndex = MessageSearchParam.pageIndex;
+	OutParam.pageSize = MessageSearchParam.pageSize;
+	return OutParam;
+}
+
+ETIMKeywordListMatchType UTencentIMLibrary::ToKeywordListMatchType(const V2TIMKeywordListMatchType& MessageSearchParam)
+{
+	switch (MessageSearchParam)
+	{
+	case V2TIM_KEYWORD_LIST_MATCH_TYPE_OR:
+		return ETIMKeywordListMatchType::V2TIM_KEYWORD_LIST_MATCH_TYPE_OR;
+	case V2TIM_KEYWORD_LIST_MATCH_TYPE_AND:
+		return ETIMKeywordListMatchType::V2TIM_KEYWORD_LIST_MATCH_TYPE_AND;
+	default:
+		return ETIMKeywordListMatchType::V2TIM_KEYWORD_LIST_MATCH_TYPE_OR;
+	}
+}
+
+V2TIMKeywordListMatchType UTencentIMLibrary::ToTIMKeywordListMatchType(const ETIMKeywordListMatchType& MessageSearchParam)
+{
+	switch (MessageSearchParam)
+	{
+	case ETIMKeywordListMatchType::V2TIM_KEYWORD_LIST_MATCH_TYPE_OR:
+		return V2TIMKeywordListMatchType::V2TIM_KEYWORD_LIST_MATCH_TYPE_OR;
+	case ETIMKeywordListMatchType::V2TIM_KEYWORD_LIST_MATCH_TYPE_AND:
+		return V2TIMKeywordListMatchType::V2TIM_KEYWORD_LIST_MATCH_TYPE_AND;
+	default:
+		return V2TIMKeywordListMatchType::V2TIM_KEYWORD_LIST_MATCH_TYPE_OR;
+	}
+}
+
+V2TIMElemType UTencentIMLibrary::ToTIMElemType(const ETIMElemType& MessageSearchParam)
+{
+	switch (MessageSearchParam)
+	{
+	case ETIMElemType::V2TIM_ELEM_TYPE_NONE:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_NONE;
+	case ETIMElemType::V2TIM_ELEM_TYPE_TEXT:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_TEXT;
+	case ETIMElemType::V2TIM_ELEM_TYPE_CUSTOM:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_CUSTOM;
+	case ETIMElemType::V2TIM_ELEM_TYPE_IMAGE:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_IMAGE;
+	case ETIMElemType::V2TIM_ELEM_TYPE_SOUND:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_SOUND;
+	case ETIMElemType::V2TIM_ELEM_TYPE_VIDEO:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_VIDEO;
+	case ETIMElemType::V2TIM_ELEM_TYPE_FILE:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_FILE;
+	case ETIMElemType::V2TIM_ELEM_TYPE_LOCATION:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_LOCATION;
+	case ETIMElemType::V2TIM_ELEM_TYPE_FACE:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_FACE;
+	case ETIMElemType::V2TIM_ELEM_TYPE_GROUP_TIPS:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_GROUP_TIPS;
+	case ETIMElemType::V2TIM_ELEM_TYPE_MERGER:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_MERGER;
+	default:
+		return V2TIMElemType::V2TIM_ELEM_TYPE_NONE;
+	}
+}
+
+ETIMElemType UTencentIMLibrary::ToElemType(const V2TIMElemType& MessageSearchParam)
+{
+	switch (MessageSearchParam)
+	{
+	case V2TIM_ELEM_TYPE_NONE:
+		return ETIMElemType::V2TIM_ELEM_TYPE_NONE;
+	case V2TIM_ELEM_TYPE_TEXT:
+		return ETIMElemType::V2TIM_ELEM_TYPE_TEXT;
+	case V2TIM_ELEM_TYPE_CUSTOM:
+		return ETIMElemType::V2TIM_ELEM_TYPE_CUSTOM;
+	case V2TIM_ELEM_TYPE_IMAGE:
+		return ETIMElemType::V2TIM_ELEM_TYPE_IMAGE;
+	case V2TIM_ELEM_TYPE_SOUND:
+		return ETIMElemType::V2TIM_ELEM_TYPE_SOUND;
+	case V2TIM_ELEM_TYPE_VIDEO:
+		return ETIMElemType::V2TIM_ELEM_TYPE_VIDEO;
+	case V2TIM_ELEM_TYPE_FILE:
+		return ETIMElemType::V2TIM_ELEM_TYPE_FILE;
+	case V2TIM_ELEM_TYPE_LOCATION:
+		return ETIMElemType::V2TIM_ELEM_TYPE_LOCATION;
+	case V2TIM_ELEM_TYPE_FACE:
+		return ETIMElemType::V2TIM_ELEM_TYPE_FACE;
+	case V2TIM_ELEM_TYPE_GROUP_TIPS:
+		return ETIMElemType::V2TIM_ELEM_TYPE_GROUP_TIPS;
+	case V2TIM_ELEM_TYPE_MERGER:
+		return ETIMElemType::V2TIM_ELEM_TYPE_MERGER;
+	default:
+		return ETIMElemType::V2TIM_ELEM_TYPE_NONE;
+	}
+}
+
+V2TIMElemTypeVector UTencentIMLibrary::ToTIMElemTypeVector(const TArray<ETIMElemType>& MessageSearchParam)
+{
+	V2TIMElemTypeVector OutVector;
+	for (ETIMElemType SearchParam : MessageSearchParam)
+	{
+		OutVector.PushBack(ToTIMElemType(SearchParam));
+	}
+	return OutVector;
+}
+
+TArray<ETIMElemType> UTencentIMLibrary::ToElemTypeArray(const V2TIMElemTypeVector& MessageSearchParam)
+{
+	TArray<ETIMElemType> ElementArray;
+	for (int32 i = 0; i < MessageSearchParam.Size(); i++)
+	{
+		ElementArray.Add(ToElemType(MessageSearchParam[i]));
+	}
+	return ElementArray;
+}
+
+FTIMMessageSearchResult UTencentIMLibrary::ToMessageSearchResult(const V2TIMMessageSearchResult& MessageSearchResult)
+{
+	FTIMMessageSearchResult Result = FTIMMessageSearchResult();
+	Result.totalCount = MessageSearchResult.totalCount;
+	Result.messageSearchResultItems = ToMessageResultItem(MessageSearchResult.messageSearchResultItems);
+	return Result;
+}
+
+TArray<FTIMMessageSearchResultItem> UTencentIMLibrary::ToMessageResultItem(const V2TIMMessageSearchResultItemVector& MessageResult)
+{
+	TArray<FTIMMessageSearchResultItem> ElementArray;
+	for (int32 i = 0; i < MessageResult.Size(); i++)
+	{
+		ElementArray.Add(ToMessageSearchResultItem(MessageResult[i]));
+	}
+	return ElementArray;
+}
+
+FTIMMessageSearchResultItem UTencentIMLibrary::ToMessageSearchResultItem(const V2TIMMessageSearchResultItem& TIMMessageSearchResultItem)
+{
+	FTIMMessageSearchResultItem Result;
+	Result.messageCount=TIMMessageSearchResultItem.messageCount;
+	Result.messageList=ToMessageArray(TIMMessageSearchResultItem.messageList);
+	Result.conversationID=ToFString(TIMMessageSearchResultItem.conversationID);
+	return Result;
+}
+

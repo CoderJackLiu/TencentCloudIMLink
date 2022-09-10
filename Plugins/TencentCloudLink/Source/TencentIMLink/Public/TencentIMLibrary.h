@@ -26,37 +26,6 @@
  * 
  */
 
-DECLARE_DELEGATE(FIMNormal_SuccessDelegate);
-DECLARE_DELEGATE(FIMNormal_FaliureDelegate);
-
-
-class NormalCallback : public V2TIMCallback
-{
-public:
-	NormalCallback()
-	{
-	};
-
-	~NormalCallback()
-	{
-	};
-
-	FIMNormal_SuccessDelegate Normal_SuccessDelegate;
-	FIMNormal_FaliureDelegate Normal_FaliureDelegate;
-
-	void OnSuccess() override
-	{
-		Normal_SuccessDelegate.ExecuteIfBound();
-		UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
-	};
-
-	void OnError(int error_code, const V2TIMString& error_message) override
-	{
-		Normal_FaliureDelegate.ExecuteIfBound();
-		UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
-	};
-};
-
 UCLASS()
 class TENCENTIMLINK_API UTencentIMLibrary : public UBlueprintFunctionLibrary
 {
@@ -133,7 +102,7 @@ public:
 	static void QuitGroup(const FString& groupID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Group")
-	void DismissGroup(const FString& groupID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	static void DismissGroup(const FString& groupID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
 
 	//--------------------------------------------
@@ -151,7 +120,7 @@ public:
 	/*
 	 * 2.1 创建文本消息
 	 */
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
 	static FTIMMessage CreateTextMessage(const FString& text);
 
 	/*
@@ -166,7 +135,7 @@ public:
 	 * atUserList 的总数不能超过默认最大数，包括 @ALL。
 	 * 直播群（AVChatRoom）不支持发送 @ 消息。
 	 */
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
 	static FTIMMessage CreateTextAtMessage(const FString& text, const TArray<FString>& atUserList);
 
 
@@ -177,38 +146,80 @@ public:
 	static FTIMMessage CreateCustomMessage(const V2TIMBuffer& data, const FString& description, const FString& extension);
 
 
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
 	static FTIMMessage CreateImageMessage(const FString& imagePath);
 
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	FTIMMessage CreateSoundMessage(const FString& soundPath, int32 duration);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static FTIMMessage CreateSoundMessage(const FString& soundPath, int32 duration);
 
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	FTIMMessage CreateVideoMessage(const FString& videoFilePath, const FString& type, int32 duration, const FString& snapshotPath);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static FTIMMessage CreateVideoMessage(const FString& videoFilePath, const FString& type, int32 duration, const FString& snapshotPath);
 
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	FTIMMessage CreateFileMessage(const FString& filePath, const FString& fileName);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static FTIMMessage CreateFileMessage(const FString& filePath, const FString& fileName);
 
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	FTIMMessage CreateLocationMessage(const FString& desc, double longitude, double latitude);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static FTIMMessage CreateLocationMessage(const FString& desc, double longitude, double latitude);
 
 	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	FTIMMessage CreateFaceMessage(int32 index, const V2TIMBuffer& data);
+	static FTIMMessage CreateFaceMessage(int32 index, const V2TIMBuffer& data);
 
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	FTIMMessage CreateMergerMessage(const TArray<FTIMMessage>& messageList, const FString& title, const TArray<FString>& abstractList, const FString& compatibleText);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static FTIMMessage CreateMergerMessage(const TArray<FTIMMessage>& messageList, const FString& title, const TArray<FString>& abstractList, const FString& compatibleText);
 
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	FTIMMessage CreateForwardMessage(const FTIMMessage& message);
-	
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static FTIMMessage CreateForwardMessage(const FTIMMessage& message);
+
 	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	FString SendMessage(FTIMMessage& message, const FString& receiver, const FString& groupID, V2TIMMessagePriority priority,
-						bool onlineUserOnly, const V2TIMOfflinePushInfo& offlinePushInfo, V2TIMSendCallback* callback);
-
-	void SetC2CReceiveMessageOpt(const TArray<FString>& userIDList, V2TIMReceiveMessageOpt opt, V2TIMCallback* callback);
+	static FString SendMessage(FTIMMessage& message, const FString& receiver, const FString& groupID, V2TIMMessagePriority priority,
+	                           bool onlineUserOnly, const V2TIMOfflinePushInfo& offlinePushInfo, V2TIMSendCallback* callback);
 
 
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void SetC2CReceiveMessageOpt(const TArray<FString>& userIDList, ETIMReceiveMessageOpt opt, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void GetC2CReceiveMessageOpt(const TArray<FString>& userIDList, FMessage_ArrayCallbackTextDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void SetGroupReceiveMessageOpt(const FString& groupID, ETIMReceiveMessageOpt opt, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void GetHistoryMessageList(const FTIMMessageListGetOption& option, FIMGroupMessageInfoCallback OnSuccess, FIMFailureCallback OnFailure);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void RevokeMessage(const FTIMMessage& message, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void MarkC2CMessageAsRead(const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void MarkGroupMessageAsRead(const FString& groupID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void MarkAllMessageAsRead(FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void DeleteMessages(const TArray<FTIMMessage>& messages, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void ClearC2CHistoryMessage(const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void ClearGroupHistoryMessage(const FString& groupID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static FString InsertGroupMessageToLocalStorage(FTIMMessage& message, const FString& groupID, const FString& sender, FIMMessageInfoCallback OnSuccessDelegate,
+	                                                FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static FString InsertC2CMessageToLocalStorage(FTIMMessage& message, const FString& userID, const FString& sender, FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void FindMessages(const TArray<FString>& messageIDList, FIMGroupMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
+	static void SearchLocalMessages(const FTIMMessageSearchParam& searchParam, FMessageSearchResultCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
 
 	/* 
@@ -261,7 +272,7 @@ public:
 	// 	2.3 修改群资料 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SetGroupInfo(const V2TIMGroupInfo& info, V2TIMCallback* callback);
+	// 	static void SetGroupInfo(const V2TIMGroupInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -279,7 +290,7 @@ public:
 	// 	从 5.6 版本开始，当多个用户同时修改同一个群属性时，只有第一个用户可以执行成功，其它用户会收到 10056 错误码；收到这个错误码之后，请您调用 getGroupAttributes 把本地保存的群属性更新到最新之后，再发起修改操作。
 	// 	*/	
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void InitGroupAttributes(const FString& groupID, const V2TIMGroupAttributeMap& attributes, V2TIMCallback* callback);
+	// 	static void InitGroupAttributes(const FString& groupID, const V2TIMGroupAttributeMap& attributes, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 	
@@ -289,7 +300,7 @@ public:
 	// 	目前只支持 AVChatRoom 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SetGroupAttributes(const FString& groupID, const V2TIMGroupAttributeMap& attributes, V2TIMCallback* callback);
+	// 	static void SetGroupAttributes(const FString& groupID, const V2TIMGroupAttributeMap& attributes, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 		
@@ -299,7 +310,7 @@ public:
 	// 	目前只支持 AVChatRoom； 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void DeleteGroupAttributes(const FString& groupID, const TArray<FString>& keys, V2TIMCallback* callback);
+	// 	static void DeleteGroupAttributes(const FString& groupID, const TArray<FString>& keys, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -369,7 +380,7 @@ public:
 	// 	3.4 修改指定的群成员资料  
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SetGroupMemberInfo(const FString& groupID, const V2TIMGroupMemberFullInfo& info, V2TIMCallback* callback);
+	// 	static void SetGroupMemberInfo(const FString& groupID, const V2TIMGroupMemberFullInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/*
@@ -379,7 +390,7 @@ public:
 	// 	seconds	禁言时间长度，单位秒，表示调用该接口成功后多少秒内不允许被禁言用户再发言。
 	// 	 */
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void MuteGroupMember(const FString& groupID, const FString& userID, int32 seconds, V2TIMCallback* callback);
+	// 	static void MuteGroupMember(const FString& groupID, const FString& userID, int32 seconds, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 	
@@ -421,9 +432,9 @@ public:
 	// 	切换的角色支持普通群成员（V2TIMGroupMemberFullInfo.V2TIM_GROUP_MEMBER_ROLE_MEMBER）和管理员（V2TIMGroupMemberFullInfo.V2TIM_GROUP_MEMBER_ROLE_ADMIN）
 	// 	 */	
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SetGroupMemberRole(const FString& groupID, const FString& userID, int32 role, V2TIMCallback* callback);
+	// 	static void SetGroupMemberRole(const FString& groupID, const FString& userID, int32 role, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
-	// 		//void MarkGroupMemberList(const FString& groupID, const TArray<FString>& memberList, int32 markType, bool enableMark, V2TIMCallback* callback);
+	// 		//void MarkGroupMemberList(const FString& groupID, const TArray<FString>& memberList, int32 markType, bool enableMark, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -435,7 +446,7 @@ public:
 	// 	直播群（AVChatRoom）：不支持转让群主。 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void TransferGroupOwner(const FString& groupID, const FString& userID, V2TIMCallback* callback);
+	// 	static void TransferGroupOwner(const FString& groupID, const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -449,14 +460,14 @@ public:
 	// 	4.2 同意某一条加群申请 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void AcceptGroupApplication(const V2TIMGroupApplication& application, const FString& reason, V2TIMCallback* callback);
+	// 	static void AcceptGroupApplication(const V2TIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
 	// 	4.3 拒绝某一条加群申请 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void RefuseGroupApplication(const V2TIMGroupApplication& application, const FString& reason, V2TIMCallback* callback);
+	// 	static void RefuseGroupApplication(const V2TIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 4.4 标记申请列表为已读 */
@@ -503,7 +514,7 @@ public:
 	// 	inviteID 邀请 ID，如果邀请失败，返回 null 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static FString Invite(const FString& invitee, const FString& data, bool onlineUserOnly, const V2TIMOfflinePushInfo& offlinePushInfo, int timeout, V2TIMCallback* callback);
+	// 	static FString Invite(const FString& invitee, const FString& data, bool onlineUserOnly, const V2TIMOfflinePushInfo& offlinePushInfo, int timeout, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -520,7 +531,7 @@ public:
 	// 	群邀请暂不支持离线推送，如果您需要离线推送，可以针对被邀请的用户单独发离线推送自定义消息， 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static FString InviteInGroup(const FString& groupID, const TArray<FString>& inviteeList, const FString& data, bool onlineUserOnly, int timeout, V2TIMCallback* callback);
+	// 	static FString InviteInGroup(const FString& groupID, const TArray<FString>& inviteeList, const FString& data, bool onlineUserOnly, int timeout, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 	
@@ -532,7 +543,7 @@ public:
 	// 	如果所有被邀请人都已经处理了当前邀请（包含超时），不能再取消当前邀请。 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static void Cancel(const FString& inviteID, const FString& data, V2TIMCallback* callback);
+	// 	static void Cancel(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -542,7 +553,7 @@ public:
 	// 	不能接受不是针对自己的邀请，请在收到 onReceiveNewInvitation 回调的时候先判断 inviteeList 有没有自己，如果没有自己，不能 accept 邀请。 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static void Accept(const FString& inviteID, const FString& data, V2TIMCallback* callback);
+	// 	static void Accept(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -552,7 +563,7 @@ public:
 	// 	不能拒绝不是针对自己的邀请，请在收到 onReceiveNewInvitation 回调的时候先判断 inviteeList 有没有自己，如果没有自己，不能 reject 邀请。 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static void Reject(const FString& inviteID, const FString& data, V2TIMCallback* callback);
+	// 	static void Reject(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -582,7 +593,7 @@ public:
 	// 	如果添加的信令信息已存在，callback 会抛 ERR_SDK_SIGNALING_ALREADY_EXISTS 错误码。
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static void AddInvitedSignaling(const V2TIMSignalingInfo& info, V2TIMCallback* callback);
+	// 	static void AddInvitedSignaling(const V2TIMSignalingInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -648,7 +659,7 @@ public:
 	// 	conversationIDList	会话唯一 ID 列表，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	// 	static void DeleteConversation(const FString& conversationID, V2TIMCallback* callback);
+	// 	static void DeleteConversation(const FString& conversationID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -659,7 +670,7 @@ public:
 	// 	只在本地保存，不会存储 Server，不能多端同步，程序卸载重装会失效。 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	// 	static void SetConversationDraft(const FString& conversationID, const FString& draftText, V2TIMCallback* callback);
+	// 	static void SetConversationDraft(const FString& conversationID, const FString& draftText, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	// 		//void SetConversationCustomData(const TArray<FString>& conversationIDList, const V2TIMBuffer& customData, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 	//
@@ -672,7 +683,7 @@ public:
 	// 	isPinned	是否置顶 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	// 	static void PinConversation(const FString& conversationID, bool isPinned, V2TIMCallback* callback);
+	// 	static void PinConversation(const FString& conversationID, bool isPinned, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	// 		//void MarkConversation(const TArray<FString>& conversationIDList, uint64_t markType, bool enableMark, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 	//
@@ -690,9 +701,9 @@ public:
 	//
 	// 		//void GetConversationGroupList(V2TIMValueCallback<TArray<FString>>* callback);
 	//
-	// 		//void DeleteConversationGroup(const FString& groupName, V2TIMCallback* callback);
+	// 		//void DeleteConversationGroup(const FString& groupName, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
-	// 		//void RenameConversationGroup(const FString& oldName, const FString& newName, V2TIMCallback* callback);
+	// 		//void RenameConversationGroup(const FString& oldName, const FString& newName, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	// 		//void AddConversationsToGroup(const FString& groupName, const TArray<FString>& conversationIDList, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 	//
@@ -736,7 +747,7 @@ public:
 	// 	2.3 设置指定好友资料 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void SetFriendInfo(const V2TIMFriendInfo& info, V2TIMCallback* callback);
+	// 	static void SetFriendInfo(const V2TIMFriendInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -824,7 +835,7 @@ public:
 	// 	application	好友申请信息，getFriendApplicationList 成功后会返回
 	// 	 */
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void DeleteFriendApplication(const V2TIMFriendApplication& application, V2TIMCallback* callback);
+	// 	static void DeleteFriendApplication(const V2TIMFriendApplication& application, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -880,14 +891,14 @@ public:
 	// 	5.3 删除好友分组
 	// 	 */
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void DeleteFriendGroup(const TArray<FString>& groupNameList, V2TIMCallback* callback);
+	// 	static void DeleteFriendGroup(const TArray<FString>& groupNameList, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
 	// 	5.4 修改好友分组的名称 
 	// 	*/
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void RenameFriendGroup(const FString& oldName, const FString& newName, V2TIMCallback* callback);
+	// 	static void RenameFriendGroup(const FString& oldName, const FString& newName, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -937,7 +948,46 @@ public:
 
 	static FTIMMessage ToMessage(const V2TIMMessage& TimMessage);
 
-	TArray<FTIMMessage> ToIMMessageArray(const V2TIMMessageVector& MessageVector);
+	static TArray<FTIMMessage> ToMessageArray(const V2TIMMessageVector& MessageVector);
 
 	static V2TIMMessageVector ToV2IMMessageArray(const TArray<FTIMMessage>& MessageArray);
+
+	static V2TIMReceiveMessageOpt ToTIMReceiveMessageOpt(const ETIMReceiveMessageOpt& MsgOpt);
+
+	static ETIMReceiveMessageOpt ToReceiveMessageOpt(const V2TIMReceiveMessageOpt& MsgOpt);
+
+
+	static FTIMReceiveMessageOptInfo ToReceiveMessageOptInfo(const V2TIMReceiveMessageOptInfo& OptInfo);
+
+	static V2TIMReceiveMessageOptInfo ToTIMReceiveMessageOptInfo(const FTIMReceiveMessageOptInfo& OptInfo);
+
+
+	static TArray<FTIMReceiveMessageOptInfo> ToReceiveMessageOptInfoArray(const V2TIMReceiveMessageOptInfoVector& MessageOptInfoVector);
+
+
+	static V2TIMMessageListGetOption ToIMMessageListGetOption(const FTIMMessageListGetOption& Option);
+
+	static ETIMMessageGetType ToMessageGetType(V2TIMMessageGetType& MessageType);
+	static V2TIMMessageGetType ToTIMMessageGetType(const ETIMMessageGetType& MessageType);
+
+	static V2TIMMessageSearchParam ToTIMessageSearchParam(const FTIMMessageSearchParam& MessageSearchParam);
+
+	static ETIMKeywordListMatchType ToKeywordListMatchType(const V2TIMKeywordListMatchType& MessageSearchParam);
+	static V2TIMKeywordListMatchType ToTIMKeywordListMatchType(const ETIMKeywordListMatchType& MessageSearchParam);
+
+	static V2TIMElemType ToTIMElemType(const ETIMElemType& MessageSearchParam);
+
+	static ETIMElemType ToElemType(const V2TIMElemType& MessageSearchParam);
+
+	static V2TIMElemTypeVector ToTIMElemTypeVector(const TArray<ETIMElemType>& MessageSearchParam);
+
+	static TArray<ETIMElemType> ToElemTypeArray(const V2TIMElemTypeVector& MessageSearchParam);
+
+	static FTIMMessageSearchResult ToMessageSearchResult(const V2TIMMessageSearchResult& MessageSearchResult);
+	
+	static TArray<FTIMMessageSearchResultItem> ToMessageResultItem(const V2TIMMessageSearchResultItemVector& MessageResult);
+
+	static FTIMMessageSearchResultItem ToMessageSearchResultItem( const V2TIMMessageSearchResultItem& TIMMessageSearchResultItem);
+
+
 };

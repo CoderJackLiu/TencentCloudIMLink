@@ -225,10 +225,7 @@ struct TENCENTIMLINK_API FTIMUserFullInfo
 	/// 首先要在 [控制台](https://console.cloud.tencent.com/im) (功能配置 -> 用户自定义字段)
 	/// 配置用户自定义字段，然后再调用该接口进行设置，key 值不需要加 Tag_Profile_Custom_ 前缀。
 
-	// FV2TIMCustomInfo customInfo;
-
-	//todo ????
-	// UPROPERTY(BlueprintReadWrite,Category=TIMUserFullInfo)
+	// UPROPERTY(BlueprintReadWrite, Category=TIMUserFullInfo)
 	TMap<FString, V2TIMBuffer> customInfo;
 
 	// 用户资料修改标记位
@@ -286,6 +283,7 @@ enum class ETIMElemType:uint8
 	///< 合并消息
 	V2TIM_ELEM_TYPE_MERGER = 10,
 };
+
 
 //高级消息
 USTRUCT(Blueprintable, BlueprintType)
@@ -409,7 +407,282 @@ struct TENCENTIMLINK_API FTIMMessage
 	TArray<FString> targetGroupMemberList;
 };
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FProgressCallbackDelegate, int64, ConsumedBytes, int64, TotalBytes);
+/// 消息接收选项
+UENUM(Blueprintable, BlueprintType)
+enum class ETIMReceiveMessageOpt:uint8
+{
+	///< 在线正常接收消息，离线时会进行 APNs 推送
+	V2TIM_RECEIVE_MESSAGE = 0,
+	///< 不会接收到消息，离线不会有推送通知
+	V2TIM_NOT_RECEIVE_MESSAGE = 1,
+	///< 在线正常接收消息，离线不会有推送通知
+	V2TIM_RECEIVE_NOT_NOTIFY_MESSAGE = 2,
+};
+
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMReceiveMessageOptInfo
+{
+	GENERATED_BODY()
+
+	/// 用户 ID
+	UPROPERTY(EditAnywhere, Category=TIMReceiveMessageOptInfo)
+	FString userID;
+	/// 消息接收选项
+	UPROPERTY(EditAnywhere, Category=TIMReceiveMessageOptInfo)
+	ETIMReceiveMessageOpt receiveOpt;
+
+	// TIMReceiveMessageOptInfo();
+	// TIMReceiveMessageOptInfo(const TIMReceiveMessageOptInfo &);
+	// ~TIMReceiveMessageOptInfo();
+};
+
+// 消息拉取方式
+UENUM(Blueprintable, BlueprintType)
+enum class ETIMMessageGetType:uint8
+{
+	///< 获取云端更老的消息
+	V2TIM_GET_CLOUD_OLDER_MSG = 0,
+	///< 获取云端更新的消息
+	V2TIM_GET_CLOUD_NEWER_MSG = 1,
+	///< 获取本地更老的消息
+	V2TIM_GET_LOCAL_OLDER_MSG = 2,
+	///< 获取本地更新的消息
+	V2TIM_GET_LOCAL_NEWER_MSG = 3,
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMMessageListGetOption
+{
+	/**
+	 * 拉取消息类型，可以设置拉取本地、云端更老或者更新的消息
+	 *
+	 * @note 请注意
+	 * <p>当设置从云端拉取时，会将本地存储消息列表与云端存储消息列表合并后返回。如果无网络，则直接返回本地消息列表。
+	 * <p>关于 getType、拉取消息的起始消息、拉取消息的时间范围 的使用说明：
+	 * - getType 可以用来表示拉取的方向：往消息时间更老的方向 或者 往消息时间更新的方向；
+	 * - lastMsg/lastMsgSeq 用来表示拉取时的起点，第一次拉取时可以不填或者填 0；
+	 * - getTimeBegin/getTimePeriod
+	 * 用来表示拉取消息的时间范围，时间范围的起止时间点与拉取方向(getType)有关；
+	 * -
+	 * 当起始消息和时间范围都存在时，结果集可理解成：「单独按起始消息拉取的结果」与「单独按时间范围拉取的结果」
+	 * 取交集；
+	 * - 当起始消息和时间范围都不存在时，结果集可理解成：从当前会话最新的一条消息开始，按照 getType
+	 * 所指定的方向和拉取方式拉取。
+	 */
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Category=TIMMessageListGetOption)
+	ETIMMessageGetType getType;
+
+	/// 拉取单聊历史消息
+	UPROPERTY(EditAnywhere, Category=TIMMessageListGetOption)
+	FString userID;
+
+	/// 拉取群组历史消息
+	UPROPERTY(EditAnywhere, Category=TIMMessageListGetOption)
+	FString groupID;
+
+	/// 拉取消息数量
+	UPROPERTY(EditAnywhere, Category=TIMMessageListGetOption)
+	int64 count;
+
+	/**
+	 * 拉取消息的起始消息
+	 *
+	 * @note 请注意，
+	 * <p>拉取 C2C 消息，只能使用 lastMsg 作为消息的拉取起点；如果没有指定
+	 * lastMsg，默认使用会话的最新消息作为拉取起点。 <p>拉取 Group 消息时，除了可以使用 lastMsg
+	 * 作为消息的拉取起点外，也可以使用 lastMsgSeq 来指定消息的拉取起点，二者的区别在于：
+	 * - 使用 lastMsg 作为消息的拉取起点时，返回的消息列表里不包含当前设置的 lastMsg；
+	 * - 使用 lastMsgSeq 作为消息拉取起点时，返回的消息列表里包含当前设置的 lastMsgSeq
+	 * 所表示的消息。
+	 *
+	 * @note 在拉取 Group 消息时，
+	 * <p>如果同时指定了 lastMsg 和 lastMsgSeq，SDK 优先使用 lastMsg 作为消息的拉取起点。
+	 * <p>如果 lastMsg 和 lastMsgSeq 都未指定，消息的拉取起点分为如下两种情况：
+	 * -  如果设置了拉取的时间范围，SDK 会根据 @getTimeBegin 所描述的时间点作为拉取起点；
+	 * -  如果未设置拉取的时间范围，SDK 默认使用会话的最新消息作为拉取起点。
+	 */
+	UPROPERTY(EditAnywhere, Category=TIMMessageListGetOption)
+	FTIMMessage lastMsg;
+
+	//todo to fstring
+	uint64_t lastMsgSeq;
+
+	/**
+	 * 拉取消息的时间范围
+	 * @getTimeBegin  表示时间范围的起点；默认为 0，表示从现在开始拉取；UTC 时间戳，单位：秒
+	 * @getTimePeriod 表示时间范围的长度；默认为 0，表示不限制时间范围；单位：秒
+	 *
+	 * @note
+	 * <p> 时间范围的方向由参数 getType 决定
+	 * <p> 如果 getType 取 V2TIM_GET_CLOUD_OLDER_MSG/V2TIM_GET_LOCAL_OLDER_MSG，表示从 getTimeBegin
+	 * 开始，过去的一段时间，时间长度由 getTimePeriod 决定 <p> 如果 getType 取
+	 * V2TIM_GET_CLOUD_NEWER_MSG/V2TIM_GET_LOCAL_NEWER_MSG，表示从 getTimeBegin
+	 * 开始，未来的一段时间，时间长度由 getTimePeriod 决定 <p>
+	 * 取值范围区间为闭区间，包含起止时间，二者关系如下：
+	 * - 如果 getType 指定了朝消息时间更老的方向拉取，则时间范围表示为 [getTimeBegin-getTimePeriod,
+	 * getTimeBegin]
+	 * - 如果 getType 指定了朝消息时间更新的方向拉取，则时间范围表示为 [getTimeBegin,
+	 * getTimeBegin+getTimePeriod]
+	 */
+
+
+	UPROPERTY(EditAnywhere, Category=TIMMessageListGetOption)
+	int64 getTimeBegin;
+
+	UPROPERTY(EditAnywhere, Category=TIMMessageListGetOption)
+	int64 getTimePeriod;
+
+	// V2TIMMessageListGetOption();
+	// V2TIMMessageListGetOption(const V2TIMMessageListGetOption&);
+	// V2TIMMessageListGetOption& operator=(const V2TIMMessageListGetOption&);
+	// ~V2TIMMessageListGetOption();
+};
+
+
+// /// 消息接收选项
+// UENUM(Blueprintable, BlueprintType)
+// enum class ETIMReceiveMessageOpt:uint8
+// {
+// 	///< 在线正常接收消息，离线时会进行 APNs 推送
+// 	V2TIM_RECEIVE_MESSAGE = 0,
+// 	///< 不会接收到消息，离线不会有推送通知
+// 	V2TIM_NOT_RECEIVE_MESSAGE = 1,
+// 	///< 在线正常接收消息，离线不会有推送通知
+// 	V2TIM_RECEIVE_NOT_NOTIFY_MESSAGE = 2,
+// };
+
+/// 消息搜索关键字匹配类型
+UENUM(Blueprintable, BlueprintType)
+enum class ETIMKeywordListMatchType:uint8
+{
+	V2TIM_KEYWORD_LIST_MATCH_TYPE_OR = 0,
+	V2TIM_KEYWORD_LIST_MATCH_TYPE_AND = 1
+};
+
+
+/// 消息搜索参数
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMMessageSearchParam
+{
+	GENERATED_BODY()
+
+	/**
+	 * 关键字列表，最多支持5个。当消息发送者以及消息类型均未指定时，关键字列表必须非空；否则，关键字列表可以为空。
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	TArray<FString> keywordList;
+
+	/**
+	 * 指定关键字列表匹配类型，可设置为“或”关系搜索或者“与”关系搜索.
+	 * 取值分别为 V2TIM_KEYWORD_LIST_MATCH_TYPE_OR 和
+	 * V2TIM_KEYWORD_LIST_MATCH_TYPE_AND，默认为“或”关系搜索。
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	ETIMKeywordListMatchType keywordListMatchType;
+
+	/**
+	 * 指定 userID 发送的消息，最多支持5个。
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	TArray<FString> senderUserIDList;
+
+	/// 指定搜索的消息类型集合，传 nil 表示搜索支持的全部类型消息（V2TIMFaceElem 和
+	/// V2TIMGroupTipsElem 不支持）取值详见 @V2TIMElemType。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	TArray<ETIMElemType> messageTypeList;
+
+	/**
+	 * 搜索“全部会话”还是搜索“指定的会话”：
+	 * <p> 如果设置 conversationID == nil，代表搜索全部会话。
+	 * <p> 如果设置 conversationID != nil，代表搜索指定会话。
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	FString conversationID;
+
+	/// 搜索的起始时间点。默认为0即代表从现在开始搜索。UTC 时间戳，单位：秒
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	int64 searchTimePosition;
+
+	/// 从起始时间点开始的过去时间范围，单位秒。默认为0即代表不限制时间范围，传24x60x60代表过去一天。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	int64 searchTimePeriod;
+
+	/**
+	 * 分页的页号：用于分页展示查找结果，从零开始起步。
+	 * 比如：您希望每页展示 10 条结果，请按照如下规则调用：
+	 * - 首次调用：通过参数 pageSize = 10, pageIndex = 0 调用 searchLocalMessage，从结果回调中的
+	 * totalCount 可以获知总共有多少条结果。
+	 * - 计算页数：可以获知总页数：totalPage = (totalCount % pageSize == 0) ? (totalCount /
+	 * pageSize) : (totalCount / pageSize + 1) 。
+	 * - 再次调用：可以通过指定参数 pageIndex （pageIndex < totalPage）返回后续页号的结果。
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	int64 pageIndex;
+
+	/// 每页结果数量：用于分页展示查找结果，如不希望分页可将其设置成
+	/// 0，但如果结果太多，可能会带来性能问题。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	int64 pageSize;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMMessageSearchResultItem
+{
+	GENERATED_BODY()
+	/// 会话ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	FString conversationID;
+	/// 当前会话一共搜索到了多少条符合要求的消息
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	int64 messageCount;
+
+	/**
+	 * 满足搜索条件的消息列表
+	 * <p>如果您本次搜索【指定会话】，那么 messageList
+	 * 中装载的是本会话中所有满足搜索条件的消息列表。 <p>如果您本次搜索【全部会话】，那么
+	 * messageList 中装载的消息条数会有如下两种可能：
+	 * - 如果某个会话中匹配到的消息条数 > 1，则 messageList 为空，您可以在 UI 上显示“ messageCount
+	 * 条相关记录”。
+	 * - 如果某个会话中匹配到的消息条数 = 1，则 messageList 为匹配到的那条消息，您可以在 UI
+	 * 上显示之，并高亮匹配关键词。
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	TArray<FTIMMessage> messageList;
+
+	// V2TIMMessageSearchResultItem();
+	// V2TIMMessageSearchResultItem(const V2TIMMessageSearchResultItem &);
+	// ~V2TIMMessageSearchResultItem();
+};
+
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMMessageSearchResult
+{
+	GENERATED_BODY()
+
+	/**
+	 * 如果您本次搜索【指定会话】，那么返回满足搜索条件的消息总数量；
+	 * 如果您本次搜索【全部会话】，那么返回满足搜索条件的消息所在的所有会话总数量。
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	int64 totalCount;
+
+	/**
+	 * 如果您本次搜索【指定会话】，那么返回结果列表只包含该会话结果；
+	 * 如果您本次搜索【全部会话】，那么对满足搜索条件的消息根据会话 ID 分组，分页返回分组结果；
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	TArray<FTIMMessageSearchResultItem> messageSearchResultItems;
+
+	// V2TIMMessageSearchResult();
+	// V2TIMMessageSearchResult(const V2TIMMessageSearchResult &);
+	// V2TIMMessageSearchResult &operator=(const V2TIMMessageSearchResult &);
+	// ~V2TIMMessageSearchResult();
+};
+
 
 /**
  * 
