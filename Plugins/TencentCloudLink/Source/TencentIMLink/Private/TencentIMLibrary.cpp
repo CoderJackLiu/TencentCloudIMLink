@@ -602,8 +602,13 @@ V2TIMMessage UTencentIMLibrary::ToIMMessage(const FTIMMessage& TimMessage)
 {
 	V2TIMMessage OutTimMessage;
 	OutTimMessage.msgID = ToIMString(TimMessage.msgID);
+	OutTimMessage.timestamp = TimMessage.timestamp;
+	OutTimMessage.sender = ToIMString(TimMessage.sender);
+	
 	//todo DingLuckyGirl
 
+	
+	
 	return OutTimMessage;
 }
 
@@ -611,7 +616,8 @@ FTIMMessage UTencentIMLibrary::ToMessage(const V2TIMMessage& TimMessage)
 {
 	//todo DingLuckyGirl
 	FTIMMessage OutTIMMessage;
-
+	OutTIMMessage.msgID=ToFString(TimMessage.msgID);
+	
 	return OutTIMMessage;
 }
 
