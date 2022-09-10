@@ -339,48 +339,48 @@ void UTencentIMLibrary::SetSelfInfo(const FTIMUserFullInfo& Info, FIMCallbackDel
 
 FTIMMessage UTencentIMLibrary::CreateTextMessage(const FString& text)
 {
-	return ToTIMMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateTextMessage(ToIMString(text)));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateTextMessage(ToIMString(text)));
 }
 
 FTIMMessage UTencentIMLibrary::CreateTextAtMessage(const FString& text, const TArray<FString>& atUserList)
 {
-	return ToTIMMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateTextAtMessage(ToIMString(text), ToIMStringArray(atUserList)));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateTextAtMessage(ToIMString(text), ToIMStringArray(atUserList)));
 }
 
 FTIMMessage UTencentIMLibrary::CreateCustomMessage(const V2TIMBuffer& data)
 {
-	return ToTIMMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateCustomMessage(data));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateCustomMessage(data));
 }
 
 FTIMMessage UTencentIMLibrary::CreateCustomMessage(const V2TIMBuffer& data, const FString& description, const FString& extension)
 {
-	return ToTIMMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateCustomMessage(data, ToIMString(description), ToIMString(extension)));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateCustomMessage(data, ToIMString(description), ToIMString(extension)));
 }
 
 FTIMMessage UTencentIMLibrary::CreateImageMessage(const FString& imagePath)
 {
-	return ToTIMMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateImageMessage(ToIMString(imagePath)));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateImageMessage(ToIMString(imagePath)));
 }
 
 FTIMMessage UTencentIMLibrary::CreateSoundMessage(const FString& soundPath, int32 duration)
 {
-	return ToTIMMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateSoundMessage(ToIMString(soundPath), FMath::Clamp(duration, 0, 2147483647)));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateSoundMessage(ToIMString(soundPath), FMath::Clamp(duration, 0, 2147483647)));
 }
 
 FTIMMessage UTencentIMLibrary::CreateVideoMessage(const FString& videoFilePath, const FString& type, int32 duration, const FString& snapshotPath)
 {
-	return ToTIMMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateVideoMessage(ToIMString(videoFilePath), ToIMString(type), FMath::Clamp(duration, 0, 2147483647),
-	                                                                                      ToIMString(snapshotPath)));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateVideoMessage(ToIMString(videoFilePath), ToIMString(type), FMath::Clamp(duration, 0, 2147483647),
+	                                                                                   ToIMString(snapshotPath)));
 }
 
 FTIMMessage UTencentIMLibrary::CreateFileMessage(const FString& filePath, const FString& fileName)
 {
-	return ToTIMMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateFileMessage(ToIMString(filePath), ToIMString(fileName)));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateFileMessage(ToIMString(filePath), ToIMString(fileName)));
 }
 
 FTIMMessage UTencentIMLibrary::CreateLocationMessage(const FString& desc, double longitude, double latitude)
 {
-	return ToTIMMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateLocationMessage(ToIMString(desc), longitude, latitude));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateLocationMessage(ToIMString(desc), longitude, latitude));
 }
 
 FTIMMessage UTencentIMLibrary::CreateFaceMessage(int32 index, const V2TIMBuffer& data)
@@ -391,8 +391,20 @@ FTIMMessage UTencentIMLibrary::CreateFaceMessage(int32 index, const V2TIMBuffer&
 
 FTIMMessage UTencentIMLibrary::CreateMergerMessage(const TArray<FTIMMessage>& messageList, const FString& title, const TArray<FString>& abstractList, const FString& compatibleText)
 {
-	return ToTIMMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateMergerMessage(ToV2IMMessageArray(messageList), ToIMString(title), ToIMStringArray(abstractList),
-	                                                                                       ToIMString(compatibleText)));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateMergerMessage(ToV2IMMessageArray(messageList), ToIMString(title), ToIMStringArray(abstractList),
+	                                                                                    ToIMString(compatibleText)));
+}
+
+FTIMMessage UTencentIMLibrary::CreateForwardMessage(const FTIMMessage& message)
+{
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateForwardMessage(ToIMMessage(message)));
+}
+
+FString UTencentIMLibrary::SendMessage(FTIMMessage& message, const FString& receiver, const FString& groupID, V2TIMMessagePriority priority, bool onlineUserOnly,
+	const V2TIMOfflinePushInfo& offlinePushInfo, V2TIMSendCallback* callback)
+{
+	//todo
+	return "";
 }
 
 
@@ -586,7 +598,7 @@ TArray<FTIMUserFullInfo> UTencentIMLibrary::ToTIMUserFullInfoArray(const V2TIMUs
 	return Info;
 }
 
-V2TIMMessage UTencentIMLibrary::ToV2TIMMessage(const FTIMMessage& TimMessage)
+V2TIMMessage UTencentIMLibrary::ToIMMessage(const FTIMMessage& TimMessage)
 {
 	V2TIMMessage OutTimMessage;
 	OutTimMessage.msgID = ToIMString(TimMessage.msgID);
@@ -595,7 +607,7 @@ V2TIMMessage UTencentIMLibrary::ToV2TIMMessage(const FTIMMessage& TimMessage)
 	return OutTimMessage;
 }
 
-FTIMMessage UTencentIMLibrary::ToTIMMessage(const V2TIMMessage& TimMessage)
+FTIMMessage UTencentIMLibrary::ToMessage(const V2TIMMessage& TimMessage)
 {
 	//todo DingLuckyGirl
 	FTIMMessage OutTIMMessage;
@@ -609,7 +621,7 @@ TArray<FTIMMessage> UTencentIMLibrary::ToIMMessageArray(const V2TIMMessageVector
 	TArray<FTIMMessage> IMMessages;
 	for (int32 i = 0; i < MessageVector.Size(); i++)
 	{
-		IMMessages.Add(ToTIMMessage(MessageVector[i]));
+		IMMessages.Add(ToMessage(MessageVector[i]));
 	}
 	return IMMessages;
 }
@@ -619,7 +631,7 @@ V2TIMMessageVector UTencentIMLibrary::ToV2IMMessageArray(const TArray<FTIMMessag
 	V2TIMMessageVector IMMessageVector;
 	for (int32 i = 0; i < MessageArray.Num(); i++)
 	{
-		IMMessageVector.PushBack(ToV2TIMMessage(MessageArray[i]));
+		IMMessageVector.PushBack(ToIMMessage(MessageArray[i]));
 	}
 	return IMMessageVector;
 }

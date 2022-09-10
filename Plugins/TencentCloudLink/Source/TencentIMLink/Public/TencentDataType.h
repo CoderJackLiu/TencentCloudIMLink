@@ -187,7 +187,7 @@ enum class ETIMFriendInfoModifyFlag:uint8
 	FV2TIM_FRIEND_INFO_MODIFY_FLAG_CUSTOM = 2,
 };
 
-USTRUCT(Blueprintable,BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct TENCENTIMLINK_API FTIMUserFullInfo
 {
 	GENERATED_BODY()
@@ -288,122 +288,125 @@ enum class ETIMElemType:uint8
 };
 
 //高级消息
-USTRUCT(Blueprintable,BlueprintType)
+USTRUCT(Blueprintable, BlueprintType)
 struct TENCENTIMLINK_API FTIMMessage
 {
 	GENERATED_BODY()
 
-    /// 消息 ID（消息创建的时候为空，消息发送的时候会生成）
-    FString msgID;
-    /// 消息时间
-    int64 timestamp;
-    /// 消息发送者
-    FString sender;
-    /// 消息发送者昵称
-    FString nickName;
-    /// 消息发送者好友备注
-    FString friendRemark;
-    /// 如果是群组消息，nameCard 为发送者的群名片
-    FString nameCard;
-    /// 消息发送者头像
-    /// 在 C2C 场景下，陌生人的头像不会实时更新，如需更新陌生人的头像（如在 UI
-    /// 上点击陌生人头像以展示陌生人信息时）， 请调用 V2TIMManager.h -> GetUsersInfo
-    /// 接口触发信息的拉取。待拉取成功后，SDK 会更新本地头像信息，即 faceURL 字段的内容。
-    /// @note 请不要在收到每条消息后都去 GetUsersInfo，会严重影响程序性能。
-    FString faceURL;
-    /// 如果是群组消息，groupID 为会话群组 ID，否则为空
-    FString groupID;
-    /// 如果是单聊消息，userID 为会话用户 ID，否则为空，
-    /// 假设自己和 userA 聊天，无论是自己发给 userA 的消息还是 userA 发给自己的消息，这里的 userID
-    /// 均为 userA
-    FString userID;
-    /// 群聊中的消息序列号云端生成，在群里是严格递增且唯一的,
-    /// 单聊中的序列号是本地生成，不能保证严格递增且唯一。
-    uint64 seq;
-    /// 消息随机码
-    uint64 random;
-    /// 消息发送状态
-    ETIMMessageStatus status;
-    /// 消息发送者是否是自己
-    bool isSelf;
-    /// 消息自己是否已读
-    bool isRead;
-    /// 消息对方是否已读（只有 C2C 消息有效）
-    bool isPeerRead;
-    /// 群消息中被 @ 的用户 UserID 列表（即该消息都 @ 了哪些人）
-    V2TIMStringVector groupAtUserList;
-    /*消息元素列表
-    
-    推荐一条消息只存放一个 elem，在收到这条消息时，调用 elemList[0] 获取这个elem，示例代码如下：
-    if (1 == message.elemList.Size()) {
-        V2TIMElem *elem = message.elemList[0];
-        switch (elem->elemType) {
-            case V2TIM_ELEM_TYPE_TEXT:
-                V2TIMTextElem *textElem = static_cast<V2TIMTextElem *>(elem);
-                break;
-            case V2TIM_ELEM_TYPE_CUSTOM:
-                V2TIMCustomElem *customElem = static_cast<V2TIMCustomElem *>(elem);
-                break;
-            case V2TIM_ELEM_TYPE_FACE:
-                V2TIMFaceElem *faceElem = static_cast<V2TIMFaceElem *>(elem);
-                break;
-            case V2TIM_ELEM_TYPE_LOCATION:
-                V2TIMLocationElem *locationElem = static_cast<V2TIMLocationElem *>(elem);
-                break;
-            default:
-                break;
-        }
-    }
-    
-    如果一条消息有多个 elem，遍历 elemList 列表，获取全部 elem 元素，示例代码如下：
-    for (size_t i = 0; i < message.elemList.Size(); ++i) {
-        V2TIMElem *elem = message.elemList[i];
-        switch (elem->elemType) {
-            case V2TIM_ELEM_TYPE_TEXT:
-                V2TIMTextElem *textElem = static_cast<V2TIMTextElem *>(elem);
-                break;
-            case V2TIM_ELEM_TYPE_CUSTOM:
-                V2TIMCustomElem *customElem = static_cast<V2TIMCustomElem *>(elem);
-                break;
-            case V2TIM_ELEM_TYPE_FACE:
-                V2TIMFaceElem *faceElem = static_cast<V2TIMFaceElem *>(elem);
-                break;
-            case V2TIM_ELEM_TYPE_LOCATION:
-                V2TIMLocationElem *locationElem = static_cast<V2TIMLocationElem *>(elem);
-                break;
-            default:
-                break;
-        }
-    }
-    
-    如果您的一条消息需要多个 elem，可以在创建 Message 对象后，调用 elemList.PushBack 添加新
-    elem， 以 V2TIMTextElem 和 V2TIMCustomElem 多 elem 为例，示例代码如下： 
-    V2TIMCustomElem *customElem = new V2TIMCustomElem(); 
-    customElem->data = buffer; 
-    V2TIMMessage message = messageManager.CreateTextMessage("text");
-    message.elemList.PushBack(customElem);*/
+	/// 消息 ID（消息创建的时候为空，消息发送的时候会生成）
+	FString msgID;
+	/// 消息时间
+	/// todo 
+	int64 timestamp;
+	/// 消息发送者
+	FString sender;
+	/// 消息发送者昵称
+	FString nickName;
+	/// 消息发送者好友备注
+	FString friendRemark;
+	/// 如果是群组消息，nameCard 为发送者的群名片
+	FString nameCard;
+	/// 消息发送者头像
+	/// 在 C2C 场景下，陌生人的头像不会实时更新，如需更新陌生人的头像（如在 UI
+	/// 上点击陌生人头像以展示陌生人信息时）， 请调用 V2TIMManager.h -> GetUsersInfo
+	/// 接口触发信息的拉取。待拉取成功后，SDK 会更新本地头像信息，即 faceURL 字段的内容。
+	/// @note 请不要在收到每条消息后都去 GetUsersInfo，会严重影响程序性能。
+	FString faceURL;
+	/// 如果是群组消息，groupID 为会话群组 ID，否则为空
+	FString groupID;
+	/// 如果是单聊消息，userID 为会话用户 ID，否则为空，
+	/// 假设自己和 userA 聊天，无论是自己发给 userA 的消息还是 userA 发给自己的消息，这里的 userID
+	/// 均为 userA
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
+	FString userID;
+	/// 群聊中的消息序列号云端生成，在群里是严格递增且唯一的,
+	/// 单聊中的序列号是本地生成，不能保证严格递增且唯一。
+	uint64 seq;
+	/// 消息随机码
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
+	uint64 random;
+	/// 消息发送状态
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
+	ETIMMessageStatus status;
+	/// 消息发送者是否是自己
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
+	bool isSelf;
+	/// 消息自己是否已读
+	bool isRead;
+	/// 消息对方是否已读（只有 C2C 消息有效）
+	bool isPeerRead;
+	/// 群消息中被 @ 的用户 UserID 列表（即该消息都 @ 了哪些人）
+	V2TIMStringVector groupAtUserList;
+	/*消息元素列表
 	
-    TArray<ETIMElemType> elemList;
-    /// 消息自定义数据（本地保存，不会发送到对端，程序卸载重装后失效）
-    V2TIMBuffer localCustomData;
-    /// 消息自定义数据,可以用来标记语音、视频消息是否已经播放（本地保存，不会发送到对端，程序卸载重装后失效）
-    int localCustomInt;
-    /// 消息自定义数据（云端保存，会发送到对端，程序卸载重装后还能拉取到）
-    V2TIMBuffer cloudCustomData;
-    /// 消息是否不计入会话未读数：默认为 false，表明需要计入会话未读数，设置为
-    /// true，表明不需要计入会话未读数
-    bool isExcludedFromUnreadCount;
-    /// 消息是否不计入会话 lastMsg：默认为 false，表明需要计入会话 lastMsg，设置为
-    /// true，表明不需要计入会话 lastMsg
-    bool isExcludedFromLastMessage;
-    /// 指定群消息接收成员，即发送群内定向消息（5.9及以上版本支持）
-    /// 请注意：
-    /// - 发送群 @ 消息时，设置该字段无效
-    /// - 向社群（Community）和直播群（AVChatRoom）里发送消息时，设置该字段无效
-    /// - 群内定向消息默认不计入群会话的未读计数
-    TArray<FString> targetGroupMemberList;
+	推荐一条消息只存放一个 elem，在收到这条消息时，调用 elemList[0] 获取这个elem，示例代码如下：
+	if (1 == message.elemList.Size()) {
+	    V2TIMElem *elem = message.elemList[0];
+	    switch (elem->elemType) {
+	        case V2TIM_ELEM_TYPE_TEXT:
+	            V2TIMTextElem *textElem = static_cast<V2TIMTextElem *>(elem);
+	            break;
+	        case V2TIM_ELEM_TYPE_CUSTOM:
+	            V2TIMCustomElem *customElem = static_cast<V2TIMCustomElem *>(elem);
+	            break;
+	        case V2TIM_ELEM_TYPE_FACE:
+	            V2TIMFaceElem *faceElem = static_cast<V2TIMFaceElem *>(elem);
+	            break;
+	        case V2TIM_ELEM_TYPE_LOCATION:
+	            V2TIMLocationElem *locationElem = static_cast<V2TIMLocationElem *>(elem);
+	            break;
+	        default:
+	            break;
+	    }
+	}
+	
+	如果一条消息有多个 elem，遍历 elemList 列表，获取全部 elem 元素，示例代码如下：
+	for (size_t i = 0; i < message.elemList.Size(); ++i) {
+	    V2TIMElem *elem = message.elemList[i];
+	    switch (elem->elemType) {
+	        case V2TIM_ELEM_TYPE_TEXT:
+	            V2TIMTextElem *textElem = static_cast<V2TIMTextElem *>(elem);
+	            break;
+	        case V2TIM_ELEM_TYPE_CUSTOM:
+	            V2TIMCustomElem *customElem = static_cast<V2TIMCustomElem *>(elem);
+	            break;
+	        case V2TIM_ELEM_TYPE_FACE:
+	            V2TIMFaceElem *faceElem = static_cast<V2TIMFaceElem *>(elem);
+	            break;
+	        case V2TIM_ELEM_TYPE_LOCATION:
+	            V2TIMLocationElem *locationElem = static_cast<V2TIMLocationElem *>(elem);
+	            break;
+	        default:
+	            break;
+	    }
+	}
+	
+	如果您的一条消息需要多个 elem，可以在创建 Message 对象后，调用 elemList.PushBack 添加新
+	elem， 以 V2TIMTextElem 和 V2TIMCustomElem 多 elem 为例，示例代码如下： 
+	V2TIMCustomElem *customElem = new V2TIMCustomElem(); 
+	customElem->data = buffer; 
+	V2TIMMessage message = messageManager.CreateTextMessage("text");
+	message.elemList.PushBack(customElem);*/
 
-
+	TArray<ETIMElemType> elemList;
+	/// 消息自定义数据（本地保存，不会发送到对端，程序卸载重装后失效）
+	V2TIMBuffer localCustomData;
+	/// 消息自定义数据,可以用来标记语音、视频消息是否已经播放（本地保存，不会发送到对端，程序卸载重装后失效）
+	int localCustomInt;
+	/// 消息自定义数据（云端保存，会发送到对端，程序卸载重装后还能拉取到）
+	V2TIMBuffer cloudCustomData;
+	/// 消息是否不计入会话未读数：默认为 false，表明需要计入会话未读数，设置为
+	/// true，表明不需要计入会话未读数
+	bool isExcludedFromUnreadCount;
+	/// 消息是否不计入会话 lastMsg：默认为 false，表明需要计入会话 lastMsg，设置为
+	/// true，表明不需要计入会话 lastMsg
+	bool isExcludedFromLastMessage;
+	/// 指定群消息接收成员，即发送群内定向消息（5.9及以上版本支持）
+	/// 请注意：
+	/// - 发送群 @ 消息时，设置该字段无效
+	/// - 向社群（Community）和直播群（AVChatRoom）里发送消息时，设置该字段无效
+	/// - 群内定向消息默认不计入群会话的未读计数
+	TArray<FString> targetGroupMemberList;
 };
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FProgressCallbackDelegate, int64, ConsumedBytes, int64, TotalBytes);
