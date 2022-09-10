@@ -151,10 +151,69 @@ public:
 	/*
 	 * 2.1 创建文本消息
 	 */
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	static FTIMMessage CreateTextMessage(const FString& text);
+
+	/*
+	 * 2.2 创建文本消息，并且可以附带 @ 提醒功能
+	 * 提醒消息仅适用于在群组中发送的消息
+	 * 参数：
+	 * atUserList	需要 @ 的用户列表，如果需要 @ALL，请传入 kImSDK_MesssageAtALL 常量字符串。 举个例子，假设该条文本消息希望@提醒 denny 和 lucy 两个用户，
+	 * 同时又希望 @所有人，atUserList 传 {"denny","lucy",kImSDK_MesssageAtALL}
+	 *
+	 * atUserList 使用注意事项
+	 * 默认情况下，最多支持 @ 30个用户，超过限制后，消息会发送失败。
+	 * atUserList 的总数不能超过默认最大数，包括 @ALL。
+	 * 直播群（AVChatRoom）不支持发送 @ 消息。
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	static FTIMMessage CreateTextAtMessage(const FString& text, const TArray<FString>& atUserList);
+
+
+	//todo ufunction
 	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	//  FTIMMessage CreateTextMessage(const FString& text);
+	static FTIMMessage CreateCustomMessage(const V2TIMBuffer& data);
+
+	static FTIMMessage CreateCustomMessage(const V2TIMBuffer& data, const FString& description, const FString& extension);
 
 
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	static FTIMMessage CreateImageMessage(const FString& imagePath);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	FTIMMessage CreateSoundMessage(const FString& soundPath, int32 duration);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	FTIMMessage CreateVideoMessage(const FString& videoFilePath, const FString& type, int32 duration, const FString& snapshotPath);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	FTIMMessage CreateFileMessage(const FString& filePath, const FString& fileName);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	FTIMMessage CreateLocationMessage(const FString& desc, double longitude, double latitude);
+
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	FTIMMessage CreateFaceMessage(int32 index, const V2TIMBuffer& data);
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	FTIMMessage CreateMergerMessage(const TArray<FTIMMessage>& messageList, const FString& title, const TArray<FString>& abstractList, const FString& compatibleText);
+
+	TArray<FTIMMessage> ToIMMessageArray(const V2TIMMessageVector& MessageVector);
+	
+	static V2TIMMessageVector ToV2IMMessageArray(const TArray<FTIMMessage>& MessageArray);
+
+
+
+
+
+
+
+
+
+
+
+
+	
 public:
 	static V2TIMString ToIMString(const FString& InStr);
 
@@ -181,4 +240,8 @@ public:
 	static V2TIMCustomInfo ToV2TIMCustomInfo(TMap<FString, V2TIMBuffer> CustomInfo);
 
 	static TArray<FTIMUserFullInfo> ToTIMUserFullInfoArray(const V2TIMUserFullInfoVector& FullInfoVector);
+
+	static V2TIMMessage ToV2TIMMessage(const FTIMMessage& TimMessage);
+	
+	static FTIMMessage ToTIMMessage(const V2TIMMessage& TimMessage);
 };
