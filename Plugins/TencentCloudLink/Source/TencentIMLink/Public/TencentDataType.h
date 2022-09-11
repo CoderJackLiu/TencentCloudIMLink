@@ -1090,7 +1090,54 @@ struct TENCENTIMLINK_API FTIMFriendCheckResult
 	ETIMFriendRelationType relationType;
 };
 
+/// 好友申请类型
+UENUM(BlueprintType)
+enum class ETIMFriendApplicationType:uint8
+{
+	/// 别人发给我的
+	V2TIM_FRIEND_APPLICATION_COME_IN = 1,
+	/// 我发给别人的
+	V2TIM_FRIEND_APPLICATION_SEND_OUT = 2,
+	/// 别人发给我的 和 我发给别人的。仅拉取时有效
+	V2TIM_FRIEND_APPLICATION_BOTH = 3,
+};
 
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMFriendApplication
+{
+	GENERATED_BODY()
+	/// 用户标识
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	FString userID;
+	/// 用户昵称
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	FString nickName;
+	/// 用户头像
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	FString faceUrl;
+	/// 添加时间   uint64_t
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	FString addTime;
+	/// 来源
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	FString addSource;
+	/// 加好友附言
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	FString addWording;
+	/// 好友申请类型
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	ETIMFriendApplicationType type;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMFriendApplicationResult
+{
+	GENERATED_BODY()
+	/// 好友申请未读数量   uint64_t
+	FString unreadCount;
+	/// 好友申请列表
+	TArray<FTIMFriendApplication> applicationList;
+};
 
 /**
  * 

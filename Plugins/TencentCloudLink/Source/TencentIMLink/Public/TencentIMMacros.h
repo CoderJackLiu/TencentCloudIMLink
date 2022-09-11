@@ -129,7 +129,7 @@ Func##_TIMFriendOperationResultVectorDelegate.ExecuteIfBound(FriendOperationResu
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
- DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendCheckResultVectorCallback, const TArray<FTIMFriendCheckResult>& , FriendCheckResult);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendCheckResultVectorCallback, const TArray<FTIMFriendCheckResult>& , FriendCheckResult);
 // //todo success message 
  #define DECLARATION_TIMFriendCheckResultVector_DELEGATE(Func) \
 FTIMFriendCheckResultVectorCallback Func##_TIMFriendCheckResultVectorDelegate; \
@@ -142,7 +142,6 @@ Func##_TIMFriendCheckResultVectorDelegate.ExecuteIfBound(FriendCheckResult);\
 }, TStatId(), nullptr, ENamedThreads::GameThread);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
-
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMMessageInfoCallback, const FTIMMessage& , Message);
 

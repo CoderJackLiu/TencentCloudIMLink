@@ -806,8 +806,8 @@ public:
 		注意
 		好友申请列表包括发起的好友申请和收到的好友申请。
 		 */
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void GetFriendApplicationList(V2TIMValueCallback<V2TIMFriendApplicationResult>* callback);
+		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+		static void GetFriendApplicationList(V2TIMValueCallback<V2TIMFriendApplicationResult>* callback);
 	
 	
 		/* 
