@@ -35,14 +35,12 @@ enum class EIMMessagePriority :uint8
 };
 
 
-
 UCLASS()
 class UMyClass : public UObject
 {
 	GENERATED_BODY()
 public:
 };
-
 
 
 USTRUCT(Blueprintable)
@@ -311,7 +309,7 @@ struct TENCENTIMLINK_API FTIMMessage
 	/// 消息对方是否已读（只有 C2C 消息有效）
 	bool isPeerRead;
 	/// 群消息中被 @ 的用户 UserID 列表（即该消息都 @ 了哪些人）
-	V2TIMStringVector groupAtUserList;
+	TArray<FString> groupAtUserList;
 	/*消息元素列表
 	
 	推荐一条消息只存放一个 elem，在收到这条消息时，调用 elemList[0] 获取这个elem，示例代码如下：
@@ -711,7 +709,7 @@ struct TENCENTIMLINK_API FTIMGroupInfo
 	bool allMuted;
 	/// 设置群自定义字段需要两个步骤：
 	/// 1.在 [控制台](https://console.cloud.tencent.com/im) (功能配置 -> 群自定义字段)
-	/// 配置群自定义字段的 key 值，Key 为 V2TIMString 类型，长度不超过 16 字节。 2.调用 SetGroupInfo
+	/// 配置群自定义字段的 key 值，Key 为 FString 类型，长度不超过 16 字节。 2.调用 SetGroupInfo
 	/// 接口设置该字段，value 为 V2TIMSBuffer 数据，长度不超过 512 字节。
 	V2TIMCustomInfo customInfo;
 	/// 群创建人/管理员
@@ -768,8 +766,6 @@ struct TENCENTIMLINK_API FTIMCreateGroupMemberInfo
 	/// 3. 所有的群都不支持设置 role 为群主。
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	int64 role;
-
-
 };
 
 
@@ -942,9 +938,9 @@ struct TENCENTIMLINK_API FTIMFriendInfo
 	/// 好友自定义字段
 	/// 首先要在 [控制台](https://console.cloud.tencent.com/im) (功能配置 -> 好友自定义字段)
 	/// 配置好友自定义字段，然后再调用该接口进行设置，key 值不需要加 Tag_SNS_Custom_ 前缀。
-	/// Map<V2TIMString, V2TIMBuffer>
+	/// Map<FString, V2TIMBuffer>
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
-	TMap<FString,FBuffer> friendCustomInfo;
+	TMap<FString, FBuffer> friendCustomInfo;
 	/// 好友所在分组列表
 	/// - 最多支持 32 个分组；
 	/// - 不允许分组名为空；
@@ -968,6 +964,61 @@ struct TENCENTIMLINK_API FTIMFriendInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
 	FString modifyFlag;
 };
+
+
+/// 群成员基本资料
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMGroupMemberInfo
+{
+	GENERATED_BODY()
+	/// 用户 ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	FString userID;
+	/// 用户昵称
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	FString nickName;
+	/// 用户好友备注
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	FString friendRemark;
+	/// 群成员名片
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	FString nameCard;
+	/// 用户头像
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	FString faceURL;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMGroupMemberFullInfo : public FTIMGroupMemberInfo
+{
+	GENERATED_BODY()
+	/// 群成员自定义字段
+	/// 首先要在 [控制台](https://console.cloud.tencent.com/im) (功能配置 -> 群成员自定义字段)
+	/// 配置用户自定义字段，然后再调用该接口进行设置。
+
+	//todo finish
+	// V2TIMCustomInfo customInfo;
+	TMap<FString, V2TIMBuffer> customInfo;
+	/// 群成员角色,修改群成员角色请调用 V2TIMManagerGroup.h -> SetGroupMemberRole 接口
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	int64 role;
+	/// 群成员禁言结束时间戳，禁言用户请调用 V2TIMManagerGroup.h -> MuteGroupMember 接口
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	int64 muteUntil;
+	/// 群成员入群时间，自动生成，不可修改
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	int64 joinTime;
+	// 群成员资料修改标记位
+	// 枚举 V2TIMGroupMemberInfoModifyFlag 列出哪些字段支持修改，如果您修改群成员资料，请设置这个字段值
+	// 支持同时修改多个字段，多个枚举值按位或 | 组合，例如，同时修改群成员名片和群成员角色
+	// info.nameCard = "new name card";
+	// info.role = V2TIM_GROUP_MEMBER_ROLE_ADMIN;
+	// info.modifyFlag = V2TIM_GROUP_MEMBER_INFO_MODIFY_FLAG_NAME_CARD | V2TIM_GROUP_MEMBER_INFO_MODIFY_FLAG_MEMBER_ROLE;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	int64 modifyFlag;
+};
+
 
 /// 好友关系类型
 UENUM(BlueprintType)

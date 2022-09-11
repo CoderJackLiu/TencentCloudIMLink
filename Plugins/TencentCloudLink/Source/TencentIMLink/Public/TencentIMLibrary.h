@@ -233,12 +233,9 @@ public:
 	*/
 	// todo :::::name is same ,so i changed it
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	static void CreateGroupByMemBer(const FTIMGroupInfo& info, const TArray<FTIMCreateGroupMemberInfo>& memberList, FIMCallbackTextDelegate OnSuccessCallback,FIMFailureCallback OnFailureDelegate);
+	static void CreateGroupByMemBer(const FTIMGroupInfo& info, const TArray<FTIMCreateGroupMemberInfo>& memberList, FIMCallbackTextDelegate OnSuccessCallback, FIMFailureCallback OnFailureDelegate);
 
 
-
-
-	
 	/* 
 	1.2 获取当前用户已经加入的群列表
 
@@ -247,79 +244,21 @@ public:
 	该接口有频限检测，SDK 限制调用频率为1 秒 10 次，超过限制后会报 ERR_SDK_COMM_API_CALL_FREQUENCY_LIMIT （7008）错误
 	*/
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	static void GetJoinedGroupList(FIMGroupInfoArrayCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
+	static void GetJoinedGroupList(FIMGroupInfoArrayCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
 
 	static TArray<FTIMGroupInfo> ToGroupInfoArray(const V2TIMGroupInfoVector& GroupInfoVector);
-	static V2TIMGroupInfoVector ToTIMGroupInfoVector(const TArray<FTIMGroupInfo>&GroupInfo);
-	
-	// 	/* 
-	// 	2.2 搜索群资料（5.4.666 及以上版本支持）
-	//
-	// 	参数
-	// 	searchParam	搜索参数
-	// 	注意
-	// 	该功能为 IM 旗舰版功能，购买旗舰版套餐包后可使用，详见价格说明
-	// 	*/	
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SearchGroups(const V2TIMGroupSearchParam& searchParam, V2TIMValueCallback<V2TIMGroupInfoVector>* callback);
-	//
+	static V2TIMGroupInfoVector ToTIMGroupInfoVector(const TArray<FTIMGroupInfo>& GroupInfo);
+
+
 	//
 	// 	/* 
 	// 	2.3 修改群资料 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SetGroupInfo(const V2TIMGroupInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
-	//
-	// 	/* 
-	// 	2.4 初始化群属性，会清空原有的群属性列表
-	//
-	// 	注意
-	// 	attributes 的使用限制如下：
-	// 	目前只支持 AVChatRoom；
-	// 	key 最多支持 16 个，长度限制为 32 字节；
-	// 	value 长度限制为 4k；
-	// 	总的 attributes（包括 key 和 value）限制为 16k；
-	// 	initGroupAttributes、setGroupAttributes、deleteGroupAttributes 接口合并计算， SDK 限制为 5 秒 10 次，超过后回调 8511 错误码；后台限制 1 秒 5 次，超过后返回 10049 错误码；
-	// 	getGroupAttributes 接口 SDK 限制 5 秒 20 次；
-	// 	从 5.6 版本开始，当每次APP启动后初次修改群属性时，请您先调用 getGroupAttributes 拉取到最新的群属性之后，再发起修改操作；
-	// 	从 5.6 版本开始，当多个用户同时修改同一个群属性时，只有第一个用户可以执行成功，其它用户会收到 10056 错误码；收到这个错误码之后，请您调用 getGroupAttributes 把本地保存的群属性更新到最新之后，再发起修改操作。
-	// 	*/	
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void InitGroupAttributes(const FString& groupID, const V2TIMGroupAttributeMap& attributes, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
-	//
-	// 	/* 	
-	// 	2.5 设置群属性。已有该群属性则更新其 value 值，没有该群属性则添加该属性。
-	//
-	// 	注意
-	// 	目前只支持 AVChatRoom 
-	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SetGroupAttributes(const FString& groupID, const V2TIMGroupAttributeMap& attributes, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
-	//
-	// 	/* 		
-	// 	2.6 删除指定群属性，keys 传 null 则清空所有群属性。
-	//
-	// 	注意
-	// 	目前只支持 AVChatRoom； 
-	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void DeleteGroupAttributes(const FString& groupID, const TArray<FString>& keys, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
-	//
-	// 	/* 
-	// 	2.7 获取指定群属性，keys 传 null 则获取所有群属性。
-	//
-	// 	注意
-	// 	目前只支持 AVChatRoom；
-	// 	 */
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void GetGroupAttributes(const FString& groupID, const TArray<FString>& keys, V2TIMValueCallback<V2TIMGroupAttributeMap>* callback);
-	//
-	//
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void SetGroupInfo(const FTIMGroupInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
 	// 	/* 
 	// 	2.8 获取指定群在线人数
 	//
@@ -328,9 +267,9 @@ public:
 	// 	目前只支持：直播群（AVChatRoom）。
 	// 	该接口有频限检测，SDK 限制调用频率为60秒1次 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void GetGroupOnlineMemberCount(const FString& groupID, V2TIMValueCallback<uint32_t>* callback);
-	//
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void GetGroupOnlineMemberCount(const FString& groupID, FGroupMemCountCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
 	//
 	// 	/* 
 	// 	3.1 获取群成员列表
@@ -350,16 +289,23 @@ public:
 	// 	程序重启后，请重新加入群组，否则拉取群成员会报 10007 错误码。
 	// 	群成员资料信息仅支持 userID | nickName | faceURL | role 字段。 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void GetGroupMemberList(const FString& groupID, int32 filter, uint64_t nextSeq, V2TIMValueCallback<V2TIMGroupMemberInfoResult>* callback);
-	//
+
+
+	//todo finish
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	//static void GetGroupMemberList(const FString& groupID, int32 filter, uint64_t nextSeq, V2TIMValueCallback<V2TIMGroupMemberInfoResult>* callback);
+
 	//
 	// 	/* 
 	// 	3.2 获取指定的群成员资料 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void GetGroupMembersInfo(const FString& groupID, TArray<FString> memberList, V2TIMValueCallback<V2TIMGroupMemberFullInfoVector>* callback);
-	//
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void GetGroupMembersInfo(const FString& groupID, const TArray<FString>& memberList, FGroupMemFullInfosCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	static V2TIMGroupMemberFullInfoVector ToGroupMemberFullInfoVector(const TArray<FTIMGroupMemberFullInfo>& GPFullInfos);
+
+	static TArray<FTIMGroupMemberFullInfo> ToTIMGroupMemberFullInfoArray(const V2TIMGroupMemberFullInfoVector& GPFullInfos);
+
 	//
 	// 	/* 
 	// 	3.3 搜索群成员（5.4.666 及以上版本支持）
@@ -595,73 +541,70 @@ public:
 	//
 
 
+	//
+	// /* 
+	// 1.1 添加会话监听器 
+	// */
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	// static void AddConversationListener(V2TIMConversationListener* listener);
+	//
+	//
+	// /* 
+	// 1.2 移除会话监听器 
+	// */
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	// static void RemoveConversationListener(V2TIMConversationListener* listener);
 
 
+	/* 	
+	1.3 获取会话列表
 
-		//
-		// /* 
-		// 1.1 添加会话监听器 
-		// */
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-		// static void AddConversationListener(V2TIMConversationListener* listener);
-		//
-		//
-		// /* 
-		// 1.2 移除会话监听器 
-		// */
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-		// static void RemoveConversationListener(V2TIMConversationListener* listener);
-	
-	
-		/* 	
-		1.3 获取会话列表
-	
-		一个会话对应一个聊天窗口，比如跟一个好友的 1v1 聊天，或者一个聊天群，都是一个会话。
-		由于历史的会话数量可能很多，所以该接口希望您采用分页查询的方式进行调用，每次分页拉取的个数建议为 100 个。
-		该接口拉取的是本地缓存的会话，如果服务器会话有更新，SDK 内部会自动同步，然后在 V2TIMConversationListener 回调告知客户。
-		如果会话全部拉取完毕，成功回调里面 V2TIMConversationResult 中的 isFinished 获取字段值为 YES。
-		注意
-		会话排序规则
-		5.5.892 及以后版本, 该接口获取的会话列表默认已经按照会话 orderKey 做了排序，orderKey 值越大，代表该会话排序越靠前。
-		5.5.892 以前版本，该接口获取的会话列表默认已经按照会话 lastMessage -> timestamp 做了排序，timestamp 越大，会话越靠前。
-		参数
-		nextSeq	分页拉取的游标，第一次默认取传 0，后续分页拉传上一次分页拉取成功回调里的 nextSeq
-		count	分页拉取的个数，一次分页拉取不宜太多，会影响拉取的速度，建议每次拉取 100 个会话 
-		*/
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-		static void GetConversationList(const FString& nextSeq, int32 count, FMTIMConversationResultCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
+	一个会话对应一个聊天窗口，比如跟一个好友的 1v1 聊天，或者一个聊天群，都是一个会话。
+	由于历史的会话数量可能很多，所以该接口希望您采用分页查询的方式进行调用，每次分页拉取的个数建议为 100 个。
+	该接口拉取的是本地缓存的会话，如果服务器会话有更新，SDK 内部会自动同步，然后在 V2TIMConversationListener 回调告知客户。
+	如果会话全部拉取完毕，成功回调里面 V2TIMConversationResult 中的 isFinished 获取字段值为 YES。
+	注意
+	会话排序规则
+	5.5.892 及以后版本, 该接口获取的会话列表默认已经按照会话 orderKey 做了排序，orderKey 值越大，代表该会话排序越靠前。
+	5.5.892 以前版本，该接口获取的会话列表默认已经按照会话 lastMessage -> timestamp 做了排序，timestamp 越大，会话越靠前。
+	参数
+	nextSeq	分页拉取的游标，第一次默认取传 0，后续分页拉传上一次分页拉取成功回调里的 nextSeq
+	count	分页拉取的个数，一次分页拉取不宜太多，会影响拉取的速度，建议每次拉取 100 个会话 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	static void GetConversationList(const FString& nextSeq, int32 count, FMTIMConversationResultCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
-		/* 
-		1.4 获取单个会话
-		参数
-		conversationID	会话唯一 ID, C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
-	 	*/
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-		static void GetConversation(const FString& conversationID, FTIMConversationCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
-	
-	
-		/* 
-		1.5 获取指定会话列表
-	
-		参数
-		conversationIDList	会话唯一 ID 列表，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
-	 	*/
-		//todo list
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-		static void GetConversationListByIDList(const TArray<FString>& conversationIDList, FTIMConversationVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
-		//GetConversationList
-		//void GetConversationListByFilter(const V2TIMConversationListFilter& filter, V2TIMValueCallback<V2TIMConversationResult>* callback);
-	
-	
-		/* 
-		1.5 获取指定会话列表
-	
-		参数
-		conversationIDList	会话唯一 ID 列表，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
-		*/
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-		static void DeleteConversation(const FString& conversationID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-		//
+	/* 
+	1.4 获取单个会话
+	参数
+	conversationID	会话唯一 ID, C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	static void GetConversation(const FString& conversationID, FTIMConversationCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	/* 
+	1.5 获取指定会话列表
+
+	参数
+	conversationIDList	会话唯一 ID 列表，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
+	 */
+	//todo list
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	static void GetConversationListByIDList(const TArray<FString>& conversationIDList, FTIMConversationVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	//GetConversationList
+	//void GetConversationListByFilter(const V2TIMConversationListFilter& filter, V2TIMValueCallback<V2TIMConversationResult>* callback);
+
+
+	/* 
+	1.5 获取指定会话列表
+
+	参数
+	conversationIDList	会话唯一 ID 列表，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	static void DeleteConversation(const FString& conversationID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	//
 	//
 	// 	/* 
 	// 	1.8 设置会话草稿
@@ -670,8 +613,8 @@ public:
 	// 	conversationID	会话唯一 ID，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
 	// 	只在本地保存，不会存储 Server，不能多端同步，程序卸载重装会失效。 
 	// 	*/
-	 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	 	static void SetConversationDraft(const FString& conversationID, const FString& draftText, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	static void SetConversationDraft(const FString& conversationID, const FString& draftText, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	// 		//void SetConversationCustomData(const TArray<FString>& conversationIDList, const V2TIMBuffer& customData, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 	//
@@ -683,8 +626,8 @@ public:
 	// 	conversationID	会话唯一 ID，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
 	// 	isPinned	是否置顶 
 	// 	*/
-	 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	 	static void PinConversation(const FString& conversationID, bool isPinned, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	static void PinConversation(const FString& conversationID, bool isPinned, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	// 		//void MarkConversation(const TArray<FString>& conversationIDList, uint64_t markType, bool enableMark, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 	//
@@ -695,9 +638,9 @@ public:
 	// 	注意
 	// 	未读总数会减去设置为免打扰的会话的未读数，即消息接收选项设置为 V2TIMMessage.V2TIM_NOT_RECEIVE_MESSAGE 或 V2TIMMessage.V2TIM_RECEIVE_NOT_NOTIFY_MESSAGE 的会话。 
 	// 	*/
-	 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-			//static void GetTotalUnreadMessageCount(V2TIMValueCallback<uint64_t>* callback);
-	 	static void GetTotalUnreadMessageCount(FTIMuint64Callback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	//static void GetTotalUnreadMessageCount(V2TIMValueCallback<uint64_t>* callback);
+	static void GetTotalUnreadMessageCount(FTIMuint64Callback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	// 		//void CreateConversationGroup(const FString& groupName, const TArray<FString>& conversationIDList, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 	//
@@ -712,46 +655,85 @@ public:
 	// 		//void DeleteConversationsFromGroup(const FString& groupName, const TArray<FString>& conversationIDList, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 	//
 	//
-	
-		/* 
-		1.1 添加关系链监听器 
-		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void AddFriendListener(V2TIMFriendshipListener* listener);
-	
-	
-		/* 
-		1.2 移除关系链监听器 
-		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void RemoveFriendListener(V2TIMFriendshipListener* listener);
-		//
-	
-		/* 
-		2.1 获取好友列表 
-		*/
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		static void GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
-	
-	
-		/* 
-		2.2 获取指定好友资料
-	
-		参数
-		userIDList	好友 userID 列表
-		ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
-		*/
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		//static void GetFriendsInfo(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
-		static void GetFriendsInfo(const TArray<FString>& userIDList, FTIMFriendInfoResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
-	
-		/* 
-		2.3 设置指定好友资料 
-		*/
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		static void SetFriendInfo(const FTIMFriendInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	
-	
+
+	/* 
+	1.1 添加关系链监听器 
+	*/
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// static void AddFriendListener(V2TIMFriendshipListener* listener);
+
+
+	/* 
+	1.2 移除关系链监听器 
+	*/
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// static void RemoveFriendListener(V2TIMFriendshipListener* listener);
+	//
+
+	/* 
+	2.1 获取好友列表 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	/* 
+	2.2 获取指定好友资料
+
+	参数
+	userIDList	好友 userID 列表
+	ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
+	*/
+	//UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	//static void GetFriendsInfo(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
+
+
+	/* 
+	2.3 设置指定好友资料 
+	*/
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// static void SetFriendInfo(const V2TIMFriendInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	// =======
+	// 	
+	// 		/* 
+	// 		1.1 添加关系链监听器 
+	// 		*/
+	// 		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// 		// static void AddFriendListener(V2TIMFriendshipListener* listener);
+	// 	
+	// 	
+	// 		/* 
+	// 		1.2 移除关系链监听器 
+	// 		*/
+	// 		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// 		// static void RemoveFriendListener(V2TIMFriendshipListener* listener);
+	// 		//
+	// 	
+	// 		/* 
+	// 		2.1 获取好友列表 
+	// 		*/
+	// 		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// 		static void GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
+	// 	
+	// 	
+	// 		/* 
+	// 		2.2 获取指定好友资料
+	// 	
+	// 		参数
+	// 		userIDList	好友 userID 列表
+	// 		ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
+	// 		*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void GetFriendsInfo(const TArray<FString>& userIDList, FTIMFriendInfoResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
+
+	/* 
+	2.3 设置指定好友资料 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void SetFriendInfo(const FTIMFriendInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
 	// 	/* 
 	// 	2.4 搜索好友（5.4.666 及以上版本支持）
 	//
@@ -759,6 +741,7 @@ public:
 	// 	接口返回本地存储的用户资料，可以根据 V2TIMFriendInfoResult 中的 getRelation 来判断是否为好友。
 	// 	该功能为 IM 旗舰版功能，购买旗舰版套餐包后可使用，详见价格说明 
 	// 	*/
+<<<<<<< HEAD
 		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
 		//static void SearchFriends(const V2TIMFriendSearchParam& searchParam, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
 		static void SearchFriends(const FTIMFriendSearchParam& searchParam, FTIMFriendInfoResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
@@ -847,6 +830,95 @@ public:
 		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
 		// static void SetFriendApplicationRead(V2TIMCallback* callback);
 	
+=======
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void SearchFriends(const FTIMFriendSearchParam& searchParam, FTIMFriendInfoResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	/* 
+	2.5 添加好友
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void AddFriend(const FTIMFriendAddApplication& application, FTIMFriendOperationResulCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	/* 
+	2.6 删除好友
+
+	参数
+	userIDList	要删除的好友 userID 列表
+	ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
+	deleteType	删除类型（单向好友、双向好友）
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void DeleteFromFriendList(const TArray<FString>& userIDList, ETIMFriendType deleteType, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	/* 
+	2.7 检查指定用户的好友关系
+
+	参数
+	userIDList	要检查的 userID 列表
+	checkType	检查类型 （单向好友检查、双向好友检查）
+	succ	成功后的回调
+	fail	失败后的回调
+	注意
+	checkType 的使用需要注意：
+	checkType 如果传入 V2TIM_FRIEND_TYPE_SINGLE，结果返回：V2TIM_FRIEND_RELATION_TYPE_NONE、V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST 两种情况
+	checkType 如果传入 V2TIM_FRIEND_TYPE_BOTH，结果返回：V2TIM_FRIEND_RELATION_TYPE_NONE、V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST、 V2TIM_FRIEND_RELATION_TYPE_IN_OTHER_FRIEND_LIST、V2TIM_FRIEND_RELATION_TYPE_BOTH_WAY 四种情况 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void CheckFriend(const TArray<FString>& userIDList, ETIMFriendType checkType, FTIMFriendCheckResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	/* 
+	3.1 获取好友申请列表
+
+	注意
+	好友申请列表包括发起的好友申请和收到的好友申请。
+	 */
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// static void GetFriendApplicationList(V2TIMValueCallback<V2TIMFriendApplicationResult>* callback);
+
+
+	/* 
+	3.2 同意好友申请
+
+	参数
+	application	好友申请信息，getFriendApplicationList 成功后会返回
+	acceptType	建立单向/双向好友关系 
+	*/
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// static void AcceptFriendApplication(const V2TIMFriendApplication& application, V2TIMFriendAcceptType acceptType, V2TIMValueCallback<V2TIMFriendOperationResult>* callback);
+
+
+	/* 
+	3.3 拒绝好友申请
+
+	参数
+	application	好友申请信息，getFriendApplicationList 成功后会返回 
+	*/
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// static void RefuseFriendApplication(const V2TIMFriendApplication& application, V2TIMValueCallback<V2TIMFriendOperationResult>* callback);
+
+
+	/* 
+	3.4 删除好友申请
+
+	参数
+	application	好友申请信息，getFriendApplicationList 成功后会返回
+	 */
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// static void DeleteFriendApplication(const V2TIMFriendApplication& application, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	/* 
+	3.5 设置好友申请已读 
+	*/
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	// static void SetFriendApplicationRead(V2TIMCallback* callback);
+
+	// >>>>>>> 75dc2fc362a4ff75e8a1e5502732904fa3c6dd27
+>>>>>>> 1cacd27632339ea2d54c0595dd8d6f05b2bc1868
 	//
 	// 	/* 
 	// 	4.1 添加用户到黑名单 
@@ -933,7 +1005,7 @@ public:
 
 	static TArray<FTIMFriendInfoResult> ToFriendInfoResultArray(const V2TIMFriendInfoResultVector& FriendInfoResultVector);
 	static FTIMFriendInfoResult ToFriendInforResult(const V2TIMFriendInfoResult& FriendInfoResult);
-	
+
 	static FTIMFriendInfo ToFriendInfo(const V2TIMFriendInfo& Info);
 	static V2TIMFriendInfo ToTIMFriendInfo(const FTIMFriendInfo& Info);
 
@@ -942,19 +1014,20 @@ public:
 	static FTIMFriendOperationResult ToFriendOperationResult(const V2TIMFriendOperationResult& FriendOperationResult);
 
 	static V2TIMFriendType ToTIMFriendType(ETIMFriendType Type);
-	
+
 	static V2TIMFriendAddApplication ToTIMFriendAddApplication(const FTIMFriendAddApplication& FriendAddApplication);
 
-	static TArray<FTIMFriendOperationResult>  ToTIMFriendOperationResultArray(const V2TIMFriendOperationResultVector& TIMFriendOperationResultVector);
+	static TArray<FTIMFriendOperationResult> ToTIMFriendOperationResultArray(const V2TIMFriendOperationResultVector& TIMFriendOperationResultVector);
 
 	static TArray<FTIMFriendCheckResult> ToTIMFriendCheckResultArray(const V2TIMFriendCheckResultVector& TIMFriendCheckResultVector);
-	
+
 	static V2TIMFriendCheckResultVector ToV2TIMFriendCheckResultVector(const TArray<FTIMFriendCheckResult>& TIMFriendCheckResult);
 	static V2TIMFriendCheckResult ToV2TIMFriendCheckResult(const FTIMFriendCheckResult& FriendCheckResult);
 	static FTIMFriendCheckResult ToFTIMFriendCheckResult(const V2TIMFriendCheckResult& FriendCheckResult);
 
 	static ETIMFriendRelationType ToFTIMFriendRelationType(const V2TIMFriendRelationType& Type);
-	
+
+	// >>>>>>> 75dc2fc362a4ff75e8a1e5502732904fa3c6dd27
 	static V2TIMString ToIMString(const FString& InStr);
 
 	static FString ToFString(const V2TIMString& InStr);
@@ -962,7 +1035,7 @@ public:
 	static V2TIMStringVector ToIMStringArray(TArray<FString> InStrArray);
 
 	static TArray<FString> ToIArrayString(V2TIMStringVector TIMStringVector);
-	
+
 	static ELoginStatus ToTIMLoginStatus(const V2TIMLoginStatus& Status);
 
 	static V2TIMMessagePriority GetMessagePriority(EIMMessagePriority InPriority);
@@ -980,11 +1053,11 @@ public:
 	static TMap<FString, FBuffer> ToTIMCustomInfo_(V2TIMCustomInfo CustomInfo);
 
 	static FBuffer ToBuffer(V2TIMBuffer TIMBuffer);
-	
+
 	static V2TIMBuffer ToTIMBuffer(FBuffer TIMBuffer);
-	
+
 	static V2TIMCustomInfo ToV2TIMCustomInfo(TMap<FString, FBuffer> CustomInfo);
-	
+
 	static TMap<FString, V2TIMBuffer> ToTIMCustomInfo(V2TIMCustomInfo CustomInfo);
 
 	static V2TIMCustomInfo ToV2TIMCustomInfo(TMap<FString, V2TIMBuffer> CustomInfo);
@@ -1020,10 +1093,10 @@ public:
 	static V2TIMMessageSearchParam ToTIMessageSearchParam(const FTIMMessageSearchParam& MessageSearchParam);
 
 	static ETIMKeywordListMatchType ToKeywordListMatchType(const V2TIMKeywordListMatchType& MessageSearchParam);
-	
+
 	static V2TIMKeywordListMatchType ToTIMKeywordListMatchType(const ETIMKeywordListMatchType& MessageSearchParam);
 
-	
+
 	static V2TIMElemType ToTIMElemType(const ETIMElemType& MessageSearchParam);
 
 	static ETIMElemType ToElemType(const V2TIMElemType& MessageSearchParam);
@@ -1033,25 +1106,18 @@ public:
 	static TArray<ETIMElemType> ToElemTypeArray(const V2TIMElemTypeVector& MessageSearchParam);
 
 	static FTIMMessageSearchResult ToMessageSearchResult(const V2TIMMessageSearchResult& MessageSearchResult);
-	
+
 	static TArray<FTIMMessageSearchResultItem> ToMessageResultItem(const V2TIMMessageSearchResultItemVector& MessageResult);
 
-	static FTIMMessageSearchResultItem ToMessageSearchResultItem( const V2TIMMessageSearchResultItem& TIMMessageSearchResultItem);
+	static FTIMMessageSearchResultItem ToMessageSearchResultItem(const V2TIMMessageSearchResultItem& TIMMessageSearchResultItem);
 
 	//-------------------------
 	//Group Info
 	static FTIMGroupInfo ToGroupInfo(const V2TIMGroupInfo& GroupInfo);
-	
+
 	static V2TIMGroupInfo ToTIMGroupInfo(const FTIMGroupInfo& GroupInfo);
-	
 
 
 	static TArray<FTIMCreateGroupMemberInfo> ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector);
 	static V2TIMCreateGroupMemberInfoVector ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector);
-
-	
-	
-	
 };
-
-

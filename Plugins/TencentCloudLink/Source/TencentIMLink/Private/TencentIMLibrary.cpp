@@ -1063,6 +1063,125 @@ V2TIMGroupInfoVector UTencentIMLibrary::ToTIMGroupInfoVector(const TArray<FTIMGr
 	return V2TIMGroupInfoVector();
 }
 
+DECLARATION_CALLBACK_DELEGATE(SetGroupInfo)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(SetGroupInfo)
+void UTencentIMLibrary::SetGroupInfo(const FTIMGroupInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	SetGroupInfo_FailureDelegate = OnFailureDelegate;
+	SetGroupInfo_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			SetGroupInfo_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			SetGroupInfo_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	Tencent_IM.GetInstance()->GetGroupManager()->SetGroupInfo(ToTIMGroupInfo(info), Callback);
+}
+DECLARATION_GroupMemCount_DELEGATE(GetGroupOnlineMemberCount)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetGroupOnlineMemberCount)
+void UTencentIMLibrary::GetGroupOnlineMemberCount(const FString& groupID, FGroupMemCountCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	GetGroupOnlineMemberCount_GroupMemCountDelegate = OnSuccessDelegate;
+	GetGroupOnlineMemberCount_FailureDelegate = OnFailureDelegate;
+
+	class FValueCallBack : public V2TIMValueCallback<uint32_t>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const uint32_t& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetGroupOnlineMemberCount_GroupMemCountDelegate.ExecuteIfBound(message);
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			GetGroupOnlineMemberCount_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* Callback = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupOnlineMemberCount(ToIMString(groupID), Callback);
+}
+DECLARATION_GroupMemFullInfos_DELEGATE(GetGroupMembersInfo)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetGroupMembersInfo)
+void UTencentIMLibrary::GetGroupMembersInfo(const FString& groupID,const TArray<FString>& memberList, FGroupMemFullInfosCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	GetGroupMembersInfo_GPMemFullInfoDelegate = OnSuccessDelegate;
+	GetGroupMembersInfo_FailureDelegate = OnFailureDelegate;
+	class FValueCallBack : public V2TIMValueCallback<V2TIMGroupMemberFullInfoVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMGroupMemberFullInfoVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetGroupMembersInfo_GPMemFullInfoDelegate.ExecuteIfBound(ToTIMGroupMemberFullInfoArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			GetGroupMembersInfo_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupMembersInfo(ToIMString(groupID),ToIMStringArray(memberList),CallBack);
+
+}
+
+V2TIMGroupMemberFullInfoVector UTencentIMLibrary::ToGroupMemberFullInfoVector(const TArray<FTIMGroupMemberFullInfo>& GPFullInfos)
+{
+	//todo finish
+	return V2TIMGroupMemberFullInfoVector();
+}
+
+TArray<FTIMGroupMemberFullInfo> UTencentIMLibrary::ToTIMGroupMemberFullInfoArray(const V2TIMGroupMemberFullInfoVector& GPFullInfos)
+{
+	//todo finish
+	return TArray<FTIMGroupMemberFullInfo>();
+}
+
+
 DECLARATION_ConversationRst_DELEGATE(GetConversationList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversationList)
 void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count, FMTIMConversationResultCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate)
@@ -1098,6 +1217,7 @@ void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count,
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
 	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(FCString::Strtoui64(*nextSeq, NULL, 10),count,CallBack);
+
 }
 
 FTIMConversationResult UTencentIMLibrary::ToTIMConversationResult(const V2TIMConversationResult& ConversationResult)
