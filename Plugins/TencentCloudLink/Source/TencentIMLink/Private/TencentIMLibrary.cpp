@@ -1100,46 +1100,153 @@ void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count,
 	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(FCString::Strtoui64(*nextSeq, NULL, 10),count,CallBack);
 }
 
-FTIMConversationResult UTencentIMLibrary::ToTIMConversationResult(const V2TIMConversationResult& saldj)
+FTIMConversationResult UTencentIMLibrary::ToTIMConversationResult(const V2TIMConversationResult& ConversationResult)
 {
 	FTIMConversationResult Temp=FTIMConversationResult();
-	Temp.conversationList=ToTIMConversationArray(saldj.conversationList);
-	Temp.isFinished=saldj.isFinished;
-	Temp.nextSeq=FString::Printf(TEXT("%llu"), saldj.nextSeq);
+	Temp.conversationList=ToTIMConversationArray(ConversationResult.conversationList);
+	Temp.isFinished=ConversationResult.isFinished;
+	Temp.nextSeq=FString::Printf(TEXT("%llu"), ConversationResult.nextSeq);
 	return Temp;
 }
 
-V2TIMVConversationVector UTencentIMLibrary::ToV2TIMVConversationVector(const TArray<FTIMConversation>& dsada)
+V2TIMVConversationVector UTencentIMLibrary::ToV2TIMVConversationVector(const TArray<FTIMConversation>& Array_Conversation)
 {
-	V2TIMVConversationVector dasdsa=V2TIMVConversationVector();
-	for (FTIMConversation Dsada : dsada)
+	V2TIMVConversationVector ConversationVector=V2TIMVConversationVector();
+	for (FTIMConversation Conversation : Array_Conversation)
 	{
-		dasdsa.PushBack(ToTIMConversation(Dsada));
+		ConversationVector.PushBack(ToTIMConversation(Conversation));
 	}
-	return dasdsa;
+	return ConversationVector;
 }
 
-TArray<FTIMConversation> UTencentIMLibrary::ToTIMConversationArray(const V2TIMVConversationVector& dsada)
+TArray<FTIMConversation> UTencentIMLibrary::ToTIMConversationArray(const V2TIMVConversationVector& ConversationVector)
 {
-	TArray<FTIMConversation> dsadsa;
-	for (int i=0;i<dsada.Size();i++)
+	TArray<FTIMConversation> Conversation;
+	for (int i=0;i<ConversationVector.Size();i++)
 	{
-		dsadsa.Add(ToConversation(dsada[i]));
+		Conversation.Add(ToConversation(ConversationVector[i]));
 	}
-	return dsadsa;
+	return Conversation;
 }
-FTIMConversation UTencentIMLibrary::ToConversation(V2TIMConversation sddsa)
+FTIMConversation UTencentIMLibrary::ToConversation(V2TIMConversation Conversation)
 {
 	//todo
 	return FTIMConversation();
 }
 
-V2TIMConversation UTencentIMLibrary::ToTIMConversation(FTIMConversation sddsa)
+V2TIMConversation UTencentIMLibrary::ToTIMConversation(FTIMConversation Conversation)
 {
 	//todo
 	return V2TIMConversation();
 }
 
+DECLARATION_TIMConversation_DELEGATE(GetConversation)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversation)
+void UTencentIMLibrary::GetConversation(const FString& conversationID, FTIMConversationCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	GetConversation_ConversationDelegate = OnSuccessDelegate;
+	GetConversation_FailureDelegate = OnFailureDelegate;
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<V2TIMConversation>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMConversation& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetConversation_ConversationDelegate.ExecuteIfBound(ToConversation(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			GetConversation_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetConversationManager()->GetConversation(ToIMString(conversationID),CallBack);
+}
+
+DECLARATION_TIMConversationVector_DELEGATE(GetConversationListByIDList)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversationListByIDList)
+void UTencentIMLibrary::GetConversationListByIDList(const TArray<FString>& conversationIDList, FTIMConversationVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	GetConversationListByIDList_ConversationVectorDelegate = OnSuccessDelegate;
+	GetConversationListByIDList_FailureDelegate = OnFailureDelegate;
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<V2TIMVConversationVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMVConversationVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetConversationListByIDList_ConversationVectorDelegate.ExecuteIfBound(ToTIMConversationArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			GetConversation_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(ToIMStringArray(conversationIDList),CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(DeleteConversation)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(DeleteConversation)
+void UTencentIMLibrary::DeleteConversation(const FString& conversationID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	DeleteConversation_FailureDelegate = OnFailureDelegate;
+	DeleteConversation_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			DeleteConversation_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			DeleteConversation_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	Tencent_IM.GetInstance()->GetConversationManager()->DeleteConversation(ToIMString(conversationID), Callback);
+}
 
 
 TArray<FTIMCreateGroupMemberInfo> UTencentIMLibrary::ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector)

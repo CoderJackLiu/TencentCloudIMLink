@@ -1,0 +1,3 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=0E9484EA_002D5348_002D32DB_002D9D4A_002D56F199BC4DEB_002Fdl_003APlugins_003A_002E_002E_003F_002E_002E_003FPlugins_002Fd_003ATencentCloudLink_002Fd_003ASource_002Fd_003ATencentIMLink_002Fd_003APrivate_002Ff_003ATencentIMLibrary_002Ecpp/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">ERROR</s:String></wpf:ResourceDictionary>

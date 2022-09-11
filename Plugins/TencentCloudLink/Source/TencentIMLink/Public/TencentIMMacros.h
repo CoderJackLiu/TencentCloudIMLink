@@ -30,6 +30,34 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FMessageSearchResultCallback, const FTIMMessag
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FMTIMConversationResultCallback, const FTIMConversationResult& , Result);
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMConversationCallback, const FTIMConversation& , Result);
+//todo success message 
+#define DECLARATION_TIMConversation_DELEGATE(Func) \
+FTIMConversationCallback Func##_ConversationDelegate; \
+void Func##_Local37(const FTIMConversation& Message) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Message]()\
+{\
+Func##_ConversationDelegate.ExecuteIfBound(Message);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMConversationVectorCallback, const TArray<FTIMConversation>& , Result);
+//todo success message 
+#define DECLARATION_TIMConversationVector_DELEGATE(Func) \
+FTIMConversationVectorCallback Func##_ConversationVectorDelegate; \
+void Func##_Local51(const TArray<FTIMConversation>& Message) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Message]()\
+{\
+Func##_ConversationVectorDelegate.ExecuteIfBound(Message);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMMessageInfoCallback, const FTIMMessage& , Message);
 
 //failure

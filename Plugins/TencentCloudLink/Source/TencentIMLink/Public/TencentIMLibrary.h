@@ -633,12 +633,11 @@ public:
 
 		/* 
 		1.4 获取单个会话
-	
 		参数
 		conversationID	会话唯一 ID, C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
 	 	*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-		// static void GetConversation(const FString& conversationID, V2TIMValueCallback<V2TIMConversation>* callback);
+		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+		static void GetConversation(const FString& conversationID, FTIMConversationCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 	
 	
 		/* 
@@ -648,10 +647,10 @@ public:
 		conversationIDList	会话唯一 ID 列表，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
 	 	*/
 		//todo list
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-		// static void GetConversationList(const TArray<FString>& conversationIDList, V2TIMValueCallback<V2TIMVConversationVector>* callback);
-	
-			//void GetConversationListByFilter(const V2TIMConversationListFilter& filter, V2TIMValueCallback<V2TIMConversationResult>* callback);
+		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+		static void GetConversationListByIDList(const TArray<FString>& conversationIDList, FTIMConversationVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
+		//GetConversationList
+		//void GetConversationListByFilter(const V2TIMConversationListFilter& filter, V2TIMValueCallback<V2TIMConversationResult>* callback);
 	
 	
 		/* 
@@ -660,8 +659,8 @@ public:
 		参数
 		conversationIDList	会话唯一 ID 列表，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
 		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-		// static void DeleteConversation(const FString& conversationID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+		static void DeleteConversation(const FString& conversationID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 		//
 	//
 	// 	/* 
@@ -922,14 +921,11 @@ public:
 public:
 	//------------
 	//Base function
-	static FTIMConversationResult ToTIMConversationResult(const V2TIMConversationResult& saldj);
-	static V2TIMVConversationVector ToV2TIMVConversationVector(const TArray<FTIMConversation>& dsada);
-	
-	static TArray<FTIMConversation> ToTIMConversationArray(const V2TIMVConversationVector& dsada);
-	
-	static V2TIMConversation ToTIMConversation(FTIMConversation sddsa);
-	
-	static FTIMConversation ToConversation(V2TIMConversation sddsa);
+	static FTIMConversationResult ToTIMConversationResult(const V2TIMConversationResult& ConversationResult);
+	static V2TIMVConversationVector ToV2TIMVConversationVector(const TArray<FTIMConversation>& Array_Conversation);
+	static TArray<FTIMConversation> ToTIMConversationArray(const V2TIMVConversationVector& ConversationVector);
+	static V2TIMConversation ToTIMConversation(FTIMConversation Conversation);
+	static FTIMConversation ToConversation(V2TIMConversation Conversation);
 	
 	static V2TIMString ToIMString(const FString& InStr);
 
