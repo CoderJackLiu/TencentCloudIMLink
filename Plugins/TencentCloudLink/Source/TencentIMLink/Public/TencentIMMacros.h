@@ -28,7 +28,7 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FIMGroupMessageInfoCallback, const TArray<FTIM
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FMessageSearchResultCallback, const FTIMMessageSearchResult& , Result);
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FMV2TIMConversationResultCallback, const FV2TIMConversationResult& , Result);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FMTIMConversationResultCallback, const FTIMConversationResult& , Result);
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMMessageInfoCallback, const FTIMMessage& , Message);
 
@@ -108,8 +108,8 @@ Func##_MessageDelegate.ExecuteIfBound(Message);\
 }
 
 #define DECLARATION_ConversationRst_DELEGATE(Func) \
-FMV2TIMConversationResultCallback Func##_CsRstDelegate; \
-void Func##_Local(const FV2TIMConversationResult& Result) \
+FMTIMConversationResultCallback Func##_CsRstDelegate; \
+void Func##_Local(const FTIMConversationResult& Result) \
 { \
 FScopeLock ScopeLock(&TencentMutex); \
 auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Result]()\

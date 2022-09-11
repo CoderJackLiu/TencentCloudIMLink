@@ -1065,7 +1065,7 @@ V2TIMGroupInfoVector UTencentIMLibrary::ToTIMGroupInfoVector(const TArray<FTIMGr
 
 DECLARATION_ConversationRst_DELEGATE(GetConversationList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversationList)
-void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count, FMV2TIMConversationResultCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate)
+void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count, FMTIMConversationResultCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate)
 {
 	GetConversationList_CsRstDelegate = OnSuccessDelegate;
 	GetConversationList_FailureDelegate = OnFailureDelegate;
@@ -1100,41 +1100,41 @@ void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count,
 	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(FCString::Strtoui64(*nextSeq, NULL, 10),count,CallBack);
 }
 
-FV2TIMConversationResult UTencentIMLibrary::ToTIMConversationResult(const V2TIMConversationResult& saldj)
+FTIMConversationResult UTencentIMLibrary::ToTIMConversationResult(const V2TIMConversationResult& saldj)
 {
-	FV2TIMConversationResult Temp=FV2TIMConversationResult();
+	FTIMConversationResult Temp=FTIMConversationResult();
 	Temp.conversationList=ToTIMConversationArray(saldj.conversationList);
 	Temp.isFinished=saldj.isFinished;
 	Temp.nextSeq=FString::Printf(TEXT("%llu"), saldj.nextSeq);
 	return Temp;
 }
 
-V2TIMVConversationVector UTencentIMLibrary::ToV2TIMVConversationVector(const TArray<FV2TIMConversation>& dsada)
+V2TIMVConversationVector UTencentIMLibrary::ToV2TIMVConversationVector(const TArray<FTIMConversation>& dsada)
 {
 	V2TIMVConversationVector dasdsa=V2TIMVConversationVector();
-	for (FV2TIMConversation Dsada : dsada)
+	for (FTIMConversation Dsada : dsada)
 	{
 		dasdsa.PushBack(ToTIMConversation(Dsada));
 	}
 	return dasdsa;
 }
 
-TArray<FV2TIMConversation> UTencentIMLibrary::ToTIMConversationArray(const V2TIMVConversationVector& dsada)
+TArray<FTIMConversation> UTencentIMLibrary::ToTIMConversationArray(const V2TIMVConversationVector& dsada)
 {
-	TArray<FV2TIMConversation> dsadsa;
+	TArray<FTIMConversation> dsadsa;
 	for (int i=0;i<dsada.Size();i++)
 	{
 		dsadsa.Add(ToConversation(dsada[i]));
 	}
 	return dsadsa;
 }
-FV2TIMConversation UTencentIMLibrary::ToConversation(V2TIMConversation sddsa)
+FTIMConversation UTencentIMLibrary::ToConversation(V2TIMConversation sddsa)
 {
 	//todo
-	return FV2TIMConversation();
+	return FTIMConversation();
 }
 
-V2TIMConversation UTencentIMLibrary::ToTIMConversation(FV2TIMConversation sddsa)
+V2TIMConversation UTencentIMLibrary::ToTIMConversation(FTIMConversation sddsa)
 {
 	//todo
 	return V2TIMConversation();

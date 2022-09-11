@@ -629,7 +629,7 @@ public:
 		count	分页拉取的个数，一次分页拉取不宜太多，会影响拉取的速度，建议每次拉取 100 个会话 
 		*/
 		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-		static void GetConversationList(const FString& nextSeq, int32 count, FMV2TIMConversationResultCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
+		static void GetConversationList(const FString& nextSeq, int32 count, FMTIMConversationResultCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 
 		/* 
 		1.4 获取单个会话
@@ -922,14 +922,14 @@ public:
 public:
 	//------------
 	//Base function
-	static FV2TIMConversationResult ToTIMConversationResult(const V2TIMConversationResult& saldj);
-	static V2TIMVConversationVector ToV2TIMVConversationVector(const TArray<FV2TIMConversation>& dsada);
+	static FTIMConversationResult ToTIMConversationResult(const V2TIMConversationResult& saldj);
+	static V2TIMVConversationVector ToV2TIMVConversationVector(const TArray<FTIMConversation>& dsada);
 	
-	static TArray<FV2TIMConversation> ToTIMConversationArray(const V2TIMVConversationVector& dsada);
+	static TArray<FTIMConversation> ToTIMConversationArray(const V2TIMVConversationVector& dsada);
 	
-	static V2TIMConversation ToTIMConversation(FV2TIMConversation sddsa);
+	static V2TIMConversation ToTIMConversation(FTIMConversation sddsa);
 	
-	static FV2TIMConversation ToConversation(V2TIMConversation sddsa);
+	static FTIMConversation ToConversation(V2TIMConversation sddsa);
 	
 	static V2TIMString ToIMString(const FString& InStr);
 
