@@ -741,7 +741,7 @@ public:
 	// 	接口返回本地存储的用户资料，可以根据 V2TIMFriendInfoResult 中的 getRelation 来判断是否为好友。
 	// 	该功能为 IM 旗舰版功能，购买旗舰版套餐包后可使用，详见价格说明 
 	// 	*/
-<<<<<<< HEAD
+
 		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
 		//static void SearchFriends(const V2TIMFriendSearchParam& searchParam, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
 		static void SearchFriends(const FTIMFriendSearchParam& searchParam, FTIMFriendInfoResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
@@ -782,93 +782,6 @@ public:
 		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
 		static void CheckFriend(const TArray<FString>& userIDList, ETIMFriendType checkType, FTIMFriendCheckResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 	
-	
-		/* 
-		3.1 获取好友申请列表
-	
-		注意
-		好友申请列表包括发起的好友申请和收到的好友申请。
-		 */
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		static void GetFriendApplicationList(V2TIMValueCallback<V2TIMFriendApplicationResult>* callback);
-	
-	
-		/* 
-		3.2 同意好友申请
-	
-		参数
-		application	好友申请信息，getFriendApplicationList 成功后会返回
-		acceptType	建立单向/双向好友关系 
-		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void AcceptFriendApplication(const V2TIMFriendApplication& application, V2TIMFriendAcceptType acceptType, V2TIMValueCallback<V2TIMFriendOperationResult>* callback);
-	
-	
-		/* 
-		3.3 拒绝好友申请
-	
-		参数
-		application	好友申请信息，getFriendApplicationList 成功后会返回 
-		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void RefuseFriendApplication(const V2TIMFriendApplication& application, V2TIMValueCallback<V2TIMFriendOperationResult>* callback);
-	
-	
-		/* 
-		3.4 删除好友申请
-	
-		参数
-		application	好友申请信息，getFriendApplicationList 成功后会返回
-		 */
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void DeleteFriendApplication(const V2TIMFriendApplication& application, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	
-	
-		/* 
-		3.5 设置好友申请已读 
-		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void SetFriendApplicationRead(V2TIMCallback* callback);
-	
-=======
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void SearchFriends(const FTIMFriendSearchParam& searchParam, FTIMFriendInfoResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-
-	/* 
-	2.5 添加好友
-	 */
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void AddFriend(const FTIMFriendAddApplication& application, FTIMFriendOperationResulCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-
-
-	/* 
-	2.6 删除好友
-
-	参数
-	userIDList	要删除的好友 userID 列表
-	ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
-	deleteType	删除类型（单向好友、双向好友）
-	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void DeleteFromFriendList(const TArray<FString>& userIDList, ETIMFriendType deleteType, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-
-
-	/* 
-	2.7 检查指定用户的好友关系
-
-	参数
-	userIDList	要检查的 userID 列表
-	checkType	检查类型 （单向好友检查、双向好友检查）
-	succ	成功后的回调
-	fail	失败后的回调
-	注意
-	checkType 的使用需要注意：
-	checkType 如果传入 V2TIM_FRIEND_TYPE_SINGLE，结果返回：V2TIM_FRIEND_RELATION_TYPE_NONE、V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST 两种情况
-	checkType 如果传入 V2TIM_FRIEND_TYPE_BOTH，结果返回：V2TIM_FRIEND_RELATION_TYPE_NONE、V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST、 V2TIM_FRIEND_RELATION_TYPE_IN_OTHER_FRIEND_LIST、V2TIM_FRIEND_RELATION_TYPE_BOTH_WAY 四种情况 
-	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void CheckFriend(const TArray<FString>& userIDList, ETIMFriendType checkType, FTIMFriendCheckResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-
 
 	/* 
 	3.1 获取好友申请列表
@@ -916,9 +829,7 @@ public:
 	*/
 	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
 	// static void SetFriendApplicationRead(V2TIMCallback* callback);
-
-	// >>>>>>> 75dc2fc362a4ff75e8a1e5502732904fa3c6dd27
->>>>>>> 1cacd27632339ea2d54c0595dd8d6f05b2bc1868
+	
 	//
 	// 	/* 
 	// 	4.1 添加用户到黑名单 

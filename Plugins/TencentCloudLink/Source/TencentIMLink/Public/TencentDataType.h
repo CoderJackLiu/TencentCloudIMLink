@@ -1145,6 +1145,7 @@ struct TENCENTIMLINK_API FTIMFriendCheckResult
 UENUM(BlueprintType)
 enum class ETIMFriendApplicationType:uint8
 {
+	None=0,
 	/// 别人发给我的
 	V2TIM_FRIEND_APPLICATION_COME_IN = 1,
 	/// 我发给别人的
