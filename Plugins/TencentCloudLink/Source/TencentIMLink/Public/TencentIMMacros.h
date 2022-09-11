@@ -121,6 +121,64 @@ Func##_TIMFriendInfoVectorDelegate.ExecuteIfBound(FriendInfo);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendInfoResultVectorCallback, const TArray<FTIMFriendInfoResult>& , FriendInfoResult);
+//todo success message 
+#define DECLARATION_TIMFriendInfoResultVector_DELEGATE(Func) \
+FTIMFriendInfoResultVectorCallback Func##_TIMFriendInfoResultVectorDelegate; \
+void Func##_Local93(const TArray<FTIMFriendInfoResult>& FriendInfoResult) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([FriendInfoResult]()\
+{\
+Func##_TIMFriendInfoResultVectorDelegate.ExecuteIfBound(FriendInfoResult);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendOperationResulCallback, const FTIMFriendOperationResult& , FriendOperationResult);
+//todo success message 
+#define DECLARATION_TIMFriendOperationResul_DELEGATE(Func) \
+FTIMFriendOperationResulCallback Func##_TIMFriendOperationResulDelegate; \
+void Func##_Local93(const FTIMFriendOperationResult& FriendOperationResult) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([FriendOperationResult]()\
+{\
+Func##_TIMFriendOperationResulDelegate.ExecuteIfBound(FriendOperationResult);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendOperationResultVectorCallback, const TArray<FTIMFriendOperationResult>& , FriendOperationResult);
+//todo success message 
+#define DECLARATION_TIMFriendOperationResultVector_DELEGATE(Func) \
+FTIMFriendOperationResultVectorCallback Func##_TIMFriendOperationResultVectorDelegate; \
+void Func##_Local122(const TArray<FTIMFriendOperationResult>& FriendOperationResult) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([FriendOperationResult]()\
+{\
+Func##_TIMFriendOperationResultVectorDelegate.ExecuteIfBound(FriendOperationResult);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+ DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendCheckResultVectorCallback, const TArray<FTIMFriendCheckResult>& , FriendCheckResult);
+// //todo success message 
+ #define DECLARATION_TIMFriendCheckResultVector_DELEGATE(Func) \
+FTIMFriendCheckResultVectorCallback Func##_TIMFriendCheckResultVectorDelegate; \
+void Func##_Local93(const TArray<FTIMFriendCheckResult>& FriendCheckResult) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([FriendCheckResult]()\
+{\
+Func##_TIMFriendCheckResultVectorDelegate.ExecuteIfBound(FriendCheckResult);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMMessageInfoCallback, const FTIMMessage& , Message);
 
 //failure

@@ -965,6 +965,7 @@ struct TENCENTIMLINK_API FTIMFriendInfo
 	FString modifyFlag;
 };
 
+
 /// 群成员基本资料
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -1017,6 +1018,130 @@ struct TENCENTIMLINK_API FTIMGroupMemberFullInfo : public FTIMGroupMemberInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
 	int64 modifyFlag;
 };
+
+
+/// 好友关系类型
+UENUM(BlueprintType)
+enum class ETIMFriendRelationType:uint8
+{
+	/// 不是好友
+	V2TIM_FRIEND_RELATION_TYPE_NONE = 0x0,
+	/// 对方在我的好友列表中
+	V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST = 0x1,
+	/// 我在对方的好友列表中
+	V2TIM_FRIEND_RELATION_TYPE_IN_OTHER_FRIEND_LIST = 0x2,
+	/// 互为好友
+	V2TIM_FRIEND_RELATION_TYPE_BOTH_WAY = 0x3,
+};
+
+/// 好友资料获取结果
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMFriendInfoResult
+{
+	GENERATED_BODY()
+	/// 返回码
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendInfoResult)
+	int32 resultCode;
+	/// 返结果表述
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendInfoResult)
+	FString resultInfo;
+	/// 好友类型
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendInfoResult)
+	ETIMFriendRelationType relation;
+	/// 好友个人资料，如果不是好友，除了 userID 字段，其他字段都为空
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendInfoResult)
+	FTIMFriendInfo friendInfo;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMFriendSearchParam
+{
+	GENERATED_BODY()
+	/// 搜索的关键字列表，关键字列表最多支持 5 个
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendSearchParam)
+	TArray<FString> keywordList;
+	/// 设置是否搜索 userID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendSearchParam)
+	bool isSearchUserID;
+	/// 是否设置搜索昵称
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendSearchParam)
+	bool isSearchNickName;
+	/// 是否设置搜索备注
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendSearchParam)
+	bool isSearchRemark;
+};
+
+/// 好友类型
+UENUM(BlueprintType)
+enum class ETIMFriendType:uint8
+{
+	None=0,
+	/// 单向好友
+	V2TIM_FRIEND_TYPE_SINGLE = 1,
+	/// 双向好友
+	V2TIM_FRIEND_TYPE_BOTH = 2,
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMFriendAddApplication
+{
+	GENERATED_BODY()
+	/// 用户 userID（必填）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	FString userID;
+	/// 备注（备注最大96字节）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	FString friendRemark;
+	/// 预分组名（最大96字节）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	FString friendGroup;
+	/// 请求说明（最大120字节）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	FString addWording;
+	/// 添加来源
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	FString addSource;
+	/// 加好友方式
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	ETIMFriendType addType;
+};
+
+/// 好友操作结果（添加、删除、加黑名单、添加分组等）
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMFriendOperationResult
+{
+	GENERATED_BODY()
+	/// 用户Id
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	FString userID;
+	/// 返回码
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	int32 resultCode;
+	/// 返回信息
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	FString resultInfo;
+};
+
+/// 好友关系链检查结果
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMFriendCheckResult
+{
+	GENERATED_BODY()
+	/// 用户id
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	FString userID;
+	/// 返回码
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	int32 resultCode;
+	/// 返回信息
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	FString resultInfo;
+	/// 检查结果
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	ETIMFriendRelationType relationType;
+};
+
+
 
 /**
  * 
