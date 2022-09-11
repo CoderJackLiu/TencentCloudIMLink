@@ -670,8 +670,8 @@ public:
 	// 	conversationID	会话唯一 ID，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
 	// 	只在本地保存，不会存储 Server，不能多端同步，程序卸载重装会失效。 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	// 	static void SetConversationDraft(const FString& conversationID, const FString& draftText, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	 	static void SetConversationDraft(const FString& conversationID, const FString& draftText, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	// 		//void SetConversationCustomData(const TArray<FString>& conversationIDList, const V2TIMBuffer& customData, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 	//
@@ -683,8 +683,8 @@ public:
 	// 	conversationID	会话唯一 ID，C2C 单聊组成方式：[NSString stringWithFormat:"c2c_%",userID]；群聊组成方式为 [NSString stringWithFormat:"group_%",groupID]
 	// 	isPinned	是否置顶 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	// 	static void PinConversation(const FString& conversationID, bool isPinned, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	 	static void PinConversation(const FString& conversationID, bool isPinned, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	// 		//void MarkConversation(const TArray<FString>& conversationIDList, uint64_t markType, bool enableMark, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 	//
@@ -695,8 +695,9 @@ public:
 	// 	注意
 	// 	未读总数会减去设置为免打扰的会话的未读数，即消息接收选项设置为 V2TIMMessage.V2TIM_NOT_RECEIVE_MESSAGE 或 V2TIMMessage.V2TIM_RECEIVE_NOT_NOTIFY_MESSAGE 的会话。 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	// 	static void GetTotalUnreadMessageCount(V2TIMValueCallback<uint64_t>* callback);
+	 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+			//static void GetTotalUnreadMessageCount(V2TIMValueCallback<uint64_t>* callback);
+	 	static void GetTotalUnreadMessageCount(FTIMuint64Callback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	// 		//void CreateConversationGroup(const FString& groupName, const TArray<FString>& conversationIDList, V2TIMValueCallback<V2TIMConversationOperationResultVector>* callback);
 	//
@@ -729,8 +730,8 @@ public:
 		/* 
 		2.1 获取好友列表 
 		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void GetFriendList(V2TIMValueCallback<V2TIMFriendInfoVector>* callback);
+		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+		static void GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 	
 	
 		/* 
@@ -740,8 +741,8 @@ public:
 		userIDList	好友 userID 列表
 		ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
 		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void GetFriendsInfo(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
+		//UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+		//static void GetFriendsInfo(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
 	
 	
 		/* 
@@ -926,6 +927,10 @@ public:
 	static TArray<FTIMConversation> ToTIMConversationArray(const V2TIMVConversationVector& ConversationVector);
 	static V2TIMConversation ToTIMConversation(FTIMConversation Conversation);
 	static FTIMConversation ToConversation(V2TIMConversation Conversation);
+
+	static TArray<FTIMFriendInfo> ToFriendInfoArray(const V2TIMFriendInfoVector& Info);
+	
+	static FTIMFriendInfo ToFriendInfo(const V2TIMFriendInfo& Info);
 	
 	static V2TIMString ToIMString(const FString& InStr);
 
@@ -933,6 +938,8 @@ public:
 
 	static V2TIMStringVector ToIMStringArray(TArray<FString> InStrArray);
 
+	static TArray<FString> ToIArrayString(V2TIMStringVector TIMStringVector);
+	
 	static ELoginStatus ToTIMLoginStatus(const V2TIMLoginStatus& Status);
 
 	static V2TIMMessagePriority GetMessagePriority(EIMMessagePriority InPriority);
@@ -947,6 +954,14 @@ public:
 
 	static V2TIMFriendAllowType ToV2TIMAllowType(const ETIMFriendAllowType& AllowType);
 
+	static TMap<FString, FBuffer> ToTIMCustomInfo_(V2TIMCustomInfo CustomInfo);
+
+	static FBuffer ToBuffer(V2TIMBuffer TIMBuffer);
+	
+	static V2TIMBuffer ToTIMBuffer(FBuffer TIMBuffer);
+	
+	static V2TIMCustomInfo ToV2TIMCustomInfo(TMap<FString, FBuffer> CustomInfo);
+	
 	static TMap<FString, V2TIMBuffer> ToTIMCustomInfo(V2TIMCustomInfo CustomInfo);
 
 	static V2TIMCustomInfo ToV2TIMCustomInfo(TMap<FString, V2TIMBuffer> CustomInfo);

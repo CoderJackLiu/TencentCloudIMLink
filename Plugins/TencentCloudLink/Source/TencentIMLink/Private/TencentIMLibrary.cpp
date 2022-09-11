@@ -1134,6 +1134,7 @@ FTIMConversation UTencentIMLibrary::ToConversation(V2TIMConversation Conversatio
 	return FTIMConversation();
 }
 
+
 V2TIMConversation UTencentIMLibrary::ToTIMConversation(FTIMConversation Conversation)
 {
 	//todo
@@ -1248,6 +1249,169 @@ void UTencentIMLibrary::DeleteConversation(const FString& conversationID, FIMCal
 	Tencent_IM.GetInstance()->GetConversationManager()->DeleteConversation(ToIMString(conversationID), Callback);
 }
 
+DECLARATION_CALLBACK_DELEGATE(SetConversationDraft)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(SetConversationDraft)
+void UTencentIMLibrary::SetConversationDraft(const FString& conversationID, const FString& draftText, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	SetConversationDraft_FailureDelegate = OnFailureDelegate;
+	SetConversationDraft_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			DeleteConversation_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			DeleteConversation_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	Tencent_IM.GetInstance()->GetConversationManager()->SetConversationDraft(ToIMString(conversationID), ToIMString(draftText),Callback);
+}
+
+DECLARATION_CALLBACK_DELEGATE(PinConversation)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(PinConversation)
+void UTencentIMLibrary::PinConversation(const FString& conversationID, bool isPinned, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	PinConversation_FailureDelegate = OnFailureDelegate;
+	PinConversation_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			DeleteConversation_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			DeleteConversation_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	Tencent_IM.GetInstance()->GetConversationManager()->PinConversation(ToIMString(conversationID), isPinned,Callback);
+}
+
+DECLARATION_TIMuint64_DELEGATE(GetTotalUnreadMessageCount)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetTotalUnreadMessageCount)
+void UTencentIMLibrary::GetTotalUnreadMessageCount(FTIMuint64Callback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	GetTotalUnreadMessageCount_uint64Delegate = OnSuccessDelegate;
+	GetTotalUnreadMessageCount_FailureDelegate = OnFailureDelegate;
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<uint64_t>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const uint64_t& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetTotalUnreadMessageCount_uint64Delegate.ExecuteIfBound(message);
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			GetTotalUnreadMessageCount_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetConversationManager()->GetTotalUnreadMessageCount(CallBack);
+}
+
+DECLARATION_TIMFriendInfoVector_DELEGATE(GetFriendList)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetFriendList)
+void UTencentIMLibrary::GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	GetFriendList_TIMFriendInfoVectorDelegate = OnSuccessDelegate;
+	GetFriendList_FailureDelegate = OnFailureDelegate;
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendInfoVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMFriendInfoVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetFriendList_TIMFriendInfoVectorDelegate.ExecuteIfBound(ToFriendInfoArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			GetFriendList_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendList(CallBack);
+}
+
+TArray<FTIMFriendInfo> UTencentIMLibrary::ToFriendInfoArray(const V2TIMFriendInfoVector& Info)
+{
+	TArray<FTIMFriendInfo> Conversation;
+	for (int i=0;i<Info.Size();i++)
+	{
+		Conversation.Add(ToFriendInfo(Info[i]));
+	}
+	return Conversation;
+}
+
+FTIMFriendInfo UTencentIMLibrary::ToFriendInfo(const V2TIMFriendInfo& Info)
+{
+	FTIMFriendInfo info= FTIMFriendInfo();
+	info.userID=ToFString(Info.userID);
+	info.friendRemark=ToFString(Info.friendRemark);
+	info.friendCustomInfo=ToTIMCustomInfo_(Info.friendCustomInfo);
+	info.friendGroups= ToIArrayString(Info.friendGroups);
+	info.userFullInfo=ToTIMUserFullInfo(Info.userFullInfo);
+	info.modifyFlag=FString::Printf(TEXT("%lu"), Info.modifyFlag);
+	return info;
+}
 
 TArray<FTIMCreateGroupMemberInfo> UTencentIMLibrary::ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector)
 {
@@ -1300,6 +1464,17 @@ V2TIMStringVector UTencentIMLibrary::ToIMStringArray(TArray<FString> InStrArray)
 		StrVector.PushBack(ToIMString(Str));
 	}
 	return StrVector;
+}
+
+TArray<FString> UTencentIMLibrary::ToIArrayString(V2TIMStringVector TIMStringVector)
+{
+	TArray<FString> res;
+	for(int i=0;i<TIMStringVector.Size();i++)
+	{
+		res.Add(ToFString(TIMStringVector[i]));
+	}
+
+	return res;
 }
 
 ELoginStatus UTencentIMLibrary::ToTIMLoginStatus(const V2TIMLoginStatus& Status)
@@ -1433,6 +1608,45 @@ V2TIMFriendAllowType UTencentIMLibrary::ToV2TIMAllowType(const ETIMFriendAllowTy
 		return V2TIMFriendAllowType::V2TIM_FRIEND_NEED_CONFIRM;
 	}
 }
+
+FBuffer UTencentIMLibrary::ToBuffer(V2TIMBuffer TIMBuffer)
+{
+	FBuffer Buffer;
+	Buffer.Buffer.AddUninitialized(TIMBuffer.Size());
+	FMemory::Memcpy(Buffer.Buffer.GetData(),TIMBuffer.Data(),TIMBuffer.Size());
+	return Buffer;
+}
+
+V2TIMBuffer UTencentIMLibrary::ToTIMBuffer(FBuffer TIMBuffer)
+{
+	V2TIMBuffer Buffer(TIMBuffer.Buffer.GetData(),TIMBuffer.Buffer.Num());
+	return Buffer;
+}
+
+TMap<FString, FBuffer> UTencentIMLibrary::ToTIMCustomInfo_(V2TIMCustomInfo CustomInfo)
+{
+	TMap<FString, FBuffer> OutCustomInfo;
+	for (int32 i = 0; i < CustomInfo.AllKeys().Size(); i++)
+	{
+		V2TIMString Key = CustomInfo.AllKeys()[i];
+		OutCustomInfo.Add(ToFString(Key),ToBuffer(CustomInfo.Get(Key)));
+	}
+	return OutCustomInfo;
+}
+
+V2TIMCustomInfo UTencentIMLibrary::ToV2TIMCustomInfo(TMap<FString, FBuffer> CustomInfo)
+{
+	V2TIMCustomInfo OutCustomInfo;
+	TArray<FString> Keys;
+	CustomInfo.GetKeys(Keys);
+	for (int32 i = 0; i < Keys.Num(); i++)
+	{
+		FString Key = Keys[i];
+		OutCustomInfo.Insert(ToIMString(Key), ToTIMBuffer(CustomInfo.FindRef(Key)));
+	}
+	return OutCustomInfo;
+}
+
 
 TMap<FString, V2TIMBuffer> UTencentIMLibrary::ToTIMCustomInfo(V2TIMCustomInfo CustomInfo)
 {

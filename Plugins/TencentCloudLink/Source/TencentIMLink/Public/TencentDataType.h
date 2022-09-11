@@ -772,45 +772,6 @@ struct TENCENTIMLINK_API FTIMCreateGroupMemberInfo
 
 };
 
-// 好友资料
-USTRUCT(Blueprintable, BlueprintType)
-struct TENCENTIMLINK_API FTIMFriendInfo
-{
-	GENERATED_BODY()
-
-	/// 好友 ID
-	V2TIMString userID;
-	/// 好友备注
-	/// 备注长度最长不得超过 96 个字节;
-	/// 字段描述详见
-	/// [控制台](https://cloud.tencent.com/document/product/269/1501#.E6.A0.87.E9.85.8D.E5.A5.BD.E5.8F.8B.E5.AD.97.E6.AE.B5)。
-	V2TIMString friendRemark;
-	/// 好友自定义字段
-	/// 首先要在 [控制台](https://console.cloud.tencent.com/im) (功能配置 -> 好友自定义字段)
-	/// 配置好友自定义字段，然后再调用该接口进行设置，key 值不需要加 Tag_SNS_Custom_ 前缀。
-	V2TIMCustomInfo friendCustomInfo;
-	/// 好友所在分组列表
-	/// - 最多支持 32 个分组；
-	/// - 不允许分组名为空；
-	/// - 分组名长度不得超过 30 个字节；
-	/// - 同一个好友可以有多个不同的分组。
-	/// - 字段描述详见
-	/// [控制台](https://cloud.tencent.com/document/product/269/1501#.E6.A0.87.E9.85.8D.E5.A5.BD.E5.8F.8B.E5.AD.97.E6.AE.B5)。
-	V2TIMStringVector friendGroups;
-	/// 好友个人资料
-	V2TIMUserFullInfo userFullInfo;
-	// 用户资料修改标记位
-	// 枚举 V2TIMFriendInfoModifyFlag 列出哪些字段支持修改，如果您修改好友资料，请设置这个字段值
-	// 支持同时修改多个字段，多个枚举值按位或 | 组合，例如，同时修改好友备注和好友自定义字段
-	// info.friendRemark = "new friend remark";
-	// info.friendCustomInfo = friendCustomInfo;
-	// info.modifyFlag = V2TIM_FRIEND_INFO_MODIFY_FLAG_REMARK | V2TIM_FRIEND_INFO_MODIFY_FLAG_CUSTOM;
-	uint32_t modifyFlag;
-
-	// V2TIMFriendInfo();
-	// V2TIMFriendInfo(const V2TIMFriendInfo& friendInfo);
-	// ~V2TIMFriendInfo();
-};
 
 UENUM()
 enum class ETIMConversationType:uint8
@@ -944,6 +905,69 @@ struct TENCENTIMLINK_API FTIMConversationResult
 	// V2TIMConversationResult& operator=(const V2TIMConversationResult& conversationResult);
 };
 
+
+/// 用户基本资料
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMUserInfo
+{
+	GENERATED_BODY()
+	/// 用户 ID
+	FString userID;
+	/// 用户昵称
+	FString nickName;
+	/// 用户头像
+	FString faceURL;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FBuffer
+{
+	GENERATED_BODY()
+	TArray<uint8> Buffer;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMFriendInfo
+{
+	GENERATED_BODY()
+	/// 好友 ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	FString userID;
+	/// 好友备注
+	/// 备注长度最长不得超过 96 个字节;
+	/// 字段描述详见
+	/// [控制台](https://cloud.tencent.com/document/product/269/1501#.E6.A0.87.E9.85.8D.E5.A5.BD.E5.8F.8B.E5.AD.97.E6.AE.B5)。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	FString friendRemark;
+	/// 好友自定义字段
+	/// 首先要在 [控制台](https://console.cloud.tencent.com/im) (功能配置 -> 好友自定义字段)
+	/// 配置好友自定义字段，然后再调用该接口进行设置，key 值不需要加 Tag_SNS_Custom_ 前缀。
+	/// Map<V2TIMString, V2TIMBuffer>
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	TMap<FString,FBuffer> friendCustomInfo;
+	/// 好友所在分组列表
+	/// - 最多支持 32 个分组；
+	/// - 不允许分组名为空；
+	/// - 分组名长度不得超过 30 个字节；
+	/// - 同一个好友可以有多个不同的分组。
+	/// - 字段描述详见
+	/// [控制台](https://cloud.tencent.com/document/product/269/1501#.E6.A0.87.E9.85.8D.E5.A5.BD.E5.8F.8B.E5.AD.97.E6.AE.B5)。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	TArray<FString> friendGroups;
+	/// 好友个人资料
+	/// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	FTIMUserFullInfo userFullInfo;
+	// 用户资料修改标记位
+	// 枚举 V2TIMFriendInfoModifyFlag 列出哪些字段支持修改，如果您修改好友资料，请设置这个字段值
+	// 支持同时修改多个字段，多个枚举值按位或 | 组合，例如，同时修改好友备注和好友自定义字段
+	// info.friendRemark = "new friend remark";
+	// info.friendCustomInfo = friendCustomInfo;
+	// info.modifyFlag = V2TIM_FRIEND_INFO_MODIFY_FLAG_REMARK | V2TIM_FRIEND_INFO_MODIFY_FLAG_CUSTOM;
+	//uint32_t
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	FString modifyFlag;
+};
 
 /**
  * 
