@@ -741,15 +741,15 @@ public:
 		userIDList	好友 userID 列表
 		ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
 		*/
-		//UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
 		//static void GetFriendsInfo(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
-	
+		static void GetFriendsInfo(const TArray<FString>& userIDList, FTIMFriendInfoResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 	
 		/* 
 		2.3 设置指定好友资料 
 		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void SetFriendInfo(const V2TIMFriendInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+		static void SetFriendInfo(const FTIMFriendInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	
 	
 	// 	/* 
@@ -759,15 +759,16 @@ public:
 	// 	接口返回本地存储的用户资料，可以根据 V2TIMFriendInfoResult 中的 getRelation 来判断是否为好友。
 	// 	该功能为 IM 旗舰版功能，购买旗舰版套餐包后可使用，详见价格说明 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void SearchFriends(const V2TIMFriendSearchParam& searchParam, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
+		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+		//static void SearchFriends(const V2TIMFriendSearchParam& searchParam, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
+		static void SearchFriends(const FTIMFriendSearchParam& searchParam, FTIMFriendInfoResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 	//
 	//
 		/* 
 		2.5 添加好友
 		 */
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void AddFriend(const V2TIMFriendAddApplication& application, V2TIMValueCallback<V2TIMFriendOperationResult>* callback);
+		 UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+		 static void AddFriend(const FTIMFriendAddApplication& application, FTIMFriendOperationResulCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 	
 	
 		/* 
@@ -778,8 +779,8 @@ public:
 		ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
 		deleteType	删除类型（单向好友、双向好友）
 		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void DeleteFromFriendList(const TArray<FString>& userIDList, V2TIMFriendType deleteType, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+		static void DeleteFromFriendList(const TArray<FString>& userIDList, ETIMFriendType deleteType, FTIMFriendOperationResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 	
 	
 		/* 
@@ -795,8 +796,8 @@ public:
 		checkType 如果传入 V2TIM_FRIEND_TYPE_SINGLE，结果返回：V2TIM_FRIEND_RELATION_TYPE_NONE、V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST 两种情况
 		checkType 如果传入 V2TIM_FRIEND_TYPE_BOTH，结果返回：V2TIM_FRIEND_RELATION_TYPE_NONE、V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST、 V2TIM_FRIEND_RELATION_TYPE_IN_OTHER_FRIEND_LIST、V2TIM_FRIEND_RELATION_TYPE_BOTH_WAY 四种情况 
 		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		// static void CheckFriend(const TArray<FString>& userIDList, V2TIMFriendType checkType, V2TIMValueCallback<V2TIMFriendCheckResultVector>* callback);
+		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+		static void CheckFriend(const TArray<FString>& userIDList, ETIMFriendType checkType, FTIMFriendCheckResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 	
 	
 		/* 
@@ -929,8 +930,30 @@ public:
 	static FTIMConversation ToConversation(V2TIMConversation Conversation);
 
 	static TArray<FTIMFriendInfo> ToFriendInfoArray(const V2TIMFriendInfoVector& Info);
+
+	static TArray<FTIMFriendInfoResult> ToFriendInfoResultArray(const V2TIMFriendInfoResultVector& FriendInfoResultVector);
+	static FTIMFriendInfoResult ToFriendInforResult(const V2TIMFriendInfoResult& FriendInfoResult);
 	
 	static FTIMFriendInfo ToFriendInfo(const V2TIMFriendInfo& Info);
+	static V2TIMFriendInfo ToTIMFriendInfo(const FTIMFriendInfo& Info);
+
+	static V2TIMFriendSearchParam ToTIMFriendSearchParam(const FTIMFriendSearchParam& FriendSearchParam);
+
+	static FTIMFriendOperationResult ToFriendOperationResult(const V2TIMFriendOperationResult& FriendOperationResult);
+
+	static V2TIMFriendType ToTIMFriendType(ETIMFriendType Type);
+	
+	static V2TIMFriendAddApplication ToTIMFriendAddApplication(const FTIMFriendAddApplication& FriendAddApplication);
+
+	static TArray<FTIMFriendOperationResult>  ToTIMFriendOperationResultArray(const V2TIMFriendOperationResultVector& TIMFriendOperationResultVector);
+
+	static TArray<FTIMFriendCheckResult> ToTIMFriendCheckResultArray(const V2TIMFriendCheckResultVector& TIMFriendCheckResultVector);
+	
+	static V2TIMFriendCheckResultVector ToV2TIMFriendCheckResultVector(const TArray<FTIMFriendCheckResult>& TIMFriendCheckResult);
+	static V2TIMFriendCheckResult ToV2TIMFriendCheckResult(const FTIMFriendCheckResult& FriendCheckResult);
+	static FTIMFriendCheckResult ToFTIMFriendCheckResult(const V2TIMFriendCheckResult& FriendCheckResult);
+
+	static ETIMFriendRelationType ToFTIMFriendRelationType(const V2TIMFriendRelationType& Type);
 	
 	static V2TIMString ToIMString(const FString& InStr);
 
