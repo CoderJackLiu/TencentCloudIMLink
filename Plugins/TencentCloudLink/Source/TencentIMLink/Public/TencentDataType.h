@@ -812,6 +812,149 @@ struct TENCENTIMLINK_API FTIMFriendInfo
 	// ~V2TIMFriendInfo();
 };
 
+UENUM()
+enum class EV2TIMConversationType:uint8
+{
+	///< 单聊
+	V2TIM_C2C = 1,
+	///< 群聊
+	V2TIM_GROUP = 2,
+};
+
+/// @ 类型
+UENUM()
+enum class EV2TIMGroupAtType:uint8
+{
+	///< @ 我
+	V2TIM_AT_ME = 1,
+	///< @ 群里所有人
+	V2TIM_AT_ALL = 2,
+	///< @ 群里所有人并且单独 @ 我
+	V2TIM_AT_ALL_AT_ME = 3,
+};
+
+UENUM()
+enum class EV2TIMReceiveMessageOpt:uint8
+{
+	///< 在线正常接收消息，离线时会进行 APNs 推送
+	V2TIM_RECEIVE_MESSAGE = 0,
+	///< 不会接收到消息，离线不会有推送通知
+	V2TIM_NOT_RECEIVE_MESSAGE = 1,
+	///< 在线正常接收消息，离线不会有推送通知
+	V2TIM_RECEIVE_NOT_NOTIFY_MESSAGE = 2,
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TIM_API FV2TIMGroupAtInfo
+{
+	GENERATED_BODY()
+	/// 消息序列号，即带有 “@我” 或者 “@所有人” 标记的消息的序列号
+	/// uint64_t
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString seq;
+	/// @ 提醒类型，分成 “@我” 、“@所有人” 以及 “@我并@所有人” 三类
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	EV2TIMGroupAtType atType;
+
+	// V2TIMGroupAtInfo();
+	// V2TIMGroupAtInfo(const V2TIMGroupAtInfo& groupAtInfo);
+	// V2TIMGroupAtInfo& operator=(const V2TIMGroupAtInfo& conversation);
+	// ~V2TIMGroupAtInfo();
+};
+
+
+/// 会话对象
+USTRUCT(Blueprintable, BlueprintType)
+struct TIM_API FV2TIMConversation
+{
+	GENERATED_BODY()
+	/// 会话类型
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMConversation)
+	EV2TIMConversationType type;
+	/// 会话唯一 ID，如果是 C2C 单聊，组成方式为 c2c_userID，如果是群聊，组成方式为 group_groupID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString conversationID;
+	/// 如果会话类型为 C2C 单聊，userID 会存储对方的用户ID，否则为空字符串
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString userID;
+	/// 如果会话类型为群聊，groupID 会存储当前群的群 ID，否则为空字符串
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString groupID;
+	/// 如果会话类型为群聊，groupType 为当前群类型，否则为空字符串
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString groupType;
+	/// 会话展示名称（群组：群名称 >> 群 ID；C2C：对方好友备注 >> 对方昵称 >> 对方的 userID）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString showName;
+	/// 会话展示头像（群组：群头像；C2C：对方头像）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString faceUrl;
+	/// 会话未读消息数量,直播群（AVChatRoom）不支持未读计数，默认为 0
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	int32 unreadCount;
+	/// 消息接收选项（接收 | 接收但不提醒 | 不接收）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	EV2TIMReceiveMessageOpt recvOpt;
+	/// 会话最后一条消息，如果会话没有消息，lastMessage 字段为 NULL
+	/// 5.5.892 以前版本，请您使用 lastMessage -> timestamp 对会话做排序，timestamp 越大，会话越靠前
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FTIMMessage lastMessage;
+	/// 群会话 @ 信息列表，用于展示 “有人@我” 或 “@所有人” 这两种提醒状态
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	TArray<FV2TIMGroupAtInfo> groupAtInfolist;
+
+	/// 草稿信息，设置草稿信息请调用 SetConversationDraft() 接口
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString draftText;
+
+	/// 草稿编辑时间，草稿设置的时候自动生成   uint64_t
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString draftTimestamp;
+
+	/// 是否置顶
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	bool isPinned;
+
+	// 排序字段（5.5.892 及以后版本支持）
+	// @note
+	// - 排序字段 orderKey
+	// 是按照会话的激活时间线性递增的一个数字（注意：不是时间戳，因为同一时刻可能会有多个会话被同时激活）
+	// - 5.5.892 及其以后版本，推荐您使用该字段对所有会话进行排序，orderKey
+	// 值越大，代表该会话排序越靠前
+	// - 当您 “清空会话所有消息” 或者 “逐个删除会话的所有消息” 之后，会话的 lastMessage
+	// 变为空，但会话的 orderKey
+	// 不会改变；如果想保持会话的排序位置不变，可以使用该字段对所有会话进行排序
+	//uint64_t
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString orderKey;
+
+	// V2TIMConversation();
+	// V2TIMConversation(const V2TIMConversation& conversation);
+	// V2TIMConversation& operator=(const V2TIMConversation& conversation);
+	// ~V2TIMConversation();
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FV2TIMConversationResult
+{
+	GENERATED_BODY()
+	/// 获取下一次分页拉取的游标   uint64_t
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString nextSeq;
+	/// 会话列表是否已经拉取完毕
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	bool isFinished;
+	/// 获取会话列表
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	TArray<FV2TIMConversation> conversationList;
+
+	// V2TIMConversationResult();
+	// V2TIMConversationResult(const V2TIMConversationResult& conversationResult);
+	// ~V2TIMConversationResult();
+	// V2TIMConversationResult& operator=(const V2TIMConversationResult& conversationResult);
+};
+
+
 /**
  * 
  */

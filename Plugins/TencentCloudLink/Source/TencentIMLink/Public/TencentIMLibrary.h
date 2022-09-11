@@ -628,8 +628,8 @@ public:
 		nextSeq	分页拉取的游标，第一次默认取传 0，后续分页拉传上一次分页拉取成功回调里的 nextSeq
 		count	分页拉取的个数，一次分页拉取不宜太多，会影响拉取的速度，建议每次拉取 100 个会话 
 		*/
-		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	//	static void GetConversationList(FString nextSeq, int32 count, V2TIMValueCallback<V2TIMConversationResult>* callback);
+		 UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+		static void GetConversationList(FString nextSeq, int32 count, FMV2TIMConversationResultCallback callback,FIMFailureCallback faile);
 	
 	
 		/* 
@@ -923,6 +923,15 @@ public:
 public:
 	//------------
 	//Base function
+	static FV2TIMConversationResult ToTIMConversationResult(const V2TIMConversationResult& saldj);
+	static V2TIMVConversationVector ToV2TIMVConversationVector(const TArray<FV2TIMConversation>& dsada);
+	
+	static TArray<FV2TIMConversation>& ToTIMConversationArray(const V2TIMVConversationVector& dsada);
+	
+	static V2TIMConversation ToTIMConversation(FV2TIMConversation sddsa);
+	
+	static FV2TIMConversation ToConversation(V2TIMConversation sddsa);
+	
 	static V2TIMString ToIMString(const FString& InStr);
 
 	static FString ToFString(const V2TIMString& InStr);
@@ -1011,3 +1020,5 @@ public:
 	
 	
 };
+
+

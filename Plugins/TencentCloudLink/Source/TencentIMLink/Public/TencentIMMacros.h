@@ -28,6 +28,8 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FIMGroupMessageInfoCallback, const TArray<FTIM
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FMessageSearchResultCallback, const FTIMMessageSearchResult& , Result);
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FMV2TIMConversationResultCallback, const FV2TIMConversationResult& , Result);
+
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMMessageInfoCallback, const FTIMMessage& , Message);
 
 //failure
@@ -104,6 +106,20 @@ Func##_MessageDelegate.ExecuteIfBound(Message);\
 }, TStatId(), nullptr, ENamedThreads::GameThread);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
+
+#define DECLARATION_ConversationRst_DELEGATE(Func) \
+FMV2TIMConversationResultCallback Func##_CsRstDelegate; \
+void Func##_Local(const FV2TIMConversationResult& Result) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Result]()\
+{\
+Func##_CsRstDelegate.ExecuteIfBound(Result);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+
 
 #define DECLARATION_MessageSearchResultCALLBACK_DELEGATE(Func) \
 FMessageSearchResultCallback Func##_MsgSearchReaultDelegate; \

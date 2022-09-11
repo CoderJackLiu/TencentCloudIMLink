@@ -1063,6 +1063,84 @@ V2TIMGroupInfoVector UTencentIMLibrary::ToTIMGroupInfoVector(const TArray<FTIMGr
 	return V2TIMGroupInfoVector();
 }
 
+DECLARATION_ConversationRst_DELEGATE(GetConversationList)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversationList)
+void UTencentIMLibrary::GetConversationList(FString nextSeq, int32 count, FMV2TIMConversationResultCallback callback, FIMFailureCallback faile)
+{
+	GetConversationList_CsRstDelegate = callback;
+	GetConversationList_FailureDelegate = faile;
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<V2TIMConversationResult>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMConversationResult& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetConversationList_CsRstDelegate.ExecuteIfBound(ToTIMConversationResult(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			GetConversationList_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(FCString::Strtoui64(*nextSeq, NULL, 10),count,CallBack);
+}
+
+FV2TIMConversationResult UTencentIMLibrary::ToTIMConversationResult(const V2TIMConversationResult& saldj)
+{
+	FV2TIMConversationResult Temp=FV2TIMConversationResult();
+	Temp.conversationList=ToTIMConversationArray(saldj.conversationList);
+	Temp.isFinished=saldj.isFinished;
+	Temp.nextSeq=FString::Printf(TEXT("%llu"), saldj.nextSeq);
+	return Temp;
+}
+
+V2TIMVConversationVector UTencentIMLibrary::ToV2TIMVConversationVector(const TArray<FV2TIMConversation>& dsada)
+{
+	V2TIMVConversationVector dasdsa=V2TIMVConversationVector();
+	for (FV2TIMConversation Dsada : dsada)
+	{
+		dasdsa.PushBack(ToTIMConversation(Dsada));
+	}
+	return dasdsa;
+}
+
+TArray<FV2TIMConversation>& UTencentIMLibrary::ToTIMConversationArray(const V2TIMVConversationVector& dsada)
+{
+	TArray<FV2TIMConversation> dsadsa;
+	for (int i=0;i<dsada.Size();i++)
+	{
+		dsadsa.Add(ToConversation(dsada[i]));
+	}
+	return dsadsa;
+}
+FV2TIMConversation UTencentIMLibrary::ToConversation(V2TIMConversation sddsa)
+{
+	//todo
+	return FV2TIMConversation();
+}
+
+V2TIMConversation UTencentIMLibrary::ToTIMConversation(FV2TIMConversation sddsa)
+{
+	//todo
+	return V2TIMConversation();
+}
+
+
 
 TArray<FTIMCreateGroupMemberInfo> UTencentIMLibrary::ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector)
 {
@@ -1072,6 +1150,7 @@ TArray<FTIMCreateGroupMemberInfo> UTencentIMLibrary::ToGroupMemberInfoArray(cons
 
 V2TIMCreateGroupMemberInfoVector UTencentIMLibrary::ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector)
 {
+
 	//todo finish
 	return V2TIMCreateGroupMemberInfoVector();
 }
@@ -1079,16 +1158,21 @@ V2TIMCreateGroupMemberInfoVector UTencentIMLibrary::ToCreateGroupMemberInfoVecto
 
 FTIMGroupInfo UTencentIMLibrary::ToGroupInfo(const V2TIMGroupInfo& GroupInfo)
 {
+	
 	return FTIMGroupInfo();
 }
 
 V2TIMGroupInfo UTencentIMLibrary::ToTIMGroupInfo(const FTIMGroupInfo& GroupInfo)
 {
+	
 	return V2TIMGroupInfo();
 }
 
 //------------------------------------------------------
 //base convert function
+
+
+
 V2TIMString UTencentIMLibrary::ToIMString(const FString& InStr)
 {
 	const char* OutIMString = TCHAR_TO_ANSI(*InStr);

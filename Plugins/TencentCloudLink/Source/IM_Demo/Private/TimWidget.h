@@ -69,7 +69,7 @@ public:
 	UScrollBox* sbMessageList;
 
 	UPROPERTY(VisibleAnywhere)
-	FString UserId="john";
+	FString UserId="GoGoGo";
 
 
 };
