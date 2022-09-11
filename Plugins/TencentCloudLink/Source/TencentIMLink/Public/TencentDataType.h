@@ -845,7 +845,7 @@ enum class EV2TIMReceiveMessageOpt:uint8
 };
 
 USTRUCT(Blueprintable, BlueprintType)
-struct TIM_API FV2TIMGroupAtInfo
+struct TENCENTIMLINK_API FV2TIMGroupAtInfo
 {
 	GENERATED_BODY()
 	/// 消息序列号，即带有 “@我” 或者 “@所有人” 标记的消息的序列号
@@ -865,7 +865,7 @@ struct TIM_API FV2TIMGroupAtInfo
 
 /// 会话对象
 USTRUCT(Blueprintable, BlueprintType)
-struct TIM_API FV2TIMConversation
+struct TENCENTIMLINK_API FV2TIMConversation
 {
 	GENERATED_BODY()
 	/// 会话类型

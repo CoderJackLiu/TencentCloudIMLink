@@ -26,11 +26,6 @@
 				"Mac",
 				"Linux"
 			]
-		},
-		{
-			"Name": "SimpleOSS",
-			"Enabled": true,
-			"MarketplaceURL": "https://renzhai.net/79.html"
 		}
 	]
 }

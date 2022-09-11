@@ -1065,10 +1065,10 @@ V2TIMGroupInfoVector UTencentIMLibrary::ToTIMGroupInfoVector(const TArray<FTIMGr
 
 DECLARATION_ConversationRst_DELEGATE(GetConversationList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversationList)
-void UTencentIMLibrary::GetConversationList(FString nextSeq, int32 count, FMV2TIMConversationResultCallback callback, FIMFailureCallback faile)
+void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count, FMV2TIMConversationResultCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate)
 {
-	GetConversationList_CsRstDelegate = callback;
-	GetConversationList_FailureDelegate = faile;
+	GetConversationList_CsRstDelegate = OnSuccessDelegate;
+	GetConversationList_FailureDelegate = OnFailureDelegate;
 	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMConversationResult>
 	{
@@ -1119,7 +1119,7 @@ V2TIMVConversationVector UTencentIMLibrary::ToV2TIMVConversationVector(const TAr
 	return dasdsa;
 }
 
-TArray<FV2TIMConversation>& UTencentIMLibrary::ToTIMConversationArray(const V2TIMVConversationVector& dsada)
+TArray<FV2TIMConversation> UTencentIMLibrary::ToTIMConversationArray(const V2TIMVConversationVector& dsada)
 {
 	TArray<FV2TIMConversation> dsadsa;
 	for (int i=0;i<dsada.Size();i++)
