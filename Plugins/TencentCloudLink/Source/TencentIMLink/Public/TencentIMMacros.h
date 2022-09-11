@@ -22,6 +22,12 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FIMUserFullInfoCallback, const TArray<FTIMUser
 //groupInfos
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMGroupInfoArrayCallback, const TArray<FTIMGroupInfo>&, GroupInfos);
 
+//mem count 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupMemCountCallback, const int64&, GroupInfos);
+//group mem full info
+DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupMemFullInfosCallback, const TArray<FTIMGroupMemberFullInfo>&, GroupMemFullInfos);
+
+
 
 //
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMGroupMessageInfoCallback, const TArray<FTIMMessage>& , Messages);
@@ -31,6 +37,35 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FMessageSearchResultCallback, const FTIMMessag
 DECLARE_DYNAMIC_DELEGATE_OneParam(FMTIMConversationResultCallback, const FTIMConversationResult& , Result);
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMConversationCallback, const FTIMConversation& , Conversation);
+
+
+
+//todo success group mem full info 
+#define DECLARATION_GroupMemFullInfos_DELEGATE(Func) \
+FGroupMemFullInfosCallback Func##_GPMemFullInfoDelegate; \
+void Func##_Local37(const TArray<FTIMGroupMemberFullInfo>& MemsFullInfos) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([MemsFullInfos]()\
+{\
+Func##_GPMemFullInfoDelegate.ExecuteIfBound(MemsFullInfos);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+//todo success mem count 
+#define DECLARATION_GroupMemCount_DELEGATE(Func) \
+FGroupMemCountCallback Func##_GroupMemCountDelegate; \
+void Func##_Local37(const int64& Count) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Count]()\
+{\
+Func##_GroupMemCountDelegate.ExecuteIfBound(Count);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
 //todo success message 
 #define DECLARATION_TIMConversation_DELEGATE(Func) \
 FTIMConversationCallback Func##_ConversationDelegate; \
