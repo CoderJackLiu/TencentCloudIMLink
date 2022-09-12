@@ -342,19 +342,6 @@ public:
 
 
 	//
-	//
-	// 	/* 
-	// 	3.10 转让群主
-	//
-	// 	注意
-	// 	请注意不同类型的群有如下限制：
-	// 	普通类型的群（Work、Public、Meeting）：只有群主才有权限进行群转让操作。
-	// 	直播群（AVChatRoom）：不支持转让群主。 
-	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void TransferGroupOwner(const FString& groupID, const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
-	//
 	// 	/* 
 	// 	4.1 获取加群申请列表 
 	// 	*/
