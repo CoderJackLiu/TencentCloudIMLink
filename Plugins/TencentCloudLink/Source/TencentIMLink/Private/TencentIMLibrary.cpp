@@ -1835,6 +1835,89 @@ void UTencentIMLibrary::GetFriendApplicationList(FTIMFriendApplicationResultCall
 	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendApplicationList(CallBack);
 }
 
+DECLARATION_TIMFriendOperationResul_DELEGATE(AcceptFriendApplication)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(AcceptFriendApplication)
+void UTencentIMLibrary::AcceptFriendApplication(const FTIMFriendApplication& application, ETIMFriendAcceptType acceptType, FTIMFriendOperationResulCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	AcceptFriendApplication_TIMFriendOperationResulDelegate = OnSuccessDelegate;
+	AcceptFriendApplication_FailureDelegate = OnFailureDelegate;
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResult>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMFriendOperationResult& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			AcceptFriendApplication_TIMFriendOperationResulDelegate.ExecuteIfBound(ToFriendOperationResult(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			AcceptFriendApplication_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetFriendshipManager()->AcceptFriendApplication(ToV2TIMFriendApplication(application),ToV2TIMFriendAcceptType(acceptType),CallBack);
+}
+
+V2TIMFriendAcceptType UTencentIMLibrary::ToV2TIMFriendAcceptType (const ETIMFriendAcceptType& Type)
+{
+	switch (Type)
+	{
+	case ETIMFriendAcceptType::V2TIM_FRIEND_ACCEPT_AGREE:
+		return V2TIMFriendAcceptType::V2TIM_FRIEND_ACCEPT_AGREE;
+		break;
+	case ETIMFriendAcceptType::V2TIM_FRIEND_ACCEPT_AGREE_AND_ADD:
+		return V2TIMFriendAcceptType::V2TIM_FRIEND_ACCEPT_AGREE_AND_ADD;
+		break;
+	}
+
+	return V2TIMFriendAcceptType::V2TIM_FRIEND_ACCEPT_AGREE;
+}
+
+V2TIMFriendApplication UTencentIMLibrary::ToV2TIMFriendApplication(const FTIMFriendApplication& TIMFriendApplication)
+{
+	V2TIMFriendApplication Application;
+	Application.userID=ToIMString(TIMFriendApplication.userID);
+	Application.nickName=ToIMString(TIMFriendApplication.nickName);
+	Application.faceUrl=ToIMString(TIMFriendApplication.faceUrl);
+	Application.addTime=FCString::Strtoui64(GetData(TIMFriendApplication.addTime),NULL,10);
+	Application.addSource=ToIMString(TIMFriendApplication.addSource);
+	Application.addWording=ToIMString(TIMFriendApplication.addWording);
+	Application.type=ToV2TIMFriendApplicationType(TIMFriendApplication.type);
+	return Application;
+}
+
+V2TIMFriendApplicationType UTencentIMLibrary::ToV2TIMFriendApplicationType(const ETIMFriendApplicationType& Type)
+{
+	switch (Type)
+	{
+	case ETIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_COME_IN:
+		return V2TIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_COME_IN;
+	break;
+	case ETIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_SEND_OUT:
+		return V2TIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_SEND_OUT;
+	break;
+	case ETIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_BOTH:
+		return V2TIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_BOTH;
+	break;
+}
+
+return V2TIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_COME_IN;
+}
+
 FTIMFriendApplicationResult UTencentIMLibrary::ToTIMFriendApplicationResult(const V2TIMFriendApplicationResult& TIMFriendApplicationResult)
 {
 	FTIMFriendApplicationResult Result;

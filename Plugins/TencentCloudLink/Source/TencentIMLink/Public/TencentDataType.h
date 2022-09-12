@@ -1193,6 +1193,16 @@ struct TENCENTIMLINK_API FTIMFriendApplicationResult
 	TArray<FTIMFriendApplication> applicationList;
 };
 
+/// 好友申请接受类型
+UENUM(BlueprintType)
+enum class ETIMFriendAcceptType:uint8
+{
+	/// 接受加好友（建立单向好友）
+	V2TIM_FRIEND_ACCEPT_AGREE = 0,
+	/// 接受加好友并加对方为好友（建立双向好友）
+	V2TIM_FRIEND_ACCEPT_AGREE_AND_ADD = 1,
+};
+
 /**
  * 
  */

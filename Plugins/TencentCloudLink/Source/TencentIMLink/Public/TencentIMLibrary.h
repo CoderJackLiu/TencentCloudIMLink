@@ -775,8 +775,8 @@ public:
 	application	好友申请信息，getFriendApplicationList 成功后会返回
 	acceptType	建立单向/双向好友关系 
 	*/
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// static void AcceptFriendApplication(const V2TIMFriendApplication& application, V2TIMFriendAcceptType acceptType, V2TIMValueCallback<V2TIMFriendOperationResult>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void AcceptFriendApplication(const FTIMFriendApplication& application, ETIMFriendAcceptType acceptType, FTIMFriendOperationResulCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 
 
 	/* 
@@ -917,7 +917,12 @@ public:
 	static FTIMFriendApplication ToTIMFriendApplication(const V2TIMFriendApplication& IMFriendApplication);
 	static FTIMFriendApplicationResult ToTIMFriendApplicationResult(const V2TIMFriendApplicationResult& TIMFriendApplicationResult);
 
+	static V2TIMFriendApplication ToV2TIMFriendApplication(const FTIMFriendApplication& TIMFriendApplication);
+	
 	static ETIMFriendApplicationType ToTIMFriendApplicationType(const V2TIMFriendApplicationType& Type);
+	static V2TIMFriendApplicationType ToV2TIMFriendApplicationType(const ETIMFriendApplicationType& Type);
+
+	static V2TIMFriendAcceptType ToV2TIMFriendAcceptType (const ETIMFriendAcceptType& Type);
 	
 	static V2TIMString ToIMString(const FString& InStr);
 
