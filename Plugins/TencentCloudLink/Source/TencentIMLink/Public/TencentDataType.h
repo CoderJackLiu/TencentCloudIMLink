@@ -1193,6 +1193,36 @@ struct TENCENTIMLINK_API FTIMFriendApplicationResult
 	TArray<FTIMFriendApplication> applicationList;
 };
 
+///  群组操作结果
+UENUM(Blueprintable, BlueprintType)
+enum class ETIMGroupMemberResult:uint8
+{
+	/// 操作失败
+	V2TIM_GROUP_MEMBER_RESULT_FAIL = 0,
+	/// 操作成功
+	V2TIM_GROUP_MEMBER_RESULT_SUCC = 1,
+	/// 无效操作，加群时已经是群成员，移除群组时不在群内
+	V2TIM_GROUP_MEMBER_RESULT_INVALID = 2,
+	/// 等待处理，邀请入群时等待对方处理
+	V2TIM_GROUP_MEMBER_RESULT_PENDING = 3,
+	/// 操作失败，创建群指定初始群成员列表或邀请入群时，被邀请者加入的群总数超限
+	V2TIM_GROUP_MEMBER_RESULT_OVERLIMIT = 4,
+};
+
+/// 邀请其他人入群的操作结果
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMGroupMemberOperationResult
+{
+	GENERATED_BODY()
+	/// 被操作成员
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	FString userID;
+	/// 返回状态
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	ETIMGroupMemberResult result;
+};
+
+
 /**
  * 
  */

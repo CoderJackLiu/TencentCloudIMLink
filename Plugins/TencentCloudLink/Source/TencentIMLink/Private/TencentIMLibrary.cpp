@@ -1215,6 +1215,49 @@ void UTencentIMLibrary::MuteGroupMember(const FString& groupID, const FString& u
 	Tencent_IM.GetInstance()->GetGroupManager()->MuteGroupMember(ToIMString(groupID),ToIMString(userID),seconds,Callback);
 }
 
+DECLARATION_GroupInviteMem_DELEGATE(InviteUserToGroup)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(InviteUserToGroup)
+void UTencentIMLibrary::InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, FGroupIniteUserCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	InviteUserToGroup_GPInviteMemDelegate = OnSuccessDelegate;
+	InviteUserToGroup_FailureDelegate = OnFailureDelegate;
+	class FValueCallBack : public V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMGroupMemberOperationResultVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			InviteUserToGroup_GPInviteMemDelegate.ExecuteIfBound(ToGPMemOpArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			InviteUserToGroup_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetGroupManager()->InviteUserToGroup(ToIMString(groupID),ToIMStringArray(userList),CallBack);
+
+}
+
+TArray<FTIMGroupMemberOperationResult> UTencentIMLibrary::ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector)
+{
+	
+	return TArray<FTIMGroupMemberOperationResult>();
+}
+
 
 DECLARATION_ConversationRst_DELEGATE(GetConversationList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversationList)

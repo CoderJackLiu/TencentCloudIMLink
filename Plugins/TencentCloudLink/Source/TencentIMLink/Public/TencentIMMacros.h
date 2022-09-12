@@ -26,6 +26,7 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FIMGroupInfoArrayCallback, const TArray<FTIMGr
 DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupMemCountCallback, const int64&, GroupInfos);
 //group mem full info
 DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupMemFullInfosCallback, const TArray<FTIMGroupMemberFullInfo>&, GroupMemFullInfos);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupIniteUserCallback, const TArray<FTIMGroupMemberOperationResult>&, IniteResults);
 
 
 
@@ -39,6 +40,19 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FMTIMConversationResultCallback, const FTIMCon
 DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMConversationCallback, const FTIMConversation& , Conversation);
 
 
+
+//todo success group invite member
+#define DECLARATION_GroupInviteMem_DELEGATE(Func) \
+FGroupIniteUserCallback Func##_GPInviteMemDelegate; \
+void Func##_Local37(const TArray<FTIMGroupMemberOperationResult>& IniteResults) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([IniteResults]()\
+{\
+Func##_GPInviteMemDelegate.ExecuteIfBound(IniteResults);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
 
 //todo success group mem full info 
 #define DECLARATION_GroupMemFullInfos_DELEGATE(Func) \
