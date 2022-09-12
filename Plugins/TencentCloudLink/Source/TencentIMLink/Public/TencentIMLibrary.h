@@ -307,13 +307,6 @@ public:
 	static TArray<FTIMGroupMemberFullInfo> ToTIMGroupMemberFullInfoArray(const V2TIMGroupMemberFullInfoVector& GPFullInfos);
 
 
-	// 	/*
-	// 	3.4 修改指定的群成员资料  
-	// 	*/
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// static void SetGroupMemberInfo(const FString& groupID, const V2TIMGroupMemberFullInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-
-
 	/*
 	3.5 禁言（只有管理员或群主能够调用）
 
@@ -334,7 +327,6 @@ public:
 	// 	直播群（AVChatRoom）：不支持此功能。 
 	// 	*/
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// static void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
 	static void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, FGroupIniteUserCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
 	static TArray<FTIMGroupMemberOperationResult> ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector);
@@ -353,24 +345,18 @@ public:
 	static FTIMGroupApplication ToGroupApp(const V2TIMGroupApplication& TIMGroupApplication);
 	static V2TIMGroupApplication ToTIMGroupApp(const FTIMGroupApplication& TIMGroupApplication);
 
-	//
-	// 	/* 
-	// 	4.2 同意某一条加群申请 
-	// 	*/
+	
+	/* 4.2 同意某一条加群申请*/
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
 	static void AcceptGroupApplication(const FTIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
-	//
-	// 	/* 
-	// 	4.3 拒绝某一条加群申请 
-	// 	*/
+	/* 	4.3 拒绝某一条加群申请 */
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
 	static void RefuseGroupApplication(const FTIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
-	//
-	// 	/* 4.4 标记申请列表为已读 */
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SetGroupApplicationRead(V2TIMCallback* callback);
+	/* 4.4 标记申请列表为已读 */
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void SetGroupApplicationRead(FIMCallbackDelegate OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 
 	//
 	//
