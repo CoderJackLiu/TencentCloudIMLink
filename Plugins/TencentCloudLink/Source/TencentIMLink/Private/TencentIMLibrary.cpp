@@ -1359,6 +1359,40 @@ void UTencentIMLibrary::AcceptGroupApplication(const FTIMGroupApplication& appli
 	Tencent_IM.GetInstance()->GetGroupManager()->AcceptGroupApplication(ToTIMGroupApp(application),ToIMString(reason),Callback);
 
 }
+DECLARATION_CALLBACK_DELEGATE(RefuseGroupApplication)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(RefuseGroupApplication)
+void UTencentIMLibrary::RefuseGroupApplication(const FTIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	RefuseGroupApplication_Delegate = OnSuccessDelegate;
+	RefuseGroupApplication_FailureDelegate = OnFailureDelegate;
+
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			RefuseGroupApplication_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			RefuseGroupApplication_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	Tencent_IM.GetInstance()->GetGroupManager()->RefuseGroupApplication(ToTIMGroupApp(application),ToIMString(reason),Callback);
+}
 
 
 DECLARATION_ConversationRst_DELEGATE(GetConversationList)

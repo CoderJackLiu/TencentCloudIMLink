@@ -364,9 +364,9 @@ public:
 	// 	/* 
 	// 	4.3 拒绝某一条加群申请 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void RefuseGroupApplication(const V2TIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void RefuseGroupApplication(const FTIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
 	//
 	// 	/* 4.4 标记申请列表为已读 */
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
