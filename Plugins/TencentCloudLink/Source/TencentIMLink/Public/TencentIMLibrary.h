@@ -337,45 +337,18 @@ public:
 	// static void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
 	static void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, FGroupIniteUserCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
-	static TArray<FTIMGroupMemberOperationResult> ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector); 
+	static TArray<FTIMGroupMemberOperationResult> ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector);
 
 
-	//
-	// 	/* 
-	// 	3.8 切换群成员的角色。
-	//
-	// 	注意
-	// 	请注意不同类型的群有如下限制：
-	// 	公开群（Public）和会议群（Meeting）：只有群主才能对群成员进行普通成员和管理员之间的角色切换。
-	// 	其他群不支持设置群成员角色。
-	// 	转让群组请调用 transferGroupOwner 接口。
-	// 	会议群（Meeting）切换群成员角色之后，不会有 onGrantAdministrator 和 onRevokeAdministrator 通知回调
-	// 	切换的角色支持普通群成员（V2TIMGroupMemberFullInfo.V2TIM_GROUP_MEMBER_ROLE_MEMBER）和管理员（V2TIMGroupMemberFullInfo.V2TIM_GROUP_MEMBER_ROLE_ADMIN）
-	// 	 */	
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SetGroupMemberRole(const FString& groupID, const FString& userID, int32 role, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
-	// 		//void MarkGroupMemberList(const FString& groupID, const TArray<FString>& memberList, int32 markType, bool enableMark, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
-	//
-	// 	/* 
-	// 	3.10 转让群主
-	//
-	// 	注意
-	// 	请注意不同类型的群有如下限制：
-	// 	普通类型的群（Work、Public、Meeting）：只有群主才有权限进行群转让操作。
-	// 	直播群（AVChatRoom）：不支持转让群主。 
-	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void TransferGroupOwner(const FString& groupID, const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
 	//
 	// 	/* 
 	// 	4.1 获取加群申请列表 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void GetGroupApplicationList(V2TIMValueCallback<V2TIMGroupApplicationResult>* callback);
-	//
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void GetGroupApplicationList(FGroupAppRstCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	
+	static TArray<FTIMGroupApplicationResult> ToGroupAppResArray(const V2TIMGroupApplicationResult& GroupApplicationResult);
+
 	//
 	// 	/* 
 	// 	4.2 同意某一条加群申请 

@@ -1249,6 +1249,88 @@ struct TENCENTIMLINK_API FTIMGroupMemberOperationResult
 	ETIMGroupMemberResult result;
 };
 
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMBaseObject
+{
+	GENERATED_BODY()
+
+	void* obj_ptr;
+};
+
+/// 群组已决结果
+UENUM(Blueprintable, BlueprintType)
+enum class ETIMGroupApplicationHandleResult:uint8
+{
+	/// 拒绝申请
+	V2TIM_GROUP_APPLICATION_HANDLE_RESULT_REFUSE = 0,
+	/// 同意申请
+	V2TIM_GROUP_APPLICATION_HANDLE_RESULT_AGREE = 1,
+};
+
+/// 群组已决标志
+UENUM(Blueprintable, BlueprintType)
+enum class ETIMGroupApplicationHandleStatus:uint8
+{
+	/// 未处理
+	V2TIM_GROUP_APPLICATION_HANDLE_STATUS_UNHANDLED = 0,
+	/// 被他人处理
+	V2TIM_GROUP_APPLICATION_HANDLE_STATUS_HANDLED_BY_OTHER = 1,
+	/// 自己已处理
+	V2TIM_GROUP_APPLICATION_HANDLE_STATUS_HANDLED_BY_SELF = 2,
+};
+
+/// 群组未决请求类型
+UENUM(Blueprintable, BlueprintType)
+enum class ETIMGroupApplicationGetType:uint8
+{
+	/// 申请入群
+	V2TIM_GROUP_APPLICATION_GET_TYPE_JOIN = 0x0,
+	/// 邀请入群
+	V2TIM_GROUP_APPLICATION_GET_TYPE_INVITE = 0x1,
+};
+
+// 群申请信息
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMGroupApplication : public FTIMBaseObject
+{
+	GENERATED_BODY()
+
+	/// 群组 ID
+	V2TIMString groupID;
+	/// 请求者 userID
+	V2TIMString fromUser;
+	/// 请求者昵称
+	V2TIMString fromUserNickName;
+	/// 请求者头像
+	V2TIMString fromUserFaceUrl;
+	/// 判决者id，有人请求加群:0，邀请其他人加群:被邀请人用户 ID
+	V2TIMString toUser;
+	/// 申请时间
+	uint64_t addTime;
+	/// 申请或邀请附加信息
+	V2TIMString requestMsg;
+	/// 审批信息：同意或拒绝信息
+	V2TIMString handledMsg;
+	/// 请求类型
+	ETIMGroupApplicationGetType getType;
+	/// 处理标志
+	ETIMGroupApplicationHandleStatus handleStatus;
+	/// 处理结果
+	ETIMGroupApplicationHandleResult handleResult;
+};
+
+/// 加群申请列表
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMGroupApplicationResult
+{
+	GENERATED_BODY()
+
+	/// 未读的申请数量
+	uint64_t unreadCount;
+	/// 加群申请的列表
+	TArray<FTIMGroupApplication> applicationList;
+};
+
 /**
  * 
  */
