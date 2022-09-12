@@ -1511,14 +1511,14 @@ void UTencentIMLibrary::SetConversationDraft(const FString& conversationID, cons
 		void OnSuccess() override
 		{
 			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
-			DeleteConversation_Delegate.ExecuteIfBound();
+			SetConversationDraft_Delegate.ExecuteIfBound();
 		};
 
 		void OnError(int error_code, const V2TIMString& error_message) override
 		{
 			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
 			const std::string TempStr = error_message.CString();
-			DeleteConversation_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+			SetConversationDraft_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
@@ -1545,14 +1545,14 @@ void UTencentIMLibrary::PinConversation(const FString& conversationID, bool isPi
 		void OnSuccess() override
 		{
 			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
-			DeleteConversation_Delegate.ExecuteIfBound();
+			PinConversation_Delegate.ExecuteIfBound();
 		};
 
 		void OnError(int error_code, const V2TIMString& error_message) override
 		{
 			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
 			const std::string TempStr = error_message.CString();
-			DeleteConversation_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+			PinConversation_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
@@ -2282,6 +2282,148 @@ void UTencentIMLibrary::GetFriendGroups(const TArray<FString>& groupNameList, FT
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
 	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendGroups(ToIMStringArray(groupNameList),CallBack);
+}
+
+DECLARATION_CALLBACK_DELEGATE(DeleteFriendGroup)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(DeleteFriendGroup)
+void UTencentIMLibrary::DeleteFriendGroup(const TArray<FString>& groupNameList, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	DeleteFriendGroup_FailureDelegate = OnFailureDelegate;
+	DeleteFriendGroup_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			DeleteFriendGroup_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			DeleteFriendGroup_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendGroup(ToIMStringArray(groupNameList),Callback);
+}
+
+DECLARATION_CALLBACK_DELEGATE(RenameFriendGroup)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(RenameFriendGroup)
+void UTencentIMLibrary::RenameFriendGroup(const FString& oldName, const FString& newName, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	RenameFriendGroup_FailureDelegate = OnFailureDelegate;
+	RenameFriendGroup_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			RenameFriendGroup_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			RenameFriendGroup_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	Tencent_IM.GetInstance()->GetFriendshipManager()->RenameFriendGroup(ToIMString(oldName),ToIMString(newName),Callback);
+}
+
+DECLARATION_TIMFriendOperationResultVector_DELEGATE(AddFriendsToFriendGroup)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(AddFriendsToFriendGroup)
+void UTencentIMLibrary::AddFriendsToFriendGroup(const FString& groupName, const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	AddFriendsToFriendGroup_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
+	AddFriendsToFriendGroup_FailureDelegate = OnFailureDelegate;
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResultVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMFriendOperationResultVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			AddFriendsToFriendGroup_TIMFriendOperationResultVectorDelegate.ExecuteIfBound(ToTIMFriendOperationResultArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			AddFriendsToFriendGroup_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetFriendshipManager()->AddFriendsToFriendGroup(ToIMString(groupName),ToIMStringArray(userIDList),CallBack);
+}
+
+DECLARATION_TIMFriendOperationResultVector_DELEGATE(DeleteFriendsFromFriendGroup)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(DeleteFriendsFromFriendGroup)
+void UTencentIMLibrary::DeleteFriendsFromFriendGroup(const FString& groupName, const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	DeleteFriendsFromFriendGroup_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
+	DeleteFriendsFromFriendGroup_FailureDelegate = OnFailureDelegate;
+	//todo 做法探究；
+	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResultVector>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMFriendOperationResultVector& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			DeleteFriendsFromFriendGroup_TIMFriendOperationResultVectorDelegate.ExecuteIfBound(ToTIMFriendOperationResultArray(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			DeleteFriendsFromFriendGroup_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* CallBack = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendsFromFriendGroup(ToIMString(groupName),ToIMStringArray(userIDList),CallBack);
 }
 
 TArray<FTIMFriendGroup> UTencentIMLibrary::ToTIMFriendGroupArray(const V2TIMFriendGroupVector& TIMFriendGroup)

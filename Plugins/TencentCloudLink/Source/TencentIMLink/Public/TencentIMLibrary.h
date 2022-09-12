@@ -803,29 +803,29 @@ public:
 	// 	/* 
 	// 	5.3 删除好友分组
 	// 	 */
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void DeleteFriendGroup(const TArray<FString>& groupNameList, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void DeleteFriendGroup(const TArray<FString>& groupNameList, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
 	// 	5.4 修改好友分组的名称 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void RenameFriendGroup(const FString& oldName, const FString& newName, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void RenameFriendGroup(const FString& oldName, const FString& newName, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
 	// 	5.5 添加好友到一个好友分组
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void AddFriendsToFriendGroup(const FString& groupName, const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void AddFriendsToFriendGroup(const FString& groupName, const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
 	// 	5.6 从好友分组中删除好友
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void DeleteFriendsFromFriendGroup(const FString& groupName, const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void DeleteFriendsFromFriendGroup(const FString& groupName, const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 
