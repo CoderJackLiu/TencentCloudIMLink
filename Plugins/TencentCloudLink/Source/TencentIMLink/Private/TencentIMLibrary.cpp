@@ -1254,7 +1254,7 @@ void UTencentIMLibrary::InviteUserToGroup(const FString& groupID, const TArray<F
 
 TArray<FTIMGroupMemberOperationResult> UTencentIMLibrary::ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector)
 {
-	
+	//todo finish
 	return TArray<FTIMGroupMemberOperationResult>();
 }
 
@@ -1297,10 +1297,67 @@ void UTencentIMLibrary::GetGroupApplicationList(FGroupAppRstCallback OnSuccessDe
 	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupApplicationList(CallBack);
 }
 
-TArray<FTIMGroupApplicationResult> UTencentIMLibrary::ToGroupAppResArray(const V2TIMGroupApplicationResult& GroupApplicationResult)
+FTIMGroupApplicationResult UTencentIMLibrary::ToGroupAppResArray(const V2TIMGroupApplicationResult& GroupApplicationResult)
 {
+	
 	//todo finish
-	return TArray<FTIMGroupApplicationResult> ();
+	return FTIMGroupApplicationResult();
+}
+
+V2TIMGroupApplicationResult UTencentIMLibrary::ToTIMGroupAppRes(const FTIMGroupApplicationResult& GroupApplicationResult)
+{
+	
+	//todo finish
+	return V2TIMGroupApplicationResult();
+}
+
+FTIMGroupApplication UTencentIMLibrary::ToGroupApp(const V2TIMGroupApplication& TIMGroupApplication)
+{
+	
+	//todo finish
+	return FTIMGroupApplication();
+}
+
+V2TIMGroupApplication UTencentIMLibrary::ToTIMGroupApp(const FTIMGroupApplication& TIMGroupApplication)
+{
+	return V2TIMGroupApplication();
+}
+
+
+DECLARATION_CALLBACK_DELEGATE(AcceptGroupApplication)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(AcceptGroupApplication)
+void UTencentIMLibrary::AcceptGroupApplication(const FTIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	AcceptGroupApplication_Delegate = OnSuccessDelegate;
+	AcceptGroupApplication_FailureDelegate = OnFailureDelegate;
+
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			AcceptGroupApplication_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			AcceptGroupApplication_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	Tencent_IM.GetInstance()->GetGroupManager()->AcceptGroupApplication(ToTIMGroupApp(application),ToIMString(reason),Callback);
+
 }
 
 

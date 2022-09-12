@@ -1331,6 +1331,8 @@ struct TENCENTIMLINK_API FTIMGroupApplicationResult
 	TArray<FTIMGroupApplication> applicationList;
 };
 
+
+
 /**
  * 
  */
