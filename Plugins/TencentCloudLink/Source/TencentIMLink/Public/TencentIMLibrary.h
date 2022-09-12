@@ -358,22 +358,98 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
 	static void SetGroupApplicationRead(FIMCallbackDelegate OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 
-	//
-	//
-	// 	/* 
-	// 	添加信令监听 
-	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static void AddSignalingListener(V2TIMSignalingListener* listener);
-	//
-	//
-	// 	/* 
-	// 	移除信令监听 
-	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static void RemoveSignalingListener(V2TIMSignalingListener* listener);
-	//
-	// 	
+
+
+	
+	/* 
+	1.1 添加关系链监听器 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void AddFriendListener(V2TIMFriendshipListener* listener);
+
+	/* 
+	1.2 移除关系链监听器 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void RemoveFriendListener(V2TIMFriendshipListener* listener);
+	
+
+	/* 
+	2.1 获取好友列表 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+	
+	/* 
+	添加信令监听 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	static void AddSignalingListener(V2TIMSignalingListener* listener);
+	
+	
+	/* 
+	移除信令监听 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	static void RemoveSignalingListener(V2TIMSignalingListener* listener);
+	
+
+
+	
+	/* 
+	1.1 添加会话监听器 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	static void AddConversationListener(V2TIMConversationListener* listener);
+	
+	
+	/* 
+	1.2 移除会话监听器 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	static void RemoveConversationListener(V2TIMConversationListener* listener);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	// 	todo shijia
 	// 	/* 
 	// 	邀请某个人
 	//
@@ -471,20 +547,6 @@ public:
 	//
 
 
-	//
-	// /* 
-	// 1.1 添加会话监听器 
-	// */
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	// static void AddConversationListener(V2TIMConversationListener* listener);
-	//
-	//
-	// /* 
-	// 1.2 移除会话监听器 
-	// */
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	// static void RemoveConversationListener(V2TIMConversationListener* listener);
-
 
 	/* 	
 	1.3 获取会话列表
@@ -580,48 +642,16 @@ public:
 	//
 	//
 
-	/* 
-	1.1 添加关系链监听器 
-	*/
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// static void AddFriendListener(V2TIMFriendshipListener* listener);
 
 
-	/* 
-	1.2 移除关系链监听器 
-	*/
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// static void RemoveFriendListener(V2TIMFriendshipListener* listener);
-	//
 
-	/* 
-	2.1 获取好友列表 
-	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
-	// =======
-	// 	
-	// 		/* 
-	// 		1.1 添加关系链监听器 
-	// 		*/
-	// 		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 		// static void AddFriendListener(V2TIMFriendshipListener* listener);
-	// 	
-	// 	
-	// 		/* 
-	// 		1.2 移除关系链监听器 
-	// 		*/
-	// 		// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 		// static void RemoveFriendListener(V2TIMFriendshipListener* listener);
-	// 		//
-	// 	
-	// 		/* 
-	// 		2.1 获取好友列表 
-	// 		*/
-	// 		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 		static void GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
-	// 	
+
+
+
+
+
+	
 	// 	
 	// 		/* 
 	// 		2.2 获取指定好友资料
