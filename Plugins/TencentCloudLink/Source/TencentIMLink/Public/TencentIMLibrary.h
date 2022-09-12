@@ -346,16 +346,20 @@ public:
 	// 	*/
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
 	static void GetGroupApplicationList(FGroupAppRstCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
 	
-	static TArray<FTIMGroupApplicationResult> ToGroupAppResArray(const V2TIMGroupApplicationResult& GroupApplicationResult);
+	static FTIMGroupApplicationResult ToGroupAppResArray(const V2TIMGroupApplicationResult& GroupApplicationResult);
+	static V2TIMGroupApplicationResult ToTIMGroupAppRes(const FTIMGroupApplicationResult& GroupApplicationResult);
+	static FTIMGroupApplication ToGroupApp(const V2TIMGroupApplication& TIMGroupApplication);
+	static V2TIMGroupApplication ToTIMGroupApp(const FTIMGroupApplication& TIMGroupApplication);
 
 	//
 	// 	/* 
 	// 	4.2 同意某一条加群申请 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void AcceptGroupApplication(const V2TIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void AcceptGroupApplication(const FTIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
 	//
 	// 	/* 
 	// 	4.3 拒绝某一条加群申请 
@@ -367,18 +371,7 @@ public:
 	// 	/* 4.4 标记申请列表为已读 */
 	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
 	// 	static void SetGroupApplicationRead(V2TIMCallback* callback);
-	//
-	// 		//void GetJoinedCommunityList(V2TIMValueCallback<V2TIMGroupInfoVector>* callback);
-	//
-	//
-	// 		// void 	CreateTopicInCommunity (const V2TIMString &groupID, const V2TIMTopicInfo &topicInfo, V2TIMValueCallback< V2TIMString > *callback);
-	//
-	// 		// void 	DeleteTopicFromCommunity (const V2TIMString &groupID, const TArray<FString> &topicIDList, V2TIMValueCallback< V2TIMTopicOperationResultVector > *callback);
-	//
-	// 		//void 	SetTopicInfo (const V2TIMTopicInfo &topicInfo, V2TIMCallback *callback);
-	//
-	// 		// void 	GetTopicInfoList (const V2TIMString &groupID, const TArray<FString> &topicIDList, V2TIMValueCallback< V2TIMTopicInfoResultVector > *callback);
-	//
+
 	//
 	//
 	// 	/* 

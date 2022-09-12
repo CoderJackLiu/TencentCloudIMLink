@@ -34,7 +34,7 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupMemFullInfosCallback, const TArray<FTIMG
 DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupIniteUserCallback, const TArray<FTIMGroupMemberOperationResult>&, IniteResults);
 
 //加群申请
-DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupAppRstCallback, const TArray<FTIMGroupApplicationResult>&, IniteResults);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupAppRstCallback, const FTIMGroupApplicationResult&, AppRstResults);
 
 
 //
@@ -50,7 +50,7 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMConversationCallback, const FTIMConversati
 //todo success 加群申请
 #define DECLARATION_GroupAPPResult_DELEGATE(Func) \
 FGroupAppRstCallback Func##_GPAppRstDelegate; \
-void Func##_Local37(const TArray<FTIMGroupApplicationResult>& AppRstResults) \
+void Func##_Local37(const FTIMGroupApplicationResult& AppRstResults) \
 { \
 FScopeLock ScopeLock(&TencentMutex); \
 auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([AppRstResults]()\
