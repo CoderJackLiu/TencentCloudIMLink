@@ -769,7 +769,7 @@ struct TENCENTIMLINK_API FTIMCreateGroupMemberInfo
 };
 
 
-UENUM(Blueprintable,BlueprintType)
+UENUM()
 enum class ETIMConversationType:uint8
 {
 	///< 单聊
@@ -779,7 +779,7 @@ enum class ETIMConversationType:uint8
 };
 
 /// @ 类型
-UENUM(Blueprintable,BlueprintType)
+UENUM()
 enum class ETIMGroupAtType:uint8
 {
 	///< @ 我
