@@ -337,17 +337,18 @@ public:
 	// static void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
 	static void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, FGroupIniteUserCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
-	static TArray<FTIMGroupMemberOperationResult> ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector); 
-
+	static TArray<FTIMGroupMemberOperationResult> ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector);
 
 
 	//
 	// 	/* 
 	// 	4.1 获取加群申请列表 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void GetGroupApplicationList(V2TIMValueCallback<V2TIMGroupApplicationResult>* callback);
-	//
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void GetGroupApplicationList(FGroupAppRstCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	
+	static TArray<FTIMGroupApplicationResult> ToGroupAppResArray(const V2TIMGroupApplicationResult& GroupApplicationResult);
+
 	//
 	// 	/* 
 	// 	4.2 同意某一条加群申请 

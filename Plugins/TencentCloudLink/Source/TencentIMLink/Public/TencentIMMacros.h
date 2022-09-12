@@ -13,8 +13,10 @@
 //------------------------------------
 //success
 DECLARE_DYNAMIC_DELEGATE(FIMCallbackDelegate);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FIMCallbackTextDelegate,FString,Text);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FMessage_ArrayCallbackTextDelegate,const TArray<FTIMReceiveMessageOptInfo>&,Messages);
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FIMCallbackTextDelegate, FString, Text);
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FMessage_ArrayCallbackTextDelegate, const TArray<FTIMReceiveMessageOptInfo>&, Messages);
 
 //userinfo
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMUserFullInfoCallback, const TArray<FTIMUserFullInfo>&, UserInfos);
@@ -24,22 +26,39 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FIMGroupInfoArrayCallback, const TArray<FTIMGr
 
 //mem count 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupMemCountCallback, const int64&, GroupInfos);
+
 //group mem full info
 DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupMemFullInfosCallback, const TArray<FTIMGroupMemberFullInfo>&, GroupMemFullInfos);
+
+//group invite
 DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupIniteUserCallback, const TArray<FTIMGroupMemberOperationResult>&, IniteResults);
 
+//加群申请
+DECLARE_DYNAMIC_DELEGATE_OneParam(FGroupAppRstCallback, const TArray<FTIMGroupApplicationResult>&, IniteResults);
 
 
 //
-DECLARE_DYNAMIC_DELEGATE_OneParam(FIMGroupMessageInfoCallback, const TArray<FTIMMessage>& , Messages);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FIMGroupMessageInfoCallback, const TArray<FTIMMessage>&, Messages);
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FMessageSearchResultCallback, const FTIMMessageSearchResult& , Result);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FMessageSearchResultCallback, const FTIMMessageSearchResult&, Result);
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FMTIMConversationResultCallback, const FTIMConversationResult& , Result);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FMTIMConversationResultCallback, const FTIMConversationResult&, Result);
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMConversationCallback, const FTIMConversation& , Conversation);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMConversationCallback, const FTIMConversation&, Conversation);
 
 
+//todo success 加群申请
+#define DECLARATION_GroupAPPResult_DELEGATE(Func) \
+FGroupAppRstCallback Func##_GPAppRstDelegate; \
+void Func##_Local37(const TArray<FTIMGroupApplicationResult>& AppRstResults) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([AppRstResults]()\
+{\
+Func##_GPAppRstDelegate.ExecuteIfBound(AppRstResults);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
 
 //todo success group invite member
 #define DECLARATION_GroupInviteMem_DELEGATE(Func) \
@@ -93,7 +112,8 @@ Func##_ConversationDelegate.ExecuteIfBound(Conversation);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMConversationVectorCallback, const TArray<FTIMConversation>& , array_Conversation);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMConversationVectorCallback, const TArray<FTIMConversation>&, array_Conversation);
+
 //todo success message 
 #define DECLARATION_TIMConversationVector_DELEGATE(Func) \
 FTIMConversationVectorCallback Func##_ConversationVectorDelegate; \
@@ -107,7 +127,8 @@ Func##_ConversationVectorDelegate.ExecuteIfBound(array_Conversation);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMuint64Callback, const uint64& , Result);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMuint64Callback, const uint64&, Result);
+
 //todo success message 
 #define DECLARATION_TIMuint64_DELEGATE(Func) \
 FTIMuint64Callback Func##_uint64Delegate; \
@@ -121,7 +142,8 @@ Func##_uint64Delegate.ExecuteIfBound(Message);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendInfoVectorCallback, const TArray<FTIMFriendInfo>& , FriendInfo);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendInfoVectorCallback, const TArray<FTIMFriendInfo>&, FriendInfo);
+
 //todo success message 
 #define DECLARATION_TIMFriendInfoVector_DELEGATE(Func) \
 FTIMFriendInfoVectorCallback Func##_TIMFriendInfoVectorDelegate; \
@@ -135,7 +157,8 @@ Func##_TIMFriendInfoVectorDelegate.ExecuteIfBound(FriendInfo);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendInfoResultVectorCallback, const TArray<FTIMFriendInfoResult>& , FriendInfoResult);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendInfoResultVectorCallback, const TArray<FTIMFriendInfoResult>&, FriendInfoResult);
+
 //todo success message 
 #define DECLARATION_TIMFriendInfoResultVector_DELEGATE(Func) \
 FTIMFriendInfoResultVectorCallback Func##_TIMFriendInfoResultVectorDelegate; \
@@ -150,7 +173,8 @@ Func##_TIMFriendInfoResultVectorDelegate.ExecuteIfBound(FriendInfoResult);\
 }
 
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendOperationResulCallback, const FTIMFriendOperationResult& , FriendOperationResult);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendOperationResulCallback, const FTIMFriendOperationResult&, FriendOperationResult);
+
 //todo success message 
 #define DECLARATION_TIMFriendOperationResul_DELEGATE(Func) \
 FTIMFriendOperationResulCallback Func##_TIMFriendOperationResulDelegate; \
@@ -164,7 +188,8 @@ Func##_TIMFriendOperationResulDelegate.ExecuteIfBound(FriendOperationResult);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendOperationResultVectorCallback, const TArray<FTIMFriendOperationResult>& , FriendOperationResult);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendOperationResultVectorCallback, const TArray<FTIMFriendOperationResult>&, FriendOperationResult);
+
 //todo success message 
 #define DECLARATION_TIMFriendOperationResultVector_DELEGATE(Func) \
 FTIMFriendOperationResultVectorCallback Func##_TIMFriendOperationResultVectorDelegate; \
@@ -178,9 +203,10 @@ Func##_TIMFriendOperationResultVectorDelegate.ExecuteIfBound(FriendOperationResu
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendCheckResultVectorCallback, const TArray<FTIMFriendCheckResult>& , FriendCheckResult);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendCheckResultVectorCallback, const TArray<FTIMFriendCheckResult>&, FriendCheckResult);
+
 // //todo success message 
- #define DECLARATION_TIMFriendCheckResultVector_DELEGATE(Func) \
+#define DECLARATION_TIMFriendCheckResultVector_DELEGATE(Func) \
 FTIMFriendCheckResultVectorCallback Func##_TIMFriendCheckResultVectorDelegate; \
 void Func##_Local93(const TArray<FTIMFriendCheckResult>& FriendCheckResult) \
 { \
@@ -192,7 +218,8 @@ Func##_TIMFriendCheckResultVectorDelegate.ExecuteIfBound(FriendCheckResult);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendApplicationResultCallback, const FTIMFriendApplicationResult& , FriendApplicationResult);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendApplicationResultCallback, const FTIMFriendApplicationResult&, FriendApplicationResult);
+
 // //todo success message 
 #define DECLARATION_TIMFriendApplicationResult_DELEGATE(Func) \
 FTIMFriendApplicationResultCallback Func##_TIMFriendApplicationResultDelegate; \
@@ -206,7 +233,7 @@ Func##_TIMFriendApplicationResultDelegate.ExecuteIfBound(FriendApplicationResult
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FIMMessageInfoCallback, const FTIMMessage& , Message);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FIMMessageInfoCallback, const FTIMMessage&, Message);
 
 //failure
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FIMFailureCallback, int, ErrorCode, FString, ErrorMassage);
@@ -294,7 +321,6 @@ Func##_CsRstDelegate.ExecuteIfBound(Result);\
 }, TStatId(), nullptr, ENamedThreads::GameThread);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
-
 
 
 #define DECLARATION_MessageSearchResultCALLBACK_DELEGATE(Func) \
