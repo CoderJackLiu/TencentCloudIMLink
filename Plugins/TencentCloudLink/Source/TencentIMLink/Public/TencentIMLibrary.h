@@ -364,14 +364,14 @@ public:
 	/* 
 	1.1 添加关系链监听器 
 	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void AddFriendListener(V2TIMFriendshipListener* listener);
+	//UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	//static void AddFriendListener(V2TIMFriendshipListener* listener);
 
 	/* 
 	1.2 移除关系链监听器 
 	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void RemoveFriendListener(V2TIMFriendshipListener* listener);
+	//UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	//static void RemoveFriendListener(V2TIMFriendshipListener* listener);
 	
 
 	/* 
@@ -384,15 +384,15 @@ public:
 	/* 
 	添加信令监听 
 	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	static void AddSignalingListener(V2TIMSignalingListener* listener);
+	//UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	//static void AddSignalingListener(V2TIMSignalingListener* listener);
 	
 	
 	/* 
 	移除信令监听 
 	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	static void RemoveSignalingListener(V2TIMSignalingListener* listener);
+	//UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	//static void RemoveSignalingListener(V2TIMSignalingListener* listener);
 	
 
 
@@ -400,15 +400,15 @@ public:
 	/* 
 	1.1 添加会话监听器 
 	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	static void AddConversationListener(V2TIMConversationListener* listener);
+	//UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	//static void AddConversationListener(V2TIMConversationListener* listener);
 	
 	
 	/* 
 	1.2 移除会话监听器 
 	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	static void RemoveConversationListener(V2TIMConversationListener* listener);
+	//UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	//static void RemoveConversationListener(V2TIMConversationListener* listener);
 
 
 
@@ -462,8 +462,8 @@ public:
 	// 	返回
 	// 	inviteID 邀请 ID，如果邀请失败，返回 null 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static FString Invite(const FString& invitee, const FString& data, bool onlineUserOnly, const V2TIMOfflinePushInfo& offlinePushInfo, int timeout, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	static FString Invite(const FString& invitee, const FString& data, bool onlineUserOnly, const FTIMOfflinePushInfo& offlinePushInfo, int32 timeout, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -479,8 +479,8 @@ public:
 	// 	注意
 	// 	群邀请暂不支持离线推送，如果您需要离线推送，可以针对被邀请的用户单独发离线推送自定义消息， 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static FString InviteInGroup(const FString& groupID, const TArray<FString>& inviteeList, const FString& data, bool onlineUserOnly, int timeout, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	static FString InviteInGroup(const FString& groupID, const TArray<FString>& inviteeList, const FString& data, bool onlineUserOnly, int timeout, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 	
@@ -491,8 +491,8 @@ public:
 	// 	注意
 	// 	如果所有被邀请人都已经处理了当前邀请（包含超时），不能再取消当前邀请。 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static void Cancel(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	static void Cancel(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -501,8 +501,8 @@ public:
 	// 	注意
 	// 	不能接受不是针对自己的邀请，请在收到 onReceiveNewInvitation 回调的时候先判断 inviteeList 有没有自己，如果没有自己，不能 accept 邀请。 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static void Accept(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	static void Accept(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -511,8 +511,8 @@ public:
 	// 	注意
 	// 	不能拒绝不是针对自己的邀请，请在收到 onReceiveNewInvitation 回调的时候先判断 inviteeList 有没有自己，如果没有自己，不能 reject 邀请。 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static void Reject(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	static void Reject(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -525,10 +525,10 @@ public:
 	// 	返回
 	// 	V2TIMSignalingInfo 信令信息，如果为 null，则 msg 不是一条信令消息。 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static V2TIMSignalingInfo GetSignalingInfo(const V2TIMMessage& msg);
-	//
-	//
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	static FTIMSignalingInfo GetSignalingInfo(const FTIMMessage& msg);
+
+	
 	// 	/* 
 	// 	添加邀请信令（可以用于群离线推送消息触发的邀请信令）
 	//
@@ -541,8 +541,8 @@ public:
 	// 	注意
 	// 	如果添加的信令信息已存在，callback 会抛 ERR_SDK_SIGNALING_ALREADY_EXISTS 错误码。
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	// 	static void AddInvitedSignaling(const V2TIMSignalingInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
+	static void AddInvitedSignaling(const FTIMSignalingInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 
@@ -887,6 +887,12 @@ public:
 	static TArray<FTIMFriendGroup> ToTIMFriendGroupArray(const V2TIMFriendGroupVector& TIMFriendGroup);
 
 	static FTIMFriendGroup ToTIMFriendGroup(const V2TIMFriendGroup& Group);
+
+	static V2TIMOfflinePushInfo ToTIMOfflinePushInfo(const FTIMOfflinePushInfo& Info);
+
+	static V2TIMSignalingInfo ToTIMSignalingInfo(const FTIMSignalingInfo& Info);
+	
+	static FTIMSignalingInfo ToSignalingInfo(const V2TIMSignalingInfo& Info);
 	
 	static V2TIMFriendAcceptType ToV2TIMFriendAcceptType (const ETIMFriendAcceptType& Type);
 	
@@ -896,6 +902,10 @@ public:
 
 	static V2TIMStringVector ToIMStringArray(TArray<FString> InStrArray);
 
+	static V2TIMSignalingActionType ToV2TIMSignalingActionType(const ETIMSignalingActionType& Type);
+	
+	static ETIMSignalingActionType ToTIMSignalingActionType(const V2TIMSignalingActionType& Type);
+	
 	static TArray<FString> ToIArrayString(V2TIMStringVector TIMStringVector);
 
 	static ELoginStatus ToTIMLoginStatus(const V2TIMLoginStatus& Status);
@@ -983,3 +993,4 @@ public:
 	static TArray<FTIMCreateGroupMemberInfo> ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector);
 	static V2TIMCreateGroupMemberInfoVector ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector);
 };
+

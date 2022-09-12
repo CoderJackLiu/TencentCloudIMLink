@@ -1250,6 +1250,88 @@ struct TENCENTIMLINK_API FTIMGroupMemberOperationResult
 };
 
 USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMOfflinePushInfo
+{
+	GENERATED_BODY()
+	/// 离线推送展示的标题。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	FString title;
+	/// 离线推送展示的内容。
+	/// 自定义消息进行离线推送，必须设置此字段内容。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	FString desc;
+	/// 离线推送扩展字段，
+	/// iOS: 收到离线推送的一方可以在 UIApplicationDelegate -> didReceiveRemoteNotification ->
+	/// userInfo 拿到这个字段，用这个字段可以做 UI 跳转逻辑
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	FString ext;
+	/// 是否关闭推送（默认开启推送）。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	bool disablePush;
+	/// 离线推送声音设置（仅对 iOS 生效），
+	/// 当 iOSSound = kIOSOfflinePushNoSound，表示接收时不会播放声音。
+	/// 当 iOSSound = kIOSOfflinePushDefaultSound，表示接收时播放系统声音。
+	/// 如果要自定义 iOSSound，需要先把语音文件链接进 Xcode 工程，然后把语音文件名（带后缀）设置给
+	/// iOSSound。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	FString iOSSound;
+	/// 离线推送忽略 badge 计数（仅对 iOS 生效），
+	/// 如果设置为 true，在 iOS 接收端，这条消息不会使 APP 的应用图标未读计数增加。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	bool ignoreIOSBadge;
+	/// 离线推送设置 OPPO 手机 8.0 系统及以上的渠道 ID（仅对 Android 生效）。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	FString AndroidOPPOChannelID;
+	/// 离线推送设置 VIVO 手机 （仅对 Android 生效）。
+	/// VIVO 手机离线推送消息分类，0：运营消息，1：系统消息。默认取值为 1 。
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	int32 AndroidVIVOClassification;
+};
+
+UENUM(Blueprintable, BlueprintType)
+enum class ETIMSignalingActionType:uint8
+{
+	None,
+	// 邀请方发起邀请
+	SignalingActionType_Invite = 1,
+	// 邀请方取消邀请
+	SignalingActionType_Cancel_Invite = 2,
+	// 被邀请方接受邀请
+	SignalingActionType_Accept_Invite = 3,
+	// 被邀请方拒绝邀请
+	SignalingActionType_Reject_Invite = 4,
+	// 邀请超时
+	SignalingActionType_Invite_Timeout = 5,
+};
+
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMSignalingInfo
+{
+	GENERATED_BODY()
+	// 信令ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	FString inviteID;
+	// 如果是群组信令，groupID 为会话群组ID，否则为空
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	FString groupID;
+	// 邀请方的ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	FString inviter;
+	// 被邀请方列表
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	TArray<FString> inviteeList;
+	// 信令内容
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	FString data;
+	// 信令操作类型
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	ETIMSignalingActionType actionType;
+	// 信令超时时间
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	int32 timeout;
+};
+
+USTRUCT(Blueprintable, BlueprintType)
 struct TENCENTIMLINK_API FTIMBaseObject
 {
 	GENERATED_BODY()
