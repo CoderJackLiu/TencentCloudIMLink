@@ -1428,6 +1428,115 @@ void UTencentIMLibrary::SetGroupApplicationRead(FIMCallbackDelegate OnSuccessDel
 	Tencent_IM.GetInstance()->GetGroupManager()->SetGroupApplicationRead(Callback);
 }
 
+V2TIMFriendshipListener* UTencentIMLibrary::Friendlistener=nullptr;
+
+
+DECLARATION_FriendApplicationListAdded_DELEGATE(AddFriendListener)
+DECLARATION_FriendApplicationListDeleted_DELEGATE(AddFriendListener)
+DECLARATION_CALLBACK_DELEGATE(AddFriendListener)
+DECLARATION_FriendListAdded_DELEGATE(AddFriendListener)
+DECLARATION_FriendListDeleted_DELEGATE(AddFriendListener)
+DECLARATION_FriendInfoArrayDeleted_DELEGATE(AddFriendListener)
+DECLARATION_BlackListDeleted_DELEGATE(AddFriendListener)
+DECLARATION_FriendInfoChanged_DELEGATE(AddFriendListener)
+
+void UTencentIMLibrary::AddFriendListener(FFriendAPPArrayAddedCallback FriendAppArrayAddedCallback,FFriendAPPArrayDeletedCallback APPDeleteDelegate,FIMCallbackDelegate FriendApplicationListRead,
+		FFriendListAddedCallback ListAddedCallback,FFriendListDeletedCallback FriendListDeletedCallback,FBlackListAddedCallback BlackListAddedCallback,
+		FBlackListDeletedCallback BlackListDeletedCallback,FFriendInfoChangedCallback FriendInfoChangedCallback)
+{
+	AddFriendListener_FriendAPPArrayAddedDelegate=FriendAppArrayAddedCallback;
+	AddFriendListener_FriendAPPListDeleted=APPDeleteDelegate;
+	AddFriendListener_Delegate =FriendApplicationListRead;
+	AddFriendListener_FriendListAddedDelegate=ListAddedCallback;
+	AddFriendListener_FriendInfoArrayDeletedDelegate=FriendListDeletedCallback;
+	AddFriendListener_BlackListAddedDelegate=BlackListAddedCallback;
+	AddFriendListener_BlackListDeletedDelegate=BlackListDeletedCallback;
+	AddFriendListener_FriendInfoChangedDelegate=FriendInfoChangedCallback;
+	
+	class IMFriendshipListener: public V2TIMFriendshipListener
+	{
+	public:
+		IMFriendshipListener(){};
+	
+		virtual ~IMFriendshipListener(){};
+	
+		/**
+		 * 好友申请新增通知，两种情况会收到这个回调：
+		 * 1. 自己申请加别人好友
+		 * 2. 别人申请加自己好友
+		 */
+		virtual void OnFriendApplicationListAdded(const V2TIMFriendApplicationVector &applicationList)
+		{
+			AddFriendListener_FriendAPPArrayAddedDelegate.ExecuteIfBound(ToTIMFriendApplicationArray(applicationList));
+		}
+	
+		/**
+		 * 好友申请删除通知，四种情况会收到这个回调
+		 * 1. 调用 DeleteFriendApplication 主动删除好友申请
+		 * 2. 调用 RefuseFriendApplication 拒绝好友申请
+		 * 3. 调用 AcceptFriendApplication 同意好友申请且同意类型为 V2TIM_FRIEND_ACCEPT_AGREE 时
+		 * 4. 申请加别人好友被拒绝
+		 */
+		virtual void OnFriendApplicationListDeleted(const V2TIMStringVector &userIDList)
+		{
+			AddFriendListener_FriendAPPListDeleted.ExecuteIfBound(ToFStringArray(userIDList));
+		}
+
+		/**
+		 * 好友申请已读通知，如果调用 setFriendApplicationRead
+		 * 设置好友申请列表已读，会收到这个回调（主要用于多端同步）
+		 */
+		virtual void OnFriendApplicationListRead()
+		{
+			AddFriendListener_Delegate.ExecuteIfBound();
+		}
+	
+		/**
+		 * 好友新增通知
+		 */
+		virtual void OnFriendListAdded(const V2TIMFriendInfoVector &userIDList)
+		{
+			AddFriendListener_FriendListAddedDelegate.ExecuteIfBound(ToFriendInfoArray(userIDList));
+		}
+	
+		/**
+		 * 好友删除通知，，两种情况会收到这个回调：
+		 * 1. 自己删除好友（单向和双向删除都会收到回调）
+		 * 2. 好友把自己删除（双向删除会收到）
+		 */
+		virtual void OnFriendListDeleted(const V2TIMStringVector &userIDList)
+		{
+			AddFriendListener_FriendInfoArrayDeletedDelegate.ExecuteIfBound(ToFStringArray(userIDList));
+		}
+	
+		/**
+		 * 黑名单新增通知
+		 */
+		virtual void OnBlackListAdded(const V2TIMFriendInfoVector &infoList)
+		{
+			AddFriendListener_BlackListAddedDelegate.ExecuteIfBound(ToFriendInfoArray(infoList));
+		}
+	
+		/**
+		 * 黑名单删除通知
+		 */
+		virtual void OnBlackListDeleted(const V2TIMStringVector &userIDList)
+		{
+			AddFriendListener_BlackListDeletedDelegate.ExecuteIfBound(ToFStringArray(userIDList));
+		}
+	
+		/**
+		 * 好友资料更新通知
+		 */
+		virtual void OnFriendInfoChanged(const V2TIMFriendInfoVector &infoList)
+		{
+			AddFriendListener_FriendInfoChangedDelegate.ExecuteIfBound(ToFriendInfoArray(infoList));
+		}
+	};
+	Friendlistener=new IMFriendshipListener();
+	Tencent_IM.GetInstance()->GetFriendshipManager()->AddFriendListener(Friendlistener);
+}
+
 
 DECLARATION_ConversationRst_DELEGATE(GetConversationList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversationList)
@@ -1721,8 +1830,114 @@ void UTencentIMLibrary::GetTotalUnreadMessageCount(FTIMuint64Callback OnSuccessD
 	Tencent_IM.GetInstance()->GetConversationManager()->GetTotalUnreadMessageCount(CallBack);
 }
 
+DECLARATION_FriendApplicationListAdded_DELEGATE(RemoveFriendListener)
+DECLARATION_FriendApplicationListDeleted_DELEGATE(RemoveFriendListener)
+DECLARATION_CALLBACK_DELEGATE(RemoveFriendListener)
+DECLARATION_FriendListAdded_DELEGATE(RemoveFriendListener)
+DECLARATION_FriendListDeleted_DELEGATE(RemoveFriendListener)
+DECLARATION_FriendInfoArrayDeleted_DELEGATE(RemoveFriendListener)
+DECLARATION_BlackListDeleted_DELEGATE(RemoveFriendListener)
+DECLARATION_FriendInfoChanged_DELEGATE(RemoveFriendListener)
+
+void UTencentIMLibrary::RemoveFriendListener(FFriendAPPArrayAddedCallback FriendAppArrayAddedCallback, FFriendAPPArrayDeletedCallback APPDeleteDelegate, FIMCallbackDelegate FriendApplicationListRead,
+	FFriendListAddedCallback ListAddedCallback, FFriendListDeletedCallback FriendListDeletedCallback, FBlackListAddedCallback BlackListAddedCallback,
+	FBlackListDeletedCallback BlackListDeletedCallback, FFriendInfoChangedCallback FriendInfoChangedCallback)
+{
+	RemoveFriendListener_FriendAPPArrayAddedDelegate=FriendAppArrayAddedCallback;
+	RemoveFriendListener_FriendAPPListDeleted=APPDeleteDelegate;
+	RemoveFriendListener_Delegate =FriendApplicationListRead;
+	RemoveFriendListener_FriendListAddedDelegate=ListAddedCallback;
+	RemoveFriendListener_FriendInfoArrayDeletedDelegate=FriendListDeletedCallback;
+	RemoveFriendListener_BlackListAddedDelegate=BlackListAddedCallback;
+	RemoveFriendListener_BlackListDeletedDelegate=BlackListDeletedCallback;
+	RemoveFriendListener_FriendInfoChangedDelegate=FriendInfoChangedCallback;
+	
+	class IMFriendshipListener: public V2TIMFriendshipListener
+	{
+	public:
+		IMFriendshipListener(){};
+	
+		virtual ~IMFriendshipListener(){};
+	
+		/**
+		 * 好友申请新增通知，两种情况会收到这个回调：
+		 * 1. 自己申请加别人好友
+		 * 2. 别人申请加自己好友
+		 */
+		virtual void OnFriendApplicationListAdded(const V2TIMFriendApplicationVector &applicationList)
+		{
+			AddFriendListener_FriendAPPArrayAddedDelegate.ExecuteIfBound(ToTIMFriendApplicationArray(applicationList));
+		}
+	
+		/**
+		 * 好友申请删除通知，四种情况会收到这个回调
+		 * 1. 调用 DeleteFriendApplication 主动删除好友申请
+		 * 2. 调用 RefuseFriendApplication 拒绝好友申请
+		 * 3. 调用 AcceptFriendApplication 同意好友申请且同意类型为 V2TIM_FRIEND_ACCEPT_AGREE 时
+		 * 4. 申请加别人好友被拒绝
+		 */
+		virtual void OnFriendApplicationListDeleted(const V2TIMStringVector &userIDList)
+		{
+			AddFriendListener_FriendAPPListDeleted.ExecuteIfBound(ToFStringArray(userIDList));
+		}
+
+		/**
+		 * 好友申请已读通知，如果调用 setFriendApplicationRead
+		 * 设置好友申请列表已读，会收到这个回调（主要用于多端同步）
+		 */
+		virtual void OnFriendApplicationListRead()
+		{
+			AddFriendListener_Delegate.ExecuteIfBound();
+		}
+	
+		/**
+		 * 好友新增通知
+		 */
+		virtual void OnFriendListAdded(const V2TIMFriendInfoVector &userIDList)
+		{
+			AddFriendListener_FriendListAddedDelegate.ExecuteIfBound(ToFriendInfoArray(userIDList));
+		}
+	
+		/**
+		 * 好友删除通知，，两种情况会收到这个回调：
+		 * 1. 自己删除好友（单向和双向删除都会收到回调）
+		 * 2. 好友把自己删除（双向删除会收到）
+		 */
+		virtual void OnFriendListDeleted(const V2TIMStringVector &userIDList)
+		{
+			AddFriendListener_FriendInfoArrayDeletedDelegate.ExecuteIfBound(ToFStringArray(userIDList));
+		}
+	
+		/**
+		 * 黑名单新增通知
+		 */
+		virtual void OnBlackListAdded(const V2TIMFriendInfoVector &infoList)
+		{
+			AddFriendListener_BlackListAddedDelegate.ExecuteIfBound(ToFriendInfoArray(infoList));
+		}
+	
+		/**
+		 * 黑名单删除通知
+		 */
+		virtual void OnBlackListDeleted(const V2TIMStringVector &userIDList)
+		{
+			AddFriendListener_BlackListDeletedDelegate.ExecuteIfBound(ToFStringArray(userIDList));
+		}
+	
+		/**
+		 * 好友资料更新通知
+		 */
+		virtual void OnFriendInfoChanged(const V2TIMFriendInfoVector &infoList)
+		{
+			AddFriendListener_FriendInfoChangedDelegate.ExecuteIfBound(ToFriendInfoArray(infoList));
+		}
+	};
+	Friendlistener=new IMFriendshipListener();
+	Tencent_IM.GetInstance()->GetFriendshipManager()->RemoveFriendListener(Friendlistener);
+}
 DECLARATION_TIMFriendInfoVector_DELEGATE(GetFriendList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetFriendList)
+
 void UTencentIMLibrary::GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetFriendList_TIMFriendInfoVectorDelegate = OnSuccessDelegate;
@@ -1832,7 +2047,7 @@ FTIMFriendInfo UTencentIMLibrary::ToFriendInfo(const V2TIMFriendInfo& Info)
 	info.userID=ToFString(Info.userID);
 	info.friendRemark=ToFString(Info.friendRemark);
 	info.friendCustomInfo=ToTIMCustomInfo_(Info.friendCustomInfo);
-	info.friendGroups= ToIArrayString(Info.friendGroups);
+	info.friendGroups= ToFStringArray(Info.friendGroups);
 	info.userFullInfo=ToTIMUserFullInfo(Info.userFullInfo);
 	info.modifyFlag=FString::Printf(TEXT("%lu"), Info.modifyFlag);
 	return info;
@@ -2567,7 +2782,7 @@ FTIMFriendGroup UTencentIMLibrary::ToTIMFriendGroup(const V2TIMFriendGroup& Grou
 	FTIMFriendGroup TIMFriendGroup;
 	TIMFriendGroup.groupName=ToFString(Group.groupName);
 	TIMFriendGroup.userCount=FString::Printf(TEXT("%llu"),Group.userCount);
-	TIMFriendGroup.friendList=ToIArrayString(Group.friendList);
+	TIMFriendGroup.friendList=ToFStringArray(Group.friendList);
 	return TIMFriendGroup;
 }
 
@@ -2833,7 +3048,7 @@ V2TIMStringVector UTencentIMLibrary::ToIMStringArray(TArray<FString> InStrArray)
 	return StrVector;
 }
 
-TArray<FString> UTencentIMLibrary::ToIArrayString(V2TIMStringVector TIMStringVector)
+TArray<FString> UTencentIMLibrary::ToFStringArray(V2TIMStringVector TIMStringVector)
 {
 	TArray<FString> res;
 	for(int i=0;i<TIMStringVector.Size();i++)

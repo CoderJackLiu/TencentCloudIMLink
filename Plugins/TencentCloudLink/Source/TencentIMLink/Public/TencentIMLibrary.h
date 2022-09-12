@@ -365,51 +365,40 @@ public:
 	1.1 添加关系链监听器 
 	*/
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void AddFriendListener(V2TIMFriendshipListener* listener);
-
-	/* 
-	1.2 移除关系链监听器 
-	*/
+	static void AddFriendListener(FFriendAPPArrayAddedCallback FriendAppArrayAddedCallback,FFriendAPPArrayDeletedCallback APPDeleteDelegate,FIMCallbackDelegate FriendApplicationListRead,
+		FFriendListAddedCallback ListAddedCallback,FFriendListDeletedCallback FriendListDeletedCallback,FBlackListAddedCallback BlackListAddedCallback,
+		FBlackListDeletedCallback BlackListDeletedCallback,FFriendInfoChangedCallback FriendInfoChangedCallback);
+	static V2TIMFriendshipListener* Friendlistener;
+	// /* 
+	// 1.2 移除关系链监听器 
+	// */
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void RemoveFriendListener(V2TIMFriendshipListener* listener);
+	static void RemoveFriendListener(FFriendAPPArrayAddedCallback FriendAppArrayAddedCallback,FFriendAPPArrayDeletedCallback APPDeleteDelegate,FIMCallbackDelegate FriendApplicationListRead,
+		FFriendListAddedCallback ListAddedCallback,FFriendListDeletedCallback FriendListDeletedCallback,FBlackListAddedCallback BlackListAddedCallback,
+		FBlackListDeletedCallback BlackListDeletedCallback,FFriendInfoChangedCallback FriendInfoChangedCallback);
 	
-
-	/* 
-	2.1 获取好友列表 
-	*/
+	//
+	// /* 
+	// 2.1 获取好友列表 
+	// */
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
 	static void GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-
-	
-	/* 
-	添加信令监听 
-	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	static void AddSignalingListener(V2TIMSignalingListener* listener);
-	
-	
-	/* 
-	移除信令监听 
-	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMSignalingManager")
-	static void RemoveSignalingListener(V2TIMSignalingListener* listener);
 	
 
-
-	
-	/* 
-	1.1 添加会话监听器 
-	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	static void AddConversationListener(V2TIMConversationListener* listener);
-	
-	
-	/* 
-	1.2 移除会话监听器 
-	*/
-	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
-	static void RemoveConversationListener(V2TIMConversationListener* listener);
-
+	//
+	// /* 
+	// 1.1 添加会话监听器 
+	// */
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	// static void AddConversationListener(V2TIMConversationListener* listener);
+	//
+	//
+	// /* 
+	// 1.2 移除会话监听器 
+	// */
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	// static void RemoveConversationListener(V2TIMConversationListener* listener);
+	//
 
 
 
@@ -896,7 +885,7 @@ public:
 
 	static V2TIMStringVector ToIMStringArray(TArray<FString> InStrArray);
 
-	static TArray<FString> ToIArrayString(V2TIMStringVector TIMStringVector);
+	static TArray<FString> ToFStringArray(V2TIMStringVector TIMStringVector);
 
 	static ELoginStatus ToTIMLoginStatus(const V2TIMLoginStatus& Status);
 

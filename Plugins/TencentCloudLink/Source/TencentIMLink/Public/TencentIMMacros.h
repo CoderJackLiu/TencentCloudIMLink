@@ -47,6 +47,122 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FMTIMConversationResultCallback, const FTIMCon
 DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMConversationCallback, const FTIMConversation&, Conversation);
 
 
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FFriendAPPArrayAddedCallback, const TArray<FTIMFriendApplication>&, applicationArray);
+
+//1 todo Listener
+#define DECLARATION_FriendApplicationListAdded_DELEGATE(Func) \
+FFriendAPPArrayAddedCallback Func##_FriendAPPArrayAddedDelegate; \
+void Func##_Local(const TArray<FTIMFriendApplication>& applicationArray) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([applicationArray]()\
+{\
+Func##_FriendAPPArrayAddedDelegate.ExecuteIfBound(applicationArray);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FFriendAPPArrayDeletedCallback, const TArray<FString>&, Results);
+
+//2 todo Listener
+#define DECLARATION_FriendApplicationListDeleted_DELEGATE(Func) \
+FFriendAPPArrayDeletedCallback Func##_FriendAPPListDeleted; \
+void Func##_Local(const TArray<FString>& Results) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Results]()\
+{\
+Func##_FriendAPPListDeleted.ExecuteIfBound(Results);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FFriendListAddedCallback, const TArray<FTIMFriendInfo>&, Results);
+
+//3 todo Listener
+#define DECLARATION_FriendListAdded_DELEGATE(Func) \
+FFriendListAddedCallback Func##_FriendListAddedDelegate; \
+void Func##_Local(const TArray<FTIMFriendInfo>& Results) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Results]()\
+{\
+Func##_FriendListAddedDelegate.ExecuteIfBound(Results);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FFriendListDeletedCallback, const TArray<FString>&, Results);
+
+//4 todo Listener
+#define DECLARATION_FriendListDeleted_DELEGATE(Func) \
+FFriendListDeletedCallback Func##_FriendInfoArrayDeletedDelegate; \
+void Func##_Local2(const TArray<FString>& Results) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Results]()\
+{\
+Func##_FriendInfoArrayDeletedDelegate.ExecuteIfBound(Results);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FBlackListAddedCallback, const TArray<FTIMFriendInfo>&, Results);
+
+//5 todo Listener
+#define DECLARATION_FriendInfoArrayDeleted_DELEGATE(Func) \
+FBlackListAddedCallback Func##_BlackListAddedDelegate; \
+void Func##_Local3(const TArray<FTIMFriendInfo>& Results) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Results]()\
+{\
+Func##_BlackListAddedDelegate.ExecuteIfBound(Results);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FBlackListDeletedCallback, const TArray<FString>&, Results);
+
+//todo Listener
+#define DECLARATION_BlackListDeleted_DELEGATE(Func) \
+FBlackListDeletedCallback Func##_BlackListDeletedDelegate; \
+void Func##_Local4(const TArray<FString>& Results) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Results]()\
+{\
+Func##_BlackListDeletedDelegate.ExecuteIfBound(Results);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FFriendInfoChangedCallback, const TArray<FTIMFriendInfo>&, Results);
+
+//todo Listener
+#define DECLARATION_FriendInfoChanged_DELEGATE(Func) \
+FFriendInfoChangedCallback Func##_FriendInfoChangedDelegate; \
+void Func##_Local5(const TArray<FTIMFriendInfo>& Results) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Results]()\
+{\
+Func##_FriendInfoChangedDelegate.ExecuteIfBound(Results);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
+
+
+
+
+
+
+
+
+
 //todo success 加群申请
 #define DECLARATION_GroupAPPResult_DELEGATE(Func) \
 FGroupAppRstCallback Func##_GPAppRstDelegate; \
