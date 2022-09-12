@@ -198,9 +198,9 @@ struct V2TIMGroupMemberInfoResult {
     // 群成员信息列表
     V2TIMGroupMemberFullInfoVector memberInfoList;
 
-    V2TIMGroupMemberInfoResult();
-    V2TIMGroupMemberInfoResult(const V2TIMGroupMemberInfoResult& groupMemberInfoResult);
-    ~V2TIMGroupMemberInfoResult();
+   // V2TIMGroupMemberInfoResult();
+    //V2TIMGroupMemberInfoResult(const V2TIMGroupMemberInfoResult& groupMemberInfoResult);
+    //~V2TIMGroupMemberInfoResult();
 };
 
 /// 群 tips，群变更信息

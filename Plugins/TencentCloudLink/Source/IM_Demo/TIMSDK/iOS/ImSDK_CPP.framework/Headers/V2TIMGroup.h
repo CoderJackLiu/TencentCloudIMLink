@@ -192,7 +192,7 @@ DEFINE_VECTOR(V2TIMGroupMemberFullInfo)
 typedef TXV2TIMGroupMemberFullInfoVector V2TIMGroupMemberFullInfoVector;
 
 /// 获取群成员信息的结果
-struct V2TIMGroupMemberInfoResult {
+struct TIM_API V2TIMGroupMemberInfoResult {
     ///获取分页拉取的 seq。如果为 0 表示拉取结束
     uint64_t nextSequence;
     // 群成员信息列表

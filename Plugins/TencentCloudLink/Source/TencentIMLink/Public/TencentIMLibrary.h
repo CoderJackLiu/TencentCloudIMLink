@@ -292,8 +292,8 @@ public:
 
 
 	//todo finish
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	//static void GetGroupMemberList(const FString& groupID, int32 filter, uint64_t nextSeq, V2TIMValueCallback<V2TIMGroupMemberInfoResult>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void GetGroupMemberList(const FString& groupID, int64 filter, const FString& nextSeq, FTIMGroupMemberInfoResultCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
 	//
 	// 	/* 
@@ -862,12 +862,23 @@ public:
 	static V2TIMFriendCheckResult ToV2TIMFriendCheckResult(const FTIMFriendCheckResult& FriendCheckResult);
 	static FTIMFriendCheckResult ToFTIMFriendCheckResult(const V2TIMFriendCheckResult& FriendCheckResult);
 
+	static V2TIMGroupMemberInfoResult ToTIMGroupMemberInfoResult(const FTIMGroupMemberInfoResult& Result);
+	static FTIMGroupMemberInfoResult ToV2TIMGroupMemberInfoResult(const V2TIMGroupMemberInfoResult& Result);
 	static TArray<FTIMFriendApplication> ToTIMFriendApplicationArray(const V2TIMFriendApplicationVector& FriendApplicationVector);
 
 	static ETIMFriendRelationType ToFTIMFriendRelationType(const V2TIMFriendRelationType& Type);
 	static FTIMFriendApplication ToTIMFriendApplication(const V2TIMFriendApplication& IMFriendApplication);
 	static FTIMFriendApplicationResult ToTIMFriendApplicationResult(const V2TIMFriendApplicationResult& TIMFriendApplicationResult);
 
+	static V2TIMGroupMemberFullInfoVector ToTIMGroupMemberFullInfoVector(const TArray<FTIMGroupMemberFullInfo>& GroupMemberFullInfoArray);
+	static TArray<FTIMGroupMemberFullInfo> ToFTIMGroupMemberFullInfoArray(const V2TIMGroupMemberFullInfoVector& GroupMemberFullInfoVector);
+	static V2TIMGroupMemberFullInfo ToV2TIMGroupMemberFullInfo(const FTIMGroupMemberFullInfo& Info);
+	static FTIMGroupMemberFullInfo ToTIMGroupMemberFullInfo(const V2TIMGroupMemberFullInfo& Info);
+
+	static ETIMGroupMemberResult ToTIMGroupMemberResult(const V2TIMGroupMemberResult& Result);
+	
+	static FTIMGroupMemberOperationResult ToTIMGroupMemberOperationResult(const V2TIMGroupMemberOperationResult& Result);
+	
 	static V2TIMFriendApplication ToV2TIMFriendApplication(const FTIMFriendApplication& TIMFriendApplication);
 	
 	static ETIMFriendApplicationType ToTIMFriendApplicationType(const V2TIMFriendApplicationType& Type);

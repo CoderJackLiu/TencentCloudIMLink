@@ -1052,15 +1052,27 @@ void UTencentIMLibrary::GetJoinedGroupList(FIMGroupInfoArrayCallback OnSuccessDe
 TArray<FTIMGroupInfo> UTencentIMLibrary::ToGroupInfoArray(const V2TIMGroupInfoVector& GroupInfoVector)
 {
 	//todo finish
+	TArray<FTIMGroupInfo> TIMGroupInfoArray;
 
-	return TArray<FTIMGroupInfo>();
+	for(int i=0;i<GroupInfoVector.Size();++i)
+	{
+		TIMGroupInfoArray.Add(ToGroupInfo(GroupInfoVector[i]));
+	}
+	
+	return TIMGroupInfoArray;
 }
 
 V2TIMGroupInfoVector UTencentIMLibrary::ToTIMGroupInfoVector(const TArray<FTIMGroupInfo>& GroupInfo)
 {
 	//todo finish
+	V2TIMGroupInfoVector TIMGroupInfoVector;
+
+	for(int i=0;i<GroupInfo.Num();++i)
+	{
+		TIMGroupInfoVector.PushBack(ToTIMGroupInfo(GroupInfo[i]));
+	}
 	
-	return V2TIMGroupInfoVector();
+	return TIMGroupInfoVector;
 }
 
 DECLARATION_CALLBACK_DELEGATE(SetGroupInfo)
@@ -1132,7 +1144,107 @@ void UTencentIMLibrary::GetGroupOnlineMemberCount(const FString& groupID, FGroup
 	FValueCallBack* Callback = new FValueCallBack();
 	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupOnlineMemberCount(ToIMString(groupID), Callback);
 }
+
+DECLARATION_TIMGroupMemberInfoResult_DELEGATE(GetGroupMemberList)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(GetGroupMemberList)
+void UTencentIMLibrary::GetGroupMemberList(const FString& groupID, int64 filter, const FString& nextSeq, FTIMGroupMemberInfoResultCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	GetGroupMemberList_TIMGroupMemberInfoResultDelegate = OnSuccessDelegate;
+	GetGroupMemberList_FailureDelegate = OnFailureDelegate;
+
+	class FValueCallBack : public V2TIMValueCallback<V2TIMGroupMemberInfoResult>
+	{
+	public:
+		virtual ~FValueCallBack() override
+		{
+		}
+
+		/**
+		 * 成功时回调，带上 T 类型的参数
+		 */
+		virtual void OnSuccess(const V2TIMGroupMemberInfoResult& message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("=== SendCallback OnSuccess ======"));
+			GetGroupMemberList_TIMGroupMemberInfoResultDelegate.ExecuteIfBound(ToV2TIMGroupMemberInfoResult(message));
+		};
+		/**
+		 * 出错时回调
+		 *
+		 * @param error_code 错误码，详细描述请参见错误码表
+		 * @param error_message 错误描述
+		 */
+		virtual void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			GetGroupMemberList_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		}
+	};
+	FValueCallBack* Callback = new FValueCallBack();
+	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupMemberList(ToIMString(groupID),filter,FCString::Atoi64(GetData(nextSeq)),Callback);
+}
+
+FTIMGroupMemberInfoResult UTencentIMLibrary::ToV2TIMGroupMemberInfoResult(const V2TIMGroupMemberInfoResult& Result)
+{
+	FTIMGroupMemberInfoResult TIMGroupMemberInfoResult;
+	TIMGroupMemberInfoResult.nextSequence=FString::Printf(TEXT("%llu"), Result.nextSequence);
+	TIMGroupMemberInfoResult.memberInfoList=ToFTIMGroupMemberFullInfoArray(Result.memberInfoList);
+	return TIMGroupMemberInfoResult;
+}
+
+TArray<FTIMGroupMemberFullInfo> UTencentIMLibrary::ToFTIMGroupMemberFullInfoArray(const V2TIMGroupMemberFullInfoVector& GroupMemberFullInfoVector)
+{
+	TArray<FTIMGroupMemberFullInfo> TIMGroupMemberFullInfoArray;
+	for(int i=0;i<GroupMemberFullInfoVector.Size();++i)
+	{
+		TIMGroupMemberFullInfoArray.Add(ToTIMGroupMemberFullInfo(GroupMemberFullInfoVector[i]));
+	}
+	return TIMGroupMemberFullInfoArray;
+}
+
+FTIMGroupMemberFullInfo UTencentIMLibrary::ToTIMGroupMemberFullInfo(const V2TIMGroupMemberFullInfo& Info)
+{
+	FTIMGroupMemberFullInfo TIMGroupMemberFullInfo;
+	TIMGroupMemberFullInfo.customInfo=ToTIMCustomInfo_(Info.customInfo);
+	TIMGroupMemberFullInfo.role=Info.role;
+	TIMGroupMemberFullInfo.muteUntil=Info.muteUntil;
+	TIMGroupMemberFullInfo.joinTime=Info.joinTime;
+	TIMGroupMemberFullInfo.modifyFlag=Info.modifyFlag;
+	return TIMGroupMemberFullInfo;
+}
+
+ETIMGroupMemberResult UTencentIMLibrary::ToTIMGroupMemberResult(const V2TIMGroupMemberResult& Result)
+{
+	switch (Result)
+	{
+	case V2TIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_FAIL:
+		return ETIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_FAIL;
+		break;
+	case V2TIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_SUCC:
+		return ETIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_SUCC;
+		break;
+	case V2TIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_INVALID:
+		return ETIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_INVALID;
+		break;
+	case V2TIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_PENDING:
+		return ETIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_PENDING;
+		break;
+	case V2TIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_OVERLIMIT:
+		return ETIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_OVERLIMIT;
+		break;
+	}
+
+	return ETIMGroupMemberResult::V2TIM_GROUP_MEMBER_RESULT_FAIL;
+}
+
+FTIMGroupMemberOperationResult UTencentIMLibrary::ToTIMGroupMemberOperationResult(const V2TIMGroupMemberOperationResult& Result)
+{
+	FTIMGroupMemberOperationResult TIMGroupMemberOperationResult;
+	TIMGroupMemberOperationResult.userID=ToFString(Result.userID);
+	TIMGroupMemberOperationResult.result=ToTIMGroupMemberResult(Result.result);
+	return TIMGroupMemberOperationResult;
+}
+
 DECLARATION_GroupMemFullInfos_DELEGATE(GetGroupMembersInfo)
+
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetGroupMembersInfo)
 void UTencentIMLibrary::GetGroupMembersInfo(const FString& groupID,const TArray<FString>& memberList, FGroupMemFullInfosCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
@@ -1172,13 +1284,27 @@ void UTencentIMLibrary::GetGroupMembersInfo(const FString& groupID,const TArray<
 V2TIMGroupMemberFullInfoVector UTencentIMLibrary::ToGroupMemberFullInfoVector(const TArray<FTIMGroupMemberFullInfo>& GPFullInfos)
 {
 	//todo finish
-	return V2TIMGroupMemberFullInfoVector();
+	V2TIMGroupMemberFullInfoVector TIMGroupMemberFullInfoVector;
+
+	for(int i=0;i<GPFullInfos.Num();++i)
+	{
+		TIMGroupMemberFullInfoVector.PushBack(ToV2TIMGroupMemberFullInfo(GPFullInfos[i]));
+	}
+	
+	return TIMGroupMemberFullInfoVector;
 }
 
 TArray<FTIMGroupMemberFullInfo> UTencentIMLibrary::ToTIMGroupMemberFullInfoArray(const V2TIMGroupMemberFullInfoVector& GPFullInfos)
 {
 	//todo finish
-	return TArray<FTIMGroupMemberFullInfo>();
+	TArray<FTIMGroupMemberFullInfo> TIMGroupMemberFullInfoArray;
+
+	for(int i=0;i<GPFullInfos.Size();++i)
+	{
+		TIMGroupMemberFullInfoArray.Add(ToTIMGroupMemberFullInfo(GPFullInfos[i]));
+	}
+	
+	return TIMGroupMemberFullInfoArray;
 }
 
 DECLARATION_CALLBACK_DELEGATE(MuteGroupMember)
@@ -1255,6 +1381,13 @@ void UTencentIMLibrary::InviteUserToGroup(const FString& groupID, const TArray<F
 TArray<FTIMGroupMemberOperationResult> UTencentIMLibrary::ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector)
 {
 	//todo finish
+	TArray<FTIMGroupMemberOperationResult> TIMGroupMemberOperationResult;
+
+	for(int i=0;i<GPMemOPVector.Size();++i)
+	{
+		TIMGroupMemberOperationResult.Add(ToTIMGroupMemberOperationResult(GPMemOPVector[i]));
+	}
+	
 	return TArray<FTIMGroupMemberOperationResult>();
 }
 
@@ -1301,6 +1434,9 @@ FTIMGroupApplicationResult UTencentIMLibrary::ToGroupAppResArray(const V2TIMGrou
 {
 	
 	//todo finish
+	FTIMGroupApplicationResult TIMGroupApplicationResult;
+	TIMGroupApplicationResult.unreadCount=FString::Printf(TEXT("%llu"), GroupApplicationResult.unreadCount);
+	TIMGroupApplicationResult.applicationList=GroupApplicationResult.applicationList;
 	return FTIMGroupApplicationResult();
 }
 
@@ -3141,6 +3277,29 @@ FTIMFriendApplicationResult UTencentIMLibrary::ToTIMFriendApplicationResult(cons
 	return Result;
 }
 
+V2TIMGroupMemberFullInfoVector UTencentIMLibrary::ToTIMGroupMemberFullInfoVector(const TArray<FTIMGroupMemberFullInfo>& GroupMemberFullInfoArray)
+{
+	V2TIMGroupMemberFullInfoVector FullInfoVector;
+	for(int i=0;i<GroupMemberFullInfoArray.Num();++i)
+	{
+		FullInfoVector.PushBack(ToV2TIMGroupMemberFullInfo(GroupMemberFullInfoArray[i]));
+	}
+
+	return FullInfoVector;
+}
+
+V2TIMGroupMemberFullInfo UTencentIMLibrary::ToV2TIMGroupMemberFullInfo(const FTIMGroupMemberFullInfo& Info)
+{
+	V2TIMGroupMemberFullInfo TIMGroupMemberFullInfo;
+	TIMGroupMemberFullInfo.customInfo=ToV2TIMCustomInfo(Info.customInfo);
+	TIMGroupMemberFullInfo.role=Info.role;
+	TIMGroupMemberFullInfo.muteUntil=Info.muteUntil;
+	TIMGroupMemberFullInfo.joinTime= Info.joinTime;
+	TIMGroupMemberFullInfo.modifyFlag=Info.modifyFlag;
+
+	return TIMGroupMemberFullInfo;
+}
+
 TArray<FTIMFriendApplication> UTencentIMLibrary::ToTIMFriendApplicationArray(const V2TIMFriendApplicationVector& FriendApplicationVector)
 {
 	TArray<FTIMFriendApplication> TIMFriendApplicationArray;
@@ -3202,6 +3361,14 @@ FTIMFriendCheckResult UTencentIMLibrary::ToFTIMFriendCheckResult(const V2TIMFrie
 	TIMFriendCheckResult.resultInfo=ToFString(FriendCheckResult.resultInfo);
 	TIMFriendCheckResult.relationType=ToFTIMFriendRelationType(FriendCheckResult.relationType);
 	return TIMFriendCheckResult;
+}
+
+V2TIMGroupMemberInfoResult UTencentIMLibrary::ToTIMGroupMemberInfoResult(const FTIMGroupMemberInfoResult& Result)
+{
+	V2TIMGroupMemberInfoResult TIMGroupMemberInfoResult;
+	TIMGroupMemberInfoResult.nextSequence=FCString::Strtoui64(GetData(Result.nextSequence),nullptr,10);
+	TIMGroupMemberInfoResult.memberInfoList=ToTIMGroupMemberFullInfoVector(Result.memberInfoList);
+	return TIMGroupMemberInfoResult;
 }
 
 ETIMFriendRelationType UTencentIMLibrary::ToFTIMFriendRelationType(const V2TIMFriendRelationType& Type)
