@@ -322,7 +322,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
 	static void MuteGroupMember(const FString& groupID, const FString& userID, int32 seconds, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	
+
 	//
 	// 	/* 	
 	// 	3.6 邀请他人入群
@@ -333,23 +333,13 @@ public:
 	// 	会议群（Meeting）和公开群（Public）：只有通过rest api 使用 App 管理员身份才可以邀请其他人进群。
 	// 	直播群（AVChatRoom）：不支持此功能。 
 	// 	*/
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
 	// static void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
+	static void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, FGroupIniteUserCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
-	//
-	// 	/* 	
-	// 	3.7 踢人（直播群踢人从 6.6 版本开始支持，需要您购买旗舰版套餐）
-	//
-	// 	注意
-	// 	请注意不同类型的群有如下限制：
-	// 	工作群（Work）：只有群主或 APP 管理员可以踢人。
-	// 	公开群（Public）、会议群（Meeting）：群主、管理员和 APP 管理员可以踢人
-	// 	直播群（AVChatRoom）：6.6 之前版本只支持禁言（muteGroupMember），不支持踢人。6.6 及以上版本支持禁言和踢人。 
-	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void KickGroupMember(const FString& groupID, const TArray<FString>& memberList, const FString& reason,
-	// 		                     V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
-	//
+	static TArray<FTIMGroupMemberOperationResult> ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector); 
+
+
 	//
 	// 	/* 
 	// 	3.8 切换群成员的角色。
@@ -529,162 +519,6 @@ public:
 	//
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	//
 	// /* 
 	// 1.1 添加会话监听器 
@@ -845,7 +679,7 @@ public:
 	// 		ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
 	// 		*/
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void GetFriendsInfo(const TArray<FString>& userIDList, FTIMFriendInfoResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
+	static void GetFriendsInfo(const TArray<FString>& userIDList, FTIMFriendInfoResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
 	/* 
 	2.3 设置指定好友资料 
@@ -861,46 +695,46 @@ public:
 	// 	该功能为 IM 旗舰版功能，购买旗舰版套餐包后可使用，详见价格说明 
 	// 	*/
 
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		//static void SearchFriends(const V2TIMFriendSearchParam& searchParam, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
-		static void SearchFriends(const FTIMFriendSearchParam& searchParam, FTIMFriendInfoResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	//static void SearchFriends(const V2TIMFriendSearchParam& searchParam, V2TIMValueCallback<V2TIMFriendInfoResultVector>* callback);
+	static void SearchFriends(const FTIMFriendSearchParam& searchParam, FTIMFriendInfoResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
-		/* 
-		2.5 添加好友
-		 */
-		 UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		 static void AddFriend(const FTIMFriendAddApplication& application, FTIMFriendOperationResulCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
-	
-	
-		/* 
-		2.6 删除好友
-	
-		参数
-		userIDList	要删除的好友 userID 列表
-		ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
-		deleteType	删除类型（单向好友、双向好友）
-		*/
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		static void DeleteFromFriendList(const TArray<FString>& userIDList, ETIMFriendType deleteType, FTIMFriendOperationResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
-	
-	
-		/* 
-		2.7 检查指定用户的好友关系
-	
-		参数
-		userIDList	要检查的 userID 列表
-		checkType	检查类型 （单向好友检查、双向好友检查）
-		succ	成功后的回调
-		fail	失败后的回调
-		注意
-		checkType 的使用需要注意：
-		checkType 如果传入 V2TIM_FRIEND_TYPE_SINGLE，结果返回：V2TIM_FRIEND_RELATION_TYPE_NONE、V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST 两种情况
-		checkType 如果传入 V2TIM_FRIEND_TYPE_BOTH，结果返回：V2TIM_FRIEND_RELATION_TYPE_NONE、V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST、 V2TIM_FRIEND_RELATION_TYPE_IN_OTHER_FRIEND_LIST、V2TIM_FRIEND_RELATION_TYPE_BOTH_WAY 四种情况 
-		*/
-		UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-		static void CheckFriend(const TArray<FString>& userIDList, ETIMFriendType checkType, FTIMFriendCheckResultVectorCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
-	
+	/* 
+	2.5 添加好友
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void AddFriend(const FTIMFriendAddApplication& application, FTIMFriendOperationResulCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	/* 
+	2.6 删除好友
+
+	参数
+	userIDList	要删除的好友 userID 列表
+	ID 建议一次最大 100 个，因为数量过多可能会导致数据包太大被后台拒绝，后台限制数据包最大为 1M。
+	deleteType	删除类型（单向好友、双向好友）
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void DeleteFromFriendList(const TArray<FString>& userIDList, ETIMFriendType deleteType, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	/* 
+	2.7 检查指定用户的好友关系
+
+	参数
+	userIDList	要检查的 userID 列表
+	checkType	检查类型 （单向好友检查、双向好友检查）
+	succ	成功后的回调
+	fail	失败后的回调
+	注意
+	checkType 的使用需要注意：
+	checkType 如果传入 V2TIM_FRIEND_TYPE_SINGLE，结果返回：V2TIM_FRIEND_RELATION_TYPE_NONE、V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST 两种情况
+	checkType 如果传入 V2TIM_FRIEND_TYPE_BOTH，结果返回：V2TIM_FRIEND_RELATION_TYPE_NONE、V2TIM_FRIEND_RELATION_TYPE_IN_MY_FRIEND_LIST、 V2TIM_FRIEND_RELATION_TYPE_IN_OTHER_FRIEND_LIST、V2TIM_FRIEND_RELATION_TYPE_BOTH_WAY 四种情况 
+	*/
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void CheckFriend(const TArray<FString>& userIDList, ETIMFriendType checkType, FTIMFriendCheckResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
 
 	/* 
 	3.1 获取好友申请列表
@@ -909,7 +743,7 @@ public:
 	好友申请列表包括发起的好友申请和收到的好友申请。
 	 */
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	static void GetFriendApplicationList(FTIMFriendApplicationResultCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
+	static void GetFriendApplicationList(FTIMFriendApplicationResultCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
 
 	/* 
@@ -1057,7 +891,7 @@ public:
 	static FTIMFriendCheckResult ToFTIMFriendCheckResult(const V2TIMFriendCheckResult& FriendCheckResult);
 
 	static TArray<FTIMFriendApplication> ToTIMFriendApplicationArray(const V2TIMFriendApplicationVector& FriendApplicationVector);
-	
+
 	static ETIMFriendRelationType ToFTIMFriendRelationType(const V2TIMFriendRelationType& Type);
 	static FTIMFriendApplication ToTIMFriendApplication(const V2TIMFriendApplication& IMFriendApplication);
 	static FTIMFriendApplicationResult ToTIMFriendApplicationResult(const V2TIMFriendApplicationResult& TIMFriendApplicationResult);
@@ -1065,6 +899,7 @@ public:
 	static V2TIMFriendApplication ToV2TIMFriendApplication(const FTIMFriendApplication& TIMFriendApplication);
 	
 	static ETIMFriendApplicationType ToTIMFriendApplicationType(const V2TIMFriendApplicationType& Type);
+
 	static V2TIMFriendApplicationType ToV2TIMFriendApplicationType(const ETIMFriendApplicationType& Type);
 
 	static TArray<FTIMFriendGroup> ToTIMFriendGroupArray(const V2TIMFriendGroupVector& TIMFriendGroup);
@@ -1166,4 +1001,3 @@ public:
 	static TArray<FTIMCreateGroupMemberInfo> ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector);
 	static V2TIMCreateGroupMemberInfoVector ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector);
 };
-
