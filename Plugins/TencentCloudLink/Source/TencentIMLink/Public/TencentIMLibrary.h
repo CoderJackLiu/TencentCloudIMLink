@@ -306,35 +306,23 @@ public:
 
 	static TArray<FTIMGroupMemberFullInfo> ToTIMGroupMemberFullInfoArray(const V2TIMGroupMemberFullInfoVector& GPFullInfos);
 
-	//
-	// 	/* 
-	// 	3.3 搜索群成员（5.4.666 及以上版本支持）
-	//
-	// 	参数
-	// 	param	搜索参数
-	// 	注意
-	// 	该功能为 IM 旗舰版功能，购买旗舰版套餐包后可使用，详见价格说明 
-	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SearchGroupMembers(const V2TIMGroupMemberSearchParam& param, V2TIMValueCallback<V2TIMGroupSearchGroupMembersMap>* callback);
-	//
-	//
+
 	// 	/*
 	// 	3.4 修改指定的群成员资料  
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void SetGroupMemberInfo(const FString& groupID, const V2TIMGroupMemberFullInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
-	//
-	// 	/*
-	// 	3.5 禁言（只有管理员或群主能够调用）
-	//
-	// 	参数
-	// 	seconds	禁言时间长度，单位秒，表示调用该接口成功后多少秒内不允许被禁言用户再发言。
-	// 	 */
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void MuteGroupMember(const FString& groupID, const FString& userID, int32 seconds, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-	//
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	// static void SetGroupMemberInfo(const FString& groupID, const V2TIMGroupMemberFullInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+
+
+	/*
+	3.5 禁言（只有管理员或群主能够调用）
+
+	参数
+	seconds	禁言时间长度，单位秒，表示调用该接口成功后多少秒内不允许被禁言用户再发言。
+	 */
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	static void MuteGroupMember(const FString& groupID, const FString& userID, int32 seconds, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	
 	//
 	// 	/* 	
 	// 	3.6 邀请他人入群
@@ -345,9 +333,9 @@ public:
 	// 	会议群（Meeting）和公开群（Public）：只有通过rest api 使用 App 管理员身份才可以邀请其他人进群。
 	// 	直播群（AVChatRoom）：不支持此功能。 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
-	//
+	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
+	// static void InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
+
 	//
 	// 	/* 	
 	// 	3.7 踢人（直播群踢人从 6.6 版本开始支持，需要您购买旗舰版套餐）
@@ -539,6 +527,162 @@ public:
 	// 	static void AddInvitedSignaling(const V2TIMSignalingInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	//
