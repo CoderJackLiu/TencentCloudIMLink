@@ -192,6 +192,21 @@ Func##_TIMFriendApplicationResultDelegate.ExecuteIfBound(FriendApplicationResult
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendGroupVectorCallback, const TArray<FTIMFriendGroup>& , FriendGroup);
+// //todo success message 
+#define DECLARATION_TIMFriendGroupVector_DELEGATE(Func) \
+FTIMFriendGroupVectorCallback Func##_TIMFriendGroupVectorDelegate; \
+void Func##_Local85(const TArray<FTIMFriendGroup>& FriendGroup) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([FriendGroup]()\
+{\
+Func##_TIMFriendGroupVectorDelegate.ExecuteIfBound(FriendGroup);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMMessageInfoCallback, const FTIMMessage& , Message);
 
 //failure

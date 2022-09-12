@@ -929,8 +929,8 @@ public:
 	参数
 	application	好友申请信息，getFriendApplicationList 成功后会返回 
 	*/
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// static void RefuseFriendApplication(const V2TIMFriendApplication& application, V2TIMValueCallback<V2TIMFriendOperationResult>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void RefuseFriendApplication(const FTIMFriendApplication& application, FTIMFriendOperationResulCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 
 
 	/* 
@@ -939,36 +939,37 @@ public:
 	参数
 	application	好友申请信息，getFriendApplicationList 成功后会返回
 	 */
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// static void DeleteFriendApplication(const V2TIMFriendApplication& application, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void DeleteFriendApplication(const FTIMFriendApplication& application, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
 
 	/* 
 	3.5 设置好友申请已读 
 	*/
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// static void SetFriendApplicationRead(V2TIMCallback* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	//static void SetFriendApplicationRead(V2TIMCallback* callback);
+	static void SetFriendApplicationRead(FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	
 	//
 	// 	/* 
 	// 	4.1 添加用户到黑名单 
 	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void AddToBlackList(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void AddToBlackList(const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
 	// 	4.2 把用户从黑名单中删除
 	// 	 */
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void DeleteFromBlackList(const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void DeleteFromBlackList(const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
 	// 	4.3 获取黑名单列表
 	// 	 */
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void GetBlackList(V2TIMValueCallback<V2TIMFriendInfoVector>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void GetBlackList(FTIMFriendInfoVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -978,8 +979,8 @@ public:
 	// 	groupName	分组名称
 	// 	userIDList	要添加到分组中的好友
 	// 	 */
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void CreateFriendGroup(const FString& groupName, const TArray<FString>& userIDList, V2TIMValueCallback<V2TIMFriendOperationResultVector>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void CreateFriendGroup(const FString& groupName, const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -988,8 +989,8 @@ public:
 	// 	参数
 	// 	groupNameList	要获取信息的好友分组名称列表,传入 nil 获得所有分组信息
 	// 	 */
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// 	static void GetFriendGroups(const TArray<FString>& groupNameList, V2TIMValueCallback<V2TIMFriendGroupVector>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void GetFriendGroups(const TArray<FString>& groupNameList, FTIMFriendGroupVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -1066,6 +1067,10 @@ public:
 	static ETIMFriendApplicationType ToTIMFriendApplicationType(const V2TIMFriendApplicationType& Type);
 	static V2TIMFriendApplicationType ToV2TIMFriendApplicationType(const ETIMFriendApplicationType& Type);
 
+	static TArray<FTIMFriendGroup> ToTIMFriendGroupArray(const V2TIMFriendGroupVector& TIMFriendGroup);
+
+	static FTIMFriendGroup ToTIMFriendGroup(const V2TIMFriendGroup& Group);
+	
 	static V2TIMFriendAcceptType ToV2TIMFriendAcceptType (const ETIMFriendAcceptType& Type);
 	
 	static V2TIMString ToIMString(const FString& InStr);

@@ -1203,6 +1203,21 @@ enum class ETIMFriendAcceptType:uint8
 	V2TIM_FRIEND_ACCEPT_AGREE_AND_ADD = 1,
 };
 
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMFriendGroup
+{
+	GENERATED_BODY()
+	/// 好友分组名称
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendGroup)
+	FString groupName;
+	/// 分组成员数量 uinn64_t
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendGroup)
+	FString userCount;
+	/// 分组成员列表
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendGroup)
+	TArray<FString> friendList;
+};
+
 /**
  * 
  */
