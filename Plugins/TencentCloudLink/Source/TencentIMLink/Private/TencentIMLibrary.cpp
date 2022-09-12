@@ -3237,12 +3237,12 @@ V2TIMFriendCheckResultVector UTencentIMLibrary::ToV2TIMFriendCheckResultVector(c
 
 V2TIMFriendCheckResult UTencentIMLibrary::ToV2TIMFriendCheckResult(const FTIMFriendCheckResult& FriendCheckResult)
 {
-	//todo finish
+	
 	V2TIMFriendCheckResult TIMFriendCheckResult;
-	//TIMFriendCheckResult.userID=ToString(FriendCheckResult.userID);
-	//TIMFriendCheckResult.resultCode=FriendCheckResult.resultCode;
-	//TIMFriendCheckResult.resultInfo=ToString(FriendCheckResult.resultInfo);
-	//TIMFriendCheckResult.relationType=FriendCheckResult.relationType;
+	TIMFriendCheckResult.userID=ToIMString(FriendCheckResult.userID);
+	TIMFriendCheckResult.resultCode=FriendCheckResult.resultCode;
+	TIMFriendCheckResult.resultInfo=ToIMString(FriendCheckResult.resultInfo);
+	TIMFriendCheckResult.relationType=V2TIMFriendRelationType(FriendCheckResult.relationType);
 	return TIMFriendCheckResult;
 }
 
