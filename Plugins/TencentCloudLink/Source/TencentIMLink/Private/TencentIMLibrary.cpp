@@ -2766,6 +2766,307 @@ void UTencentIMLibrary::DeleteFriendsFromFriendGroup(const FString& groupName, c
 	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendsFromFriendGroup(ToIMString(groupName),ToIMStringArray(userIDList),CallBack);
 }
 
+DECLARATION_CALLBACK_DELEGATE(Invite)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(Invite)
+FString UTencentIMLibrary::Invite(const FString& invitee, const FString& data, bool onlineUserOnly, const FTIMOfflinePushInfo& offlinePushInfo, int32 timeout, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	Invite_FailureDelegate = OnFailureDelegate;
+	Invite_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			Invite_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			Invite_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	return Tencent_IM.Invite(invitee,data,onlineUserOnly,ToTIMOfflinePushInfo(offlinePushInfo),timeout,Callback);
+}
+
+DECLARATION_CALLBACK_DELEGATE(InviteInGroup)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(InviteInGroup)
+FString UTencentIMLibrary::InviteInGroup(const FString& groupID, const TArray<FString>& inviteeList, const FString& data, bool onlineUserOnly, int timeout, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	InviteInGroup_FailureDelegate = OnFailureDelegate;
+	InviteInGroup_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			InviteInGroup_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			InviteInGroup_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	return Tencent_IM.InviteInGroup(groupID,inviteeList,data,onlineUserOnly,timeout,Callback);
+}
+
+DECLARATION_CALLBACK_DELEGATE(Cancel)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(Cancel)
+void UTencentIMLibrary::Cancel(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	Cancel_FailureDelegate = OnFailureDelegate;
+	Cancel_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			Cancel_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			Cancel_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	return Tencent_IM.Cancel(inviteID,data,Callback);
+}
+
+DECLARATION_CALLBACK_DELEGATE(Accept)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(Accept)
+void UTencentIMLibrary::Accept(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	Accept_FailureDelegate = OnFailureDelegate;
+	Accept_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			Accept_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			Accept_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	return Tencent_IM.Accept(inviteID,data,Callback);
+}
+
+DECLARATION_CALLBACK_DELEGATE(Reject)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(Reject)
+void UTencentIMLibrary::Reject(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	Reject_FailureDelegate = OnFailureDelegate;
+	Reject_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			Reject_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			Reject_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	return Tencent_IM.Reject(inviteID,data,Callback);
+}
+
+FTIMSignalingInfo UTencentIMLibrary::GetSignalingInfo(const FTIMMessage& msg)
+{
+	return ToSignalingInfo(Tencent_IM.GetSignalingInfo(ToIMMessage(msg)));
+}
+
+DECLARATION_CALLBACK_DELEGATE(AddInvitedSignaling)
+
+DECLARATION_FAILURE_CALLBACK_DELEGATE(AddInvitedSignaling)
+void UTencentIMLibrary::AddInvitedSignaling(const FTIMSignalingInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+{
+	AddInvitedSignaling_FailureDelegate = OnFailureDelegate;
+	AddInvitedSignaling_Delegate = OnSuccessDelegate;
+	class NormalCallback : public V2TIMCallback
+	{
+	public:
+		NormalCallback()
+		{
+		}
+
+		~NormalCallback() override
+		{
+		}
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+			AddInvitedSignaling_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+			const std::string TempStr = error_message.CString();
+			AddInvitedSignaling_FailureDelegate.ExecuteIfBound(error_code, TempStr.c_str());
+		};
+	};
+	NormalCallback* Callback = new NormalCallback();
+	return Tencent_IM.AddInvitedSignaling(ToTIMSignalingInfo(info),Callback);
+}
+
+V2TIMOfflinePushInfo UTencentIMLibrary::ToTIMOfflinePushInfo(const FTIMOfflinePushInfo& Info)
+{
+	V2TIMOfflinePushInfo TIMOfflinePushInfo ;
+	TIMOfflinePushInfo.title=ToIMString(Info.title);
+	TIMOfflinePushInfo.desc=ToIMString(Info.desc);
+	TIMOfflinePushInfo.ext=ToIMString(Info.ext);
+	TIMOfflinePushInfo.disablePush=Info.disablePush;
+	TIMOfflinePushInfo.iOSSound=ToIMString(Info.iOSSound);
+	TIMOfflinePushInfo.ignoreIOSBadge=Info.ignoreIOSBadge;
+	TIMOfflinePushInfo.AndroidOPPOChannelID=ToIMString(Info.AndroidOPPOChannelID);
+	TIMOfflinePushInfo.AndroidVIVOClassification=Info.AndroidVIVOClassification;
+
+	return TIMOfflinePushInfo;
+}
+
+V2TIMSignalingInfo UTencentIMLibrary::ToTIMSignalingInfo(const FTIMSignalingInfo& Info)
+{
+	V2TIMSignalingInfo TIMSignalingInfo;
+	TIMSignalingInfo.inviteID=ToIMString(Info.inviteID);
+	TIMSignalingInfo.groupID=ToIMString(Info.groupID);
+	TIMSignalingInfo.inviter=ToIMString(Info.inviter);
+	TIMSignalingInfo.inviteeList=ToIMStringArray(Info.inviteeList);
+	TIMSignalingInfo.data=ToIMString(Info.data);
+	TIMSignalingInfo.actionType=ToV2TIMSignalingActionType(Info.actionType);
+	TIMSignalingInfo.timeout=Info.timeout;
+
+	return TIMSignalingInfo;
+}
+
+FTIMSignalingInfo UTencentIMLibrary::ToSignalingInfo(const V2TIMSignalingInfo& Info)
+{
+	FTIMSignalingInfo TIMSignalingInfo;
+	TIMSignalingInfo.inviteID=ToFString(Info.inviteID);
+	TIMSignalingInfo.groupID=ToFString(Info.groupID);
+	TIMSignalingInfo.inviter=ToFString(Info.inviter);
+	TIMSignalingInfo.inviteeList=ToFStringArray(Info.inviteeList);
+	TIMSignalingInfo.data=ToFString(Info.data);
+	TIMSignalingInfo.actionType=ToTIMSignalingActionType(Info.actionType);
+	TIMSignalingInfo.timeout=Info.timeout;
+
+	return TIMSignalingInfo;
+}
+
+ETIMSignalingActionType UTencentIMLibrary::ToTIMSignalingActionType(const V2TIMSignalingActionType& Type)
+{
+	switch (Type)
+	{
+	case V2TIMSignalingActionType::SignalingActionType_Invite:
+		return ETIMSignalingActionType::SignalingActionType_Invite;
+		break;
+	case V2TIMSignalingActionType::SignalingActionType_Cancel_Invite:
+		return ETIMSignalingActionType::SignalingActionType_Cancel_Invite;
+		break;
+	case V2TIMSignalingActionType::SignalingActionType_Accept_Invite:
+		return ETIMSignalingActionType::SignalingActionType_Accept_Invite;
+		break;
+	case V2TIMSignalingActionType::SignalingActionType_Reject_Invite:
+		return ETIMSignalingActionType::SignalingActionType_Reject_Invite;
+		break;
+	case V2TIMSignalingActionType::SignalingActionType_Invite_Timeout:
+		return ETIMSignalingActionType::SignalingActionType_Invite_Timeout;
+		break;
+	}
+
+	return ETIMSignalingActionType::SignalingActionType_Invite;
+}
+
+V2TIMSignalingActionType UTencentIMLibrary::ToV2TIMSignalingActionType(const ETIMSignalingActionType& Type)
+{
+	switch (Type)
+	{
+	case ETIMSignalingActionType::SignalingActionType_Invite:
+		return V2TIMSignalingActionType::SignalingActionType_Invite;
+		break;
+	case ETIMSignalingActionType::SignalingActionType_Cancel_Invite:
+		return V2TIMSignalingActionType::SignalingActionType_Cancel_Invite;
+		break;
+	case ETIMSignalingActionType::SignalingActionType_Accept_Invite:
+		return V2TIMSignalingActionType::SignalingActionType_Accept_Invite;
+		break;
+	case ETIMSignalingActionType::SignalingActionType_Reject_Invite:
+		return V2TIMSignalingActionType::SignalingActionType_Reject_Invite;
+		break;
+	case ETIMSignalingActionType::SignalingActionType_Invite_Timeout:
+		return V2TIMSignalingActionType::SignalingActionType_Invite_Timeout;
+		break;
+	}
+
+	return V2TIMSignalingActionType::SignalingActionType_Invite;
+}
+
 TArray<FTIMFriendGroup> UTencentIMLibrary::ToTIMFriendGroupArray(const V2TIMFriendGroupVector& TIMFriendGroup)
 {
 	TArray<FTIMFriendGroup> Result;
