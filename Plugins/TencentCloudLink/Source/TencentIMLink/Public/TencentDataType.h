@@ -9,7 +9,7 @@
 #include "TencentDataType.generated.h"
 
 
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class ELoginStatus :uint8
 {
 	/// 已登录
@@ -21,7 +21,7 @@ enum class ELoginStatus :uint8
 	V2TIM_STATUS_LOGOUT = 3,
 };
 
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class EIMMessagePriority :uint8
 {
 	/// 默认
@@ -51,7 +51,7 @@ struct TENCENTIMLINK_API FV2TIMSDKConfig
 	struct V2TIMSDKConfig;
 };
 
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMGender:uint8
 {
 	/// 未知性别
@@ -63,7 +63,7 @@ enum class ETIMGender:uint8
 };
 
 /// 好友验证方式
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMFriendAllowType:uint8
 {
 	/// 同意任何用户加好友
@@ -76,7 +76,7 @@ enum class ETIMFriendAllowType:uint8
 
 
 /// 好友申请类型
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class FV2TIMFriendApplicationType:uint8
 {
 	/// 别人发给我的
@@ -89,7 +89,7 @@ enum class FV2TIMFriendApplicationType:uint8
 };
 
 /// 好友类型
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class FV2TIMFriendType:uint8
 {
 	/// 单向好友
@@ -100,7 +100,7 @@ enum class FV2TIMFriendType:uint8
 };
 
 /// 好友关系类型
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class FV2TIMFriendRelationType:uint8
 {
 	/// 不是好友
@@ -114,7 +114,7 @@ enum class FV2TIMFriendRelationType:uint8
 };
 
 /// 好友申请接受类型
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class FV2TIMFriendAcceptType:uint8
 {
 	/// 接受加好友（建立单向好友）
@@ -125,7 +125,7 @@ enum class FV2TIMFriendAcceptType:uint8
 
 
 // 用户资料修改标记
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class FV2TIMUserInfoModifyFlag:uint8
 {
 	// 未定义
@@ -151,7 +151,7 @@ enum class FV2TIMUserInfoModifyFlag:uint8
 };
 
 // 好友资料修改标记
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMFriendInfoModifyFlag:uint8
 {
 	// 未定义
@@ -214,7 +214,7 @@ struct TENCENTIMLINK_API FTIMUserFullInfo
 };
 
 /// 消息状态
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMMessageStatus:uint8
 {
 	///< 消息发送中
@@ -232,7 +232,7 @@ enum class ETIMMessageStatus:uint8
 };
 
 /// 消息类型
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMElemType:uint8
 {
 	///< 未知消息
@@ -769,7 +769,7 @@ struct TENCENTIMLINK_API FTIMCreateGroupMemberInfo
 };
 
 
-UENUM()
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMConversationType:uint8
 {
 	///< 单聊
@@ -779,7 +779,7 @@ enum class ETIMConversationType:uint8
 };
 
 /// @ 类型
-UENUM()
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMGroupAtType:uint8
 {
 	///< @ 我
@@ -908,10 +908,13 @@ struct TENCENTIMLINK_API FTIMUserInfo
 {
 	GENERATED_BODY()
 	/// 用户 ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
 	FString userID;
 	/// 用户昵称
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
 	FString nickName;
 	/// 用户头像
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
 	FString faceURL;
 };
 
@@ -919,6 +922,7 @@ USTRUCT(Blueprintable, BlueprintType)
 struct TENCENTIMLINK_API FBuffer
 {
 	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
 	TArray<uint8> Buffer;
 };
 
@@ -1021,7 +1025,7 @@ struct TENCENTIMLINK_API FTIMGroupMemberFullInfo : public FTIMGroupMemberInfo
 
 
 /// 好友关系类型
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMFriendRelationType:uint8
 {
 	/// 不是好友
@@ -1072,7 +1076,7 @@ struct TENCENTIMLINK_API FTIMFriendSearchParam
 };
 
 /// 好友类型
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMFriendType:uint8
 {
 	None=0,
@@ -1142,7 +1146,7 @@ struct TENCENTIMLINK_API FTIMFriendCheckResult
 };
 
 /// 好友申请类型
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMFriendApplicationType:uint8
 {
 	None=0,
@@ -1195,7 +1199,7 @@ struct TENCENTIMLINK_API FTIMFriendApplicationResult
 
 
 /// 好友申请接受类型
-UENUM(BlueprintType)
+UENUM(Blueprintable,BlueprintType)
 enum class ETIMFriendAcceptType:uint8
 {
 	/// 接受加好友（建立单向好友）
@@ -1378,26 +1382,37 @@ struct TENCENTIMLINK_API FTIMGroupApplication : public FTIMBaseObject
 	GENERATED_BODY()
 
 	/// 群组 ID
-	V2TIMString groupID;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString groupID;
 	/// 请求者 userID
-	V2TIMString fromUser;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString fromUser;
 	/// 请求者昵称
-	V2TIMString fromUserNickName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString fromUserNickName;
 	/// 请求者头像
-	V2TIMString fromUserFaceUrl;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString fromUserFaceUrl;
 	/// 判决者id，有人请求加群:0，邀请其他人加群:被邀请人用户 ID
-	V2TIMString toUser;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString toUser;
 	/// 申请时间
-	uint64_t addTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString addTime;
 	/// 申请或邀请附加信息
-	V2TIMString requestMsg;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString requestMsg;
 	/// 审批信息：同意或拒绝信息
-	V2TIMString handledMsg;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	FString handledMsg;
 	/// 请求类型
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
 	ETIMGroupApplicationGetType getType;
 	/// 处理标志
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
 	ETIMGroupApplicationHandleStatus handleStatus;
 	/// 处理结果
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
 	ETIMGroupApplicationHandleResult handleResult;
 };
 
