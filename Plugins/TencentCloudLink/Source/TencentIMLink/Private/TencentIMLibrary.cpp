@@ -3237,6 +3237,7 @@ V2TIMFriendCheckResultVector UTencentIMLibrary::ToV2TIMFriendCheckResultVector(c
 
 V2TIMFriendCheckResult UTencentIMLibrary::ToV2TIMFriendCheckResult(const FTIMFriendCheckResult& FriendCheckResult)
 {
+	//todo finish
 	V2TIMFriendCheckResult TIMFriendCheckResult;
 	//TIMFriendCheckResult.userID=ToString(FriendCheckResult.userID);
 	//TIMFriendCheckResult.resultCode=FriendCheckResult.resultCode;
@@ -3313,12 +3314,14 @@ V2TIMCreateGroupMemberInfoVector UTencentIMLibrary::ToCreateGroupMemberInfoVecto
 FTIMGroupInfo UTencentIMLibrary::ToGroupInfo(const V2TIMGroupInfo& GroupInfo)
 {
 	
+		//todo finish
 	return FTIMGroupInfo();
 }
 
 V2TIMGroupInfo UTencentIMLibrary::ToTIMGroupInfo(const FTIMGroupInfo& GroupInfo)
 {
 	
+	//todo finish
 	return V2TIMGroupInfo();
 }
 
