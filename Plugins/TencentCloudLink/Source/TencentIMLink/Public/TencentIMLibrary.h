@@ -339,20 +339,7 @@ public:
 
 	static TArray<FTIMGroupMemberOperationResult> ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector); 
 
-	//
-	// 	/* 	
-	// 	3.7 踢人（直播群踢人从 6.6 版本开始支持，需要您购买旗舰版套餐）
-	//
-	// 	注意
-	// 	请注意不同类型的群有如下限制：
-	// 	工作群（Work）：只有群主或 APP 管理员可以踢人。
-	// 	公开群（Public）、会议群（Meeting）：群主、管理员和 APP 管理员可以踢人
-	// 	直播群（AVChatRoom）：6.6 之前版本只支持禁言（muteGroupMember），不支持踢人。6.6 及以上版本支持禁言和踢人。 
-	// 	*/
-	// 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMGroupManager")
-	// 	static void KickGroupMember(const FString& groupID, const TArray<FString>& memberList, const FString& reason,
-	// 		                     V2TIMValueCallback<V2TIMGroupMemberOperationResultVector>* callback);
-	//
+
 	//
 	// 	/* 
 	// 	3.8 切换群成员的角色。
