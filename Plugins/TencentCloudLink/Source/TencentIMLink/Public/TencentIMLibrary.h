@@ -49,7 +49,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Log")
-	static void LogIn(const FString& InUserId, const FString& InIMUserSigId);
+	static void LogIn(const FString& InUserId, const FString& InIMUserSigId,FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Log")
 	static void LogOut(FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);

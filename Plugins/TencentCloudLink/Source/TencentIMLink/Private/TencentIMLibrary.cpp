@@ -16,10 +16,38 @@ int64 UTencentIMLibrary::GetServerTime()
 {
 	return Tencent_IM.GetServerTime();
 }
-
-void UTencentIMLibrary::LogIn(const FString& InUserId, const FString& InIMUserSigId)
+DECLARATION_CALLBACK_DELEGATE(LogIn)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(LogIn)
+void UTencentIMLibrary::LogIn(const FString& InUserId, const FString& InIMUserSigId,FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
-	Tencent_IM.LogIn(InUserId, InIMUserSigId);
+	LogIn_Delegate = OnSuccessDelegate;
+	LogIn_FailureDelegate = OnFailureDelegate;
+	class LogOutCallback : public V2TIMCallback
+	{
+	public:
+		LogOutCallback()
+		{
+		};
+
+		~LogOutCallback()
+		{
+		};
+
+		void OnSuccess() override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== logOut OnSuccess"));
+			LogIn_Delegate.ExecuteIfBound();
+		};
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== logOut failed OnError ======: %d"), error_code);
+			LogIn_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		};
+	};
+	LogOutCallback* LogOut_callback_ = new LogOutCallback();
+	Tencent_IM.GetInstance()->Login(ToIMString(InUserId), ToIMString(InIMUserSigId),LogOut_callback_);
+	// Tencent_IM.LogIn(InUserId, InIMUserSigId);
 }
 
 DECLARATION_CALLBACK_DELEGATE(LogOut)
