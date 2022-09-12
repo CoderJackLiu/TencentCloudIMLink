@@ -178,6 +178,20 @@ Func##_TIMFriendCheckResultVectorDelegate.ExecuteIfBound(FriendCheckResult);\
 /*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
 }
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTIMFriendApplicationResultCallback, const FTIMFriendApplicationResult& , FriendApplicationResult);
+// //todo success message 
+#define DECLARATION_TIMFriendApplicationResult_DELEGATE(Func) \
+FTIMFriendApplicationResultCallback Func##_TIMFriendApplicationResultDelegate; \
+void Func##_Local85(const FTIMFriendApplicationResult& FriendApplicationResult) \
+{ \
+FScopeLock ScopeLock(&TencentMutex); \
+auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([FriendApplicationResult]()\
+{\
+Func##_TIMFriendApplicationResultDelegate.ExecuteIfBound(FriendApplicationResult);\
+}, TStatId(), nullptr, ENamedThreads::GameThread);\
+/*	FTaskGraphInterface::Get().WaitUntilTaskCompletes(EventRef);*/\
+}
+
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIMMessageInfoCallback, const FTIMMessage& , Message);
 
 //failure

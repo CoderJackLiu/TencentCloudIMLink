@@ -595,6 +595,9 @@ public:
 	//GetConversationList
 	//void GetConversationListByFilter(const V2TIMConversationListFilter& filter, V2TIMValueCallback<V2TIMConversationResult>* callback);
 
+
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMConversationManager")
+	static void DeleteConversation(const FString& conversationID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 	//
 	//
 	// 	/* 
@@ -761,8 +764,8 @@ public:
 	注意
 	好友申请列表包括发起的好友申请和收到的好友申请。
 	 */
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
-	// static void GetFriendApplicationList(V2TIMValueCallback<V2TIMFriendApplicationResult>* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|IMFriendshipManager")
+	static void GetFriendApplicationList(FTIMFriendApplicationResultCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate);
 
 
 	/* 
@@ -908,9 +911,14 @@ public:
 	static V2TIMFriendCheckResult ToV2TIMFriendCheckResult(const FTIMFriendCheckResult& FriendCheckResult);
 	static FTIMFriendCheckResult ToFTIMFriendCheckResult(const V2TIMFriendCheckResult& FriendCheckResult);
 
+	static TArray<FTIMFriendApplication> ToTIMFriendApplicationArray(const V2TIMFriendApplicationVector& FriendApplicationVector);
+	
 	static ETIMFriendRelationType ToFTIMFriendRelationType(const V2TIMFriendRelationType& Type);
+	static FTIMFriendApplication ToTIMFriendApplication(const V2TIMFriendApplication& IMFriendApplication);
+	static FTIMFriendApplicationResult ToTIMFriendApplicationResult(const V2TIMFriendApplicationResult& TIMFriendApplicationResult);
 
-	// >>>>>>> 75dc2fc362a4ff75e8a1e5502732904fa3c6dd27
+	static ETIMFriendApplicationType ToTIMFriendApplicationType(const V2TIMFriendApplicationType& Type);
+	
 	static V2TIMString ToIMString(const FString& InStr);
 
 	static FString ToFString(const V2TIMString& InStr);
@@ -1004,3 +1012,4 @@ public:
 	static TArray<FTIMCreateGroupMemberInfo> ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector);
 	static V2TIMCreateGroupMemberInfoVector ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector);
 };
+

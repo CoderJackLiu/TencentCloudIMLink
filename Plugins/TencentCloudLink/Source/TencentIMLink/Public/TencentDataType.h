@@ -1186,8 +1186,10 @@ struct TENCENTIMLINK_API FTIMFriendApplicationResult
 {
 	GENERATED_BODY()
 	/// 好友申请未读数量   uint64_t
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
 	FString unreadCount;
 	/// 好友申请列表
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
 	TArray<FTIMFriendApplication> applicationList;
 };
 
