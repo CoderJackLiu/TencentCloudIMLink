@@ -5,6 +5,13 @@
 
 #include "DebugDefs.h"
 #include "TencentIMManage.h"
+#include "Engine/Engine.h"
+#include "Misc/Guid.h"
+#include "Misc/Paths.h"
+#include "HAL/Platform.h"
+#include "GenericPlatform/GenericPlatformProcess.h"
+#include <string>
+#include <stdlib.h>
 
 FCriticalSection TencentMutex;
 
@@ -142,7 +149,7 @@ FString UTencentIMLibrary::SendC2CTextMessage(FString text, FString userId, FIMC
 		void OnSuccess(const V2TIMMessage& InStr) override
 		{
 			UE_LOG(LogTemp, Log, TEXT("<== SendC2CTextMessage OnSuccess"));
-			LogOut_Delegate.ExecuteIfBound();
+			SendC2CTextMessage_Delegate.ExecuteIfBound();
 		};
 
 		void OnProgress(uint32_t progress) override
@@ -1493,7 +1500,7 @@ FTIMGroupApplicationResult UTencentIMLibrary::ToGroupAppResArray(const V2TIMGrou
 	//todo finish
 	FTIMGroupApplicationResult TIMGroupApplicationResult;
 	TIMGroupApplicationResult.unreadCount=FString::Printf(TEXT("%llu"), GroupApplicationResult.unreadCount);
-	TIMGroupApplicationResult.applicationList=GroupApplicationResult.applicationList;
+	// TIMGroupApplicationResult.applicationList=GroupApplicationResult.applicationList;
 	return FTIMGroupApplicationResult();
 }
 
@@ -3997,6 +4004,24 @@ V2TIMKeywordListMatchType UTencentIMLibrary::ToTIMKeywordListMatchType(const ETI
 		return V2TIMKeywordListMatchType::V2TIM_KEYWORD_LIST_MATCH_TYPE_OR;
 	}
 }
+
+FTIMElem UTencentIMLibrary::ToTIMElem(const V2TIMElem& TimElem)
+{
+	FTIMElem Element;
+	Element.elemType=ToElemType(TimElem.elemType);
+	return Element;
+}
+
+TArray<FTIMElem> UTencentIMLibrary::ToTIMElemArray(const V2TIMElemVector& ElementVector)
+{
+	TArray<FTIMElem> ElementArray;
+	for (int i=0;i<ElementVector.Size();i++)
+	{
+		ElementArray.Add(ToTIMElem(*ElementVector[i]));
+	}
+	return ElementArray;
+}
+
 
 V2TIMElemType UTencentIMLibrary::ToTIMElemType(const ETIMElemType& MessageSearchParam)
 {

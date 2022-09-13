@@ -115,6 +115,7 @@ void UTimWidget::timLogin()
 	UE_LOG(LogTemp,Warning,TEXT("UserID::  %s"),*Test);
 	timInstance->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
 #endif
+	
 }
 
 

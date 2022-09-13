@@ -89,50 +89,50 @@ void FTencentIMManage::FTencentIM::InitAccounts(const FString& InUserId, const F
 {
 }
 
-void FTencentIMManage::FTencentIM::LogIn(const FString& InUserId, const FString& InIMUserSigId)
-{
-	class LoginCallback : public V2TIMCallback
-	{
-	public:
-		LoginCallback()
-		{
-		};
-
-		~LoginCallback()
-		{
-		};
-
-		void OnSuccess() override
-		{
-			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
-		};
-
-		void OnError(int error_code, const V2TIMString& error_message) override
-		{
-			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
-		};
-	};
-	LoginCallback* login_callback_ = new LoginCallback();
-	const char* imTestUserId = TCHAR_TO_ANSI(*InUserId);
-	#if PLATFORM_ANDROID
-		if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
-		{
-			jmethodID GetPackageNameMethodID = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "genTestUserSig", "(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
-			jstring jsUserId = Env->NewStringUTF(imTestUserId);
-			jstring jsKey = Env->NewStringUTF(SECRETKEY);
-			jstring JstringResult = (jstring)FJavaWrapper::CallObjectMethod(Env, FJavaWrapper::GameActivityThis,GetPackageNameMethodID, SDKAppID, jsUserId, jsKey);
-			FString FinalResult = FJavaHelper::FStringFromLocalRef(Env, JstringResult);
-			auto twoHundredAnsi = StringCast<ANSICHAR>(*FinalResult);
-			const char* userSig = twoHundredAnsi.Get();
-			GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
-		}
-	#else
-	const char* userSig = GenerateTestUserSig().genTestUserSig(imTestUserId, SDKAppID, SECRETKEY);
-	FString Test = userSig;
-	UE_LOG(LogTemp, Warning, TEXT("UserID::  %s"), *Test);
-	GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
-	#endif
-}
+// void FTencentIMManage::FTencentIM::LogIn(const FString& InUserId, const FString& InIMUserSigId)
+// {
+// 	class LoginCallback : public V2TIMCallback
+// 	{
+// 	public:
+// 		LoginCallback()
+// 		{
+// 		};
+//
+// 		~LoginCallback()
+// 		{
+// 		};
+//
+// 		void OnSuccess() override
+// 		{
+// 			UE_LOG(LogTemp, Log, TEXT("<== login OnSuccess"));
+// 		};
+//
+// 		void OnError(int error_code, const V2TIMString& error_message) override
+// 		{
+// 			UE_LOG(LogTemp, Log, TEXT("<== login failed OnError ======: %d"), error_code);
+// 		};
+// 	};
+// 	LoginCallback* login_callback_ = new LoginCallback();
+// 	const char* imTestUserId = TCHAR_TO_ANSI(*InUserId);
+// 	#if PLATFORM_ANDROID
+// 		if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
+// 		{
+// 			jmethodID GetPackageNameMethodID = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "genTestUserSig", "(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
+// 			jstring jsUserId = Env->NewStringUTF(imTestUserId);
+// 			jstring jsKey = Env->NewStringUTF(SECRETKEY);
+// 			jstring JstringResult = (jstring)FJavaWrapper::CallObjectMethod(Env, FJavaWrapper::GameActivityThis,GetPackageNameMethodID, SDKAppID, jsUserId, jsKey);
+// 			FString FinalResult = FJavaHelper::FStringFromLocalRef(Env, JstringResult);
+// 			auto twoHundredAnsi = StringCast<ANSICHAR>(*FinalResult);
+// 			const char* userSig = twoHundredAnsi.Get();
+// 			GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
+// 		}
+// 	#else
+// 	const char* userSig = GenerateTestUserSig().genTestUserSig(imTestUserId, SDKAppID, SECRETKEY);
+// 	FString Test = userSig;
+// 	UE_LOG(LogTemp, Warning, TEXT("UserID::  %s"), *Test);
+// 	GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), login_callback_);
+// 	#endif
+// }
 
 // void FTencentIMManage::FTencentIM::LogOut()
 // {

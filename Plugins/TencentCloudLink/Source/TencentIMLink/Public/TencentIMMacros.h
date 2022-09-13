@@ -383,7 +383,7 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FIMMessageInfoCallback, const FTIMMessage& , M
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FIMFailureCallback, int, ErrorCode, FString, ErrorMassage);
 
 //progress
-DECLARE_DYNAMIC_DELEGATE_OneParam(FIMProgressCallback, uint32, Progress);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FIMProgressCallback, int32, Progress);
 
 
 // DECLARE_DYNAMIC_DELEGATE_TwoParams(FProgressCallbackDelegate, int64, ConsumedBytes, int64, TotalBytes);
@@ -507,7 +507,7 @@ void Func##_Local2(int Code,const FString& Message) \
 //todo progress with uint32 para
 #define DECLARATION_Progress_CALLBACK_DELEGATE(Func) \
 FIMProgressCallback Func##_ProgressDelegate; \
-void Func##_Local3(uint32 Code) \
+void Func##_Local3(int32 Code) \
 { \
 	FScopeLock ScopeLock(&TencentMutex); \
 	auto EventRef = FFunctionGraphTask::CreateAndDispatchWhenReady([Code]()\

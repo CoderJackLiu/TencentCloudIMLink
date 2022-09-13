@@ -64,7 +64,7 @@ public:
 		/*
 		 * 
 		 */
-		void LogIn(const FString& InUserId, const FString& InIMUserSigId);
+		//void LogIn(const FString& InUserId, const FString& InIMUserSigId);
 
 		/*
 		 * 

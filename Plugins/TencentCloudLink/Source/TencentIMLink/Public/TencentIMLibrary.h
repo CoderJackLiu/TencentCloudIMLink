@@ -25,6 +25,13 @@
 /**
  * 
  */
+#if PLATFORM_ANDROID
+#include "Runtime/Launch/Public/Android/AndroidJNI.h"
+#include "Runtime/Core/Public/Android/AndroidJavaEnv.h"
+#include "Runtime/ApplicationCore/Public/Android/AndroidApplication.h"
+#else
+//#include "GenerateTestUserSig.h"
+#endif
 
 UCLASS()
 class TENCENTIMLINK_API UTencentIMLibrary : public UBlueprintFunctionLibrary
@@ -969,6 +976,9 @@ public:
 
 	static V2TIMKeywordListMatchType ToTIMKeywordListMatchType(const ETIMKeywordListMatchType& MessageSearchParam);
 
+	static FTIMElem ToTIMElem(const V2TIMElem& TimElem);
+
+	static TArray<FTIMElem> ToTIMElemArray(const V2TIMElemVector& ElementVector);
 
 	static V2TIMElemType ToTIMElemType(const ETIMElemType& MessageSearchParam);
 

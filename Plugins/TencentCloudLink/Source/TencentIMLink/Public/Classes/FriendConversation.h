@@ -39,7 +39,8 @@ class TENCENTIMLINK_API UFriendConversation : public UUserWidget,public V2TIMAdv
 {
 	GENERATED_BODY()
 
-	
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	//listener接口：
 public:
 	/**
@@ -48,12 +49,55 @@ public:
 	* @param message 消息
 	*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnReceiveNewMessage(const FTIMMessage &message);
+	void OnReceiveNewMessage(const FString &UserName,const FString &message);
 	
 	
 	virtual void OnRecvNewMessage(const V2TIMMessage &message) override
 	{
-		OnReceiveNewMessage(UTencentIMLibrary::ToMessage(message));
+		UE_LOG(LogTemp, Log, TEXT("==>OnRecvNewMessage ======"));
+		V2TIMSignalingInfo info = V2TIMManager::GetInstance()->GetSignalingManager()->GetSignalingInfo(message);
+
+		for (unsigned long j = 0; j < message.elemList.Size(); ++j)
+		{
+			
+			switch (message.elemList[j]->elemType)
+			{
+			case V2TIM_ELEM_TYPE_TEXT:
+				{
+					AsyncTask(ENamedThreads::GameThread, [=]()
+					{
+						const char* msgEle = ((V2TIMTextElem*)message.elemList[j])->text.CString();
+						UTextBlock* textBlock = NewObject<UTextBlock>(this, UTextBlock::StaticClass());
+						FString other = message.sender.CString();
+						FString ele = UTF8_TO_TCHAR(msgEle); // FString(TEXT("&msgEle"));
+						
+						// FString UserId=message.nickName.CString();
+						OnReceiveNewMessage(other,ele);
+					});
+				}
+				break;
+			case V2TIM_ELEM_TYPE_CUSTOM:
+				break;
+			case V2TIM_ELEM_TYPE_IMAGE:
+				break;
+			case V2TIM_ELEM_TYPE_SOUND:
+				break;
+			case V2TIM_ELEM_TYPE_VIDEO:
+				break;
+			case V2TIM_ELEM_TYPE_FILE:
+				break;
+			case V2TIM_ELEM_TYPE_LOCATION:
+				break;
+			case V2TIM_ELEM_TYPE_FACE:
+				break;
+			case V2TIM_ELEM_TYPE_GROUP_TIPS:
+				break;
+			case V2TIM_ELEM_TYPE_MERGER:
+				break;
+			default:
+				break;
+			}
+		}
 	}
 
 	/**

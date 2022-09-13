@@ -3,7 +3,21 @@
 
 #include "Classes/FriendConversation.h"
 
-void UFriendConversation::OnReceiveNewMessage_Implementation(const FTIMMessage& message)
+
+
+void UFriendConversation::NativeConstruct()
 {
+	Super::NativeConstruct();
+
+	V2TIMManager::GetInstance()->GetMessageManager()->AddAdvancedMsgListener(this);
 	
+}
+
+void UFriendConversation::NativeDestruct()
+{
+	Super::NativeDestruct();
+}
+
+void UFriendConversation::OnReceiveNewMessage_Implementation(const FString& UserName, const FString& message)
+{
 }
