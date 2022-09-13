@@ -11,12 +11,14 @@ public class TencentIMLink : ModuleRules
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
+				"UMG",
 			}
 			);
 				
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
+				"UMG","CoreUObject", "Engine", "UMG", "Slate", "SlateCore"
 				// ... add other private include paths required here ...
 			}
 			);
