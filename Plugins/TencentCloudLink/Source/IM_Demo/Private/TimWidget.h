@@ -68,7 +68,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Meta = (BindWidget))
 	UScrollBox* sbMessageList;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Default)
 	FString UserId="GoGoGo";
 
 
