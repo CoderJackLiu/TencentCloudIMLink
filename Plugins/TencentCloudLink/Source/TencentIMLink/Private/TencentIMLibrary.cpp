@@ -3,6 +3,7 @@
 
 #include "TencentIMLink/Public/TencentIMLibrary.h"
 
+#include "DebugDefs.h"
 #include "TencentIMManage.h"
 
 FCriticalSection TencentMutex;
@@ -22,14 +23,14 @@ void UTencentIMLibrary::LogIn(const FString& InUserId, const FString& InIMUserSi
 {
 	LogIn_Delegate = OnSuccessDelegate;
 	LogIn_FailureDelegate = OnFailureDelegate;
-	class LogOutCallback : public V2TIMCallback
+	class LogInCallback : public V2TIMCallback
 	{
 	public:
-		LogOutCallback()
+		LogInCallback()
 		{
 		};
 
-		~LogOutCallback()
+		~LogInCallback()
 		{
 		};
 
@@ -45,8 +46,36 @@ void UTencentIMLibrary::LogIn(const FString& InUserId, const FString& InIMUserSi
 			LogIn_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
 		};
 	};
-	LogOutCallback* LogOut_callback_ = new LogOutCallback();
-	Tencent_IM.GetInstance()->Login(ToIMString(InUserId), ToIMString(InIMUserSigId),LogOut_callback_);
+	LogInCallback* LogIn_callback_ = new LogInCallback();
+	// Tencent_IM.GetInstance()->Login(ToIMString(InUserId), ToIMString(InIMUserSigId),LogOut_callback_);
+	FString guidUser = InUserId;
+	// guidUser="10057992";
+	// https://answers.unrealengine.com/questions/49838/fguid-doesnt-create-unique-guids-on-os-x.html
+	#if PLATFORM_MAC || PLATFORM_IOS
+	int r = rand() + rand();
+	std::string sRand = std::to_string(r);
+	const char* imTestUserId = sRand.c_str();
+#else
+	const char* imTestUserId = TCHAR_TO_ANSI(*guidUser);
+#endif
+
+#if PLATFORM_ANDROID
+	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv()) {
+		jmethodID GetPackageNameMethodID = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "genTestUserSig", "(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
+		jstring jsUserId = Env->NewStringUTF(imTestUserId);
+		jstring jsKey = Env->NewStringUTF(SECRETKEY);
+		jstring JstringResult = (jstring)FJavaWrapper::CallObjectMethod(Env, FJavaWrapper::GameActivityThis,GetPackageNameMethodID, SDKAppID, jsUserId, jsKey);
+		FString FinalResult = FJavaHelper::FStringFromLocalRef(Env, JstringResult);
+		auto twoHundredAnsi = StringCast<ANSICHAR>(*FinalResult);
+		const char* userSig = twoHundredAnsi.Get();
+		Tencent_IM.GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), LogIn_callback_);
+	}
+#else
+	const char* userSig = GenerateTestUserSig().genTestUserSig(imTestUserId, SDKAppID, SECRETKEY);
+	FString Test=userSig;
+	UE_LOG(LogTemp,Warning,TEXT("UserID::  %s"),*Test);
+	Tencent_IM.GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), LogIn_callback_);
+#endif
 	// Tencent_IM.LogIn(InUserId, InIMUserSigId);
 }
 
