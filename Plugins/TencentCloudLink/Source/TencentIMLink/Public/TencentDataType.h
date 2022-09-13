@@ -1003,7 +1003,7 @@ struct TENCENTIMLINK_API FTIMGroupMemberFullInfo : public FTIMGroupMemberInfo
 
 	//todo finish
 	// V2TIMCustomInfo customInfo;
-	TMap<FString, V2TIMBuffer> customInfo;
+	TMap<FString, FBuffer> customInfo;
 	/// 群成员角色,修改群成员角色请调用 V2TIMManagerGroup.h -> SetGroupMemberRole 接口
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
 	int64 role;
@@ -1335,6 +1335,23 @@ struct TENCENTIMLINK_API FTIMSignalingInfo
 	int32 timeout;
 };
 
+
+/// 获取群成员信息的结果
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMGroupMemberInfoResult
+{
+	GENERATED_BODY()
+	
+	///获取分页拉取的 seq。如果为 0 表示拉取结束  uint64_t
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMGroupMemberInfoResult)
+	FString nextSequence;
+	
+	// 群成员信息列表
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMGroupMemberInfoResult)
+	TArray<FTIMGroupMemberFullInfo> memberInfoList;
+};
+
+
 USTRUCT(Blueprintable, BlueprintType)
 struct TENCENTIMLINK_API FTIMBaseObject
 {
@@ -1423,8 +1440,10 @@ struct TENCENTIMLINK_API FTIMGroupApplicationResult
 	GENERATED_BODY()
 
 	/// 未读的申请数量
-	uint64_t unreadCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMGroupApplicationResult)
+	FString unreadCount;
 	/// 加群申请的列表
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMGroupApplicationResult)
 	TArray<FTIMGroupApplication> applicationList;
 };
 
