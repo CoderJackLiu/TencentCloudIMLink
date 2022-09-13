@@ -294,7 +294,7 @@ struct TENCENTIMLINK_API FTIMMessage
 	FString userID;
 	/// 群聊中的消息序列号云端生成，在群里是严格递增且唯一的,
 	/// 单聊中的序列号是本地生成，不能保证严格递增且唯一。
-	uint64 seq;
+	FString seq;
 	/// 消息随机码
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	uint64 random;

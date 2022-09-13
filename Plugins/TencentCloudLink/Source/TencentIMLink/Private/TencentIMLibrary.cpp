@@ -3631,18 +3631,38 @@ V2TIMMessage UTencentIMLibrary::ToIMMessage(const FTIMMessage& TimMessage)
 	OutTimMessage.msgID = ToIMString(TimMessage.msgID);
 	OutTimMessage.timestamp = TimMessage.timestamp;
 	OutTimMessage.sender = ToIMString(TimMessage.sender);
+	OutTimMessage.nickName = ToIMString(TimMessage.nickName);
+	OutTimMessage.friendRemark = ToIMString(TimMessage.friendRemark);
+	OutTimMessage.nameCard = ToIMString(TimMessage.nameCard);
+	OutTimMessage.faceURL = ToIMString(TimMessage.faceURL);
+	OutTimMessage.groupID = ToIMString(TimMessage.groupID);
+	OutTimMessage.userID = ToIMString(TimMessage.userID);
+	OutTimMessage.seq = FCString::Strtoui64(GetData(TimMessage.seq),NULL,10);
+	//todo finish
+	// OutTimMessage.status =((uint8)TimMessage.status+1);
+	OutTimMessage.isSelf = TimMessage.isSelf;
+	OutTimMessage.isRead =TimMessage.isRead;
+	OutTimMessage.isPeerRead =TimMessage.isPeerRead;
+	//todo finish
 
-	//todo DingLuckyGirl
 
 
 	return OutTimMessage;
 }
+
 
 FTIMMessage UTencentIMLibrary::ToMessage(const V2TIMMessage& TimMessage)
 {
 	//todo DingLuckyGirl
 	FTIMMessage OutTIMMessage;
 	OutTIMMessage.msgID = ToFString(TimMessage.msgID);
+	OutTIMMessage.timestamp = TimMessage.timestamp;
+	OutTIMMessage.sender = ToFString(TimMessage.msgID);
+	OutTIMMessage.nickName = ToFString(TimMessage.msgID);
+	OutTIMMessage.friendRemark = ToFString(TimMessage.msgID);
+	OutTIMMessage.nameCard = ToFString(TimMessage.msgID);
+	OutTIMMessage.faceURL = ToFString(TimMessage.msgID);
+	OutTIMMessage.groupID = ToFString(TimMessage.msgID);
 
 	return OutTIMMessage;
 }

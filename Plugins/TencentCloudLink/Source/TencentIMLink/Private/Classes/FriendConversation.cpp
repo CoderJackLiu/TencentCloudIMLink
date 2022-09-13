@@ -2,3 +2,8 @@
 
 
 #include "Classes/FriendConversation.h"
+
+void UFriendConversation::OnReceiveNewMessage_Implementation(const FTIMMessage& message)
+{
+	
+}
