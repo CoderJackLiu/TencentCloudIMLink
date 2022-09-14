@@ -24,9 +24,11 @@ int64 UTencentIMLibrary::GetServerTime()
 {
 	return Tencent_IM.GetServerTime();
 }
+
 DECLARATION_CALLBACK_DELEGATE(LogIn)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(LogIn)
-void UTencentIMLibrary::LogIn(const FString& InUserId, const FString& InIMUserSigId,FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+
+void UTencentIMLibrary::LogIn(const FString& InUserId, const FString& InIMUserSigId, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	LogIn_Delegate = OnSuccessDelegate;
 	LogIn_FailureDelegate = OnFailureDelegate;
@@ -58,11 +60,12 @@ void UTencentIMLibrary::LogIn(const FString& InUserId, const FString& InIMUserSi
 	FString guidUser = InUserId;
 	// guidUser="10057992";
 	// https://answers.unrealengine.com/questions/49838/fguid-doesnt-create-unique-guids-on-os-x.html
-	#if PLATFORM_MAC || PLATFORM_IOS
+#if PLATFORM_MAC || PLATFORM_IOS
 	int r = rand() + rand();
 	std::string sRand = std::to_string(r);
 	const char* imTestUserId = sRand.c_str();
 #else
+	
 	const char* imTestUserId = TCHAR_TO_ANSI(*guidUser);
 #endif
 
@@ -79,8 +82,8 @@ void UTencentIMLibrary::LogIn(const FString& InUserId, const FString& InIMUserSi
 	}
 #else
 	const char* userSig = GenerateTestUserSig().genTestUserSig(imTestUserId, SDKAppID, SECRETKEY);
-	FString Test=userSig;
-	UE_LOG(LogTemp,Warning,TEXT("UserID::  %s"),*Test);
+	FString Test = userSig;
+	UE_LOG(LogTemp, Warning, TEXT("UserID::  %s"), *Test);
 	Tencent_IM.GetInstance()->Login(static_cast<V2TIMString>(imTestUserId), static_cast<V2TIMString>(userSig), LogIn_callback_);
 #endif
 	// Tencent_IM.LogIn(InUserId, InIMUserSigId);
@@ -1077,7 +1080,8 @@ void UTencentIMLibrary::CreateGroupByMemBer(const FTIMGroupInfo& info, const TAr
 
 DECLARATION_GroupInfoArray_DELEGATE(GetJoinedGroupList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetJoinedGroupList)
-void UTencentIMLibrary::GetJoinedGroupList(FIMGroupInfoArrayCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate)
+
+void UTencentIMLibrary::GetJoinedGroupList(FIMGroupInfoArrayCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetJoinedGroupList_GroupInfoArrayDelegate = OnSuccessDelegate;
 	GetJoinedGroupList_FailureDelegate = OnFailureDelegate;
@@ -1118,11 +1122,11 @@ TArray<FTIMGroupInfo> UTencentIMLibrary::ToGroupInfoArray(const V2TIMGroupInfoVe
 	//todo finish
 	TArray<FTIMGroupInfo> TIMGroupInfoArray;
 
-	for(int i=0;i<GroupInfoVector.Size();++i)
+	for (int i = 0; i < GroupInfoVector.Size(); ++i)
 	{
 		TIMGroupInfoArray.Add(ToGroupInfo(GroupInfoVector[i]));
 	}
-	
+
 	return TIMGroupInfoArray;
 }
 
@@ -1131,16 +1135,17 @@ V2TIMGroupInfoVector UTencentIMLibrary::ToTIMGroupInfoVector(const TArray<FTIMGr
 	//todo finish
 	V2TIMGroupInfoVector TIMGroupInfoVector;
 
-	for(int i=0;i<GroupInfo.Num();++i)
+	for (int i = 0; i < GroupInfo.Num(); ++i)
 	{
 		TIMGroupInfoVector.PushBack(ToTIMGroupInfo(GroupInfo[i]));
 	}
-	
+
 	return TIMGroupInfoVector;
 }
 
 DECLARATION_CALLBACK_DELEGATE(SetGroupInfo)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SetGroupInfo)
+
 void UTencentIMLibrary::SetGroupInfo(const FTIMGroupInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	SetGroupInfo_FailureDelegate = OnFailureDelegate;
@@ -1172,8 +1177,10 @@ void UTencentIMLibrary::SetGroupInfo(const FTIMGroupInfo& info, FIMCallbackDeleg
 	NormalCallback* Callback = new NormalCallback();
 	Tencent_IM.GetInstance()->GetGroupManager()->SetGroupInfo(ToTIMGroupInfo(info), Callback);
 }
+
 DECLARATION_GroupMemCount_DELEGATE(GetGroupOnlineMemberCount)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetGroupOnlineMemberCount)
+
 void UTencentIMLibrary::GetGroupOnlineMemberCount(const FString& groupID, FGroupMemCountCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetGroupOnlineMemberCount_GroupMemCountDelegate = OnSuccessDelegate;
@@ -1211,6 +1218,7 @@ void UTencentIMLibrary::GetGroupOnlineMemberCount(const FString& groupID, FGroup
 
 DECLARATION_TIMGroupMemberInfoResult_DELEGATE(GetGroupMemberList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetGroupMemberList)
+
 void UTencentIMLibrary::GetGroupMemberList(const FString& groupID, int64 filter, const FString& nextSeq, FTIMGroupMemberInfoResultCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetGroupMemberList_TIMGroupMemberInfoResultDelegate = OnSuccessDelegate;
@@ -1243,21 +1251,21 @@ void UTencentIMLibrary::GetGroupMemberList(const FString& groupID, int64 filter,
 		}
 	};
 	FValueCallBack* Callback = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupMemberList(ToIMString(groupID),filter,FCString::Atoi64(GetData(nextSeq)),Callback);
+	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupMemberList(ToIMString(groupID), filter, FCString::Atoi64(GetData(nextSeq)), Callback);
 }
 
 FTIMGroupMemberInfoResult UTencentIMLibrary::ToV2TIMGroupMemberInfoResult(const V2TIMGroupMemberInfoResult& Result)
 {
 	FTIMGroupMemberInfoResult TIMGroupMemberInfoResult;
-	TIMGroupMemberInfoResult.nextSequence=FString::Printf(TEXT("%llu"), Result.nextSequence);
-	TIMGroupMemberInfoResult.memberInfoList=ToFTIMGroupMemberFullInfoArray(Result.memberInfoList);
+	TIMGroupMemberInfoResult.nextSequence = FString::Printf(TEXT("%llu"), Result.nextSequence);
+	TIMGroupMemberInfoResult.memberInfoList = ToFTIMGroupMemberFullInfoArray(Result.memberInfoList);
 	return TIMGroupMemberInfoResult;
 }
 
 TArray<FTIMGroupMemberFullInfo> UTencentIMLibrary::ToFTIMGroupMemberFullInfoArray(const V2TIMGroupMemberFullInfoVector& GroupMemberFullInfoVector)
 {
 	TArray<FTIMGroupMemberFullInfo> TIMGroupMemberFullInfoArray;
-	for(int i=0;i<GroupMemberFullInfoVector.Size();++i)
+	for (int i = 0; i < GroupMemberFullInfoVector.Size(); ++i)
 	{
 		TIMGroupMemberFullInfoArray.Add(ToTIMGroupMemberFullInfo(GroupMemberFullInfoVector[i]));
 	}
@@ -1267,11 +1275,11 @@ TArray<FTIMGroupMemberFullInfo> UTencentIMLibrary::ToFTIMGroupMemberFullInfoArra
 FTIMGroupMemberFullInfo UTencentIMLibrary::ToTIMGroupMemberFullInfo(const V2TIMGroupMemberFullInfo& Info)
 {
 	FTIMGroupMemberFullInfo TIMGroupMemberFullInfo;
-	TIMGroupMemberFullInfo.customInfo=ToTIMCustomInfo_(Info.customInfo);
-	TIMGroupMemberFullInfo.role=Info.role;
-	TIMGroupMemberFullInfo.muteUntil=Info.muteUntil;
-	TIMGroupMemberFullInfo.joinTime=Info.joinTime;
-	TIMGroupMemberFullInfo.modifyFlag=Info.modifyFlag;
+	TIMGroupMemberFullInfo.customInfo = ToTIMCustomInfo_(Info.customInfo);
+	TIMGroupMemberFullInfo.role = Info.role;
+	TIMGroupMemberFullInfo.muteUntil = Info.muteUntil;
+	TIMGroupMemberFullInfo.joinTime = Info.joinTime;
+	TIMGroupMemberFullInfo.modifyFlag = Info.modifyFlag;
 	return TIMGroupMemberFullInfo;
 }
 
@@ -1302,15 +1310,16 @@ ETIMGroupMemberResult UTencentIMLibrary::ToTIMGroupMemberResult(const V2TIMGroup
 FTIMGroupMemberOperationResult UTencentIMLibrary::ToTIMGroupMemberOperationResult(const V2TIMGroupMemberOperationResult& Result)
 {
 	FTIMGroupMemberOperationResult TIMGroupMemberOperationResult;
-	TIMGroupMemberOperationResult.userID=ToFString(Result.userID);
-	TIMGroupMemberOperationResult.result=ToTIMGroupMemberResult(Result.result);
+	TIMGroupMemberOperationResult.userID = ToFString(Result.userID);
+	TIMGroupMemberOperationResult.result = ToTIMGroupMemberResult(Result.result);
 	return TIMGroupMemberOperationResult;
 }
 
 DECLARATION_GroupMemFullInfos_DELEGATE(GetGroupMembersInfo)
 
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetGroupMembersInfo)
-void UTencentIMLibrary::GetGroupMembersInfo(const FString& groupID,const TArray<FString>& memberList, FGroupMemFullInfosCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+
+void UTencentIMLibrary::GetGroupMembersInfo(const FString& groupID, const TArray<FString>& memberList, FGroupMemFullInfosCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetGroupMembersInfo_GPMemFullInfoDelegate = OnSuccessDelegate;
 	GetGroupMembersInfo_FailureDelegate = OnFailureDelegate;
@@ -1341,8 +1350,7 @@ void UTencentIMLibrary::GetGroupMembersInfo(const FString& groupID,const TArray<
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupMembersInfo(ToIMString(groupID),ToIMStringArray(memberList),CallBack);
-
+	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupMembersInfo(ToIMString(groupID), ToIMStringArray(memberList), CallBack);
 }
 
 V2TIMGroupMemberFullInfoVector UTencentIMLibrary::ToGroupMemberFullInfoVector(const TArray<FTIMGroupMemberFullInfo>& GPFullInfos)
@@ -1350,11 +1358,11 @@ V2TIMGroupMemberFullInfoVector UTencentIMLibrary::ToGroupMemberFullInfoVector(co
 	//todo finish
 	V2TIMGroupMemberFullInfoVector TIMGroupMemberFullInfoVector;
 
-	for(int i=0;i<GPFullInfos.Num();++i)
+	for (int i = 0; i < GPFullInfos.Num(); ++i)
 	{
 		TIMGroupMemberFullInfoVector.PushBack(ToV2TIMGroupMemberFullInfo(GPFullInfos[i]));
 	}
-	
+
 	return TIMGroupMemberFullInfoVector;
 }
 
@@ -1363,16 +1371,17 @@ TArray<FTIMGroupMemberFullInfo> UTencentIMLibrary::ToTIMGroupMemberFullInfoArray
 	//todo finish
 	TArray<FTIMGroupMemberFullInfo> TIMGroupMemberFullInfoArray;
 
-	for(int i=0;i<GPFullInfos.Size();++i)
+	for (int i = 0; i < GPFullInfos.Size(); ++i)
 	{
 		TIMGroupMemberFullInfoArray.Add(ToTIMGroupMemberFullInfo(GPFullInfos[i]));
 	}
-	
+
 	return TIMGroupMemberFullInfoArray;
 }
 
 DECLARATION_CALLBACK_DELEGATE(MuteGroupMember)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(MuteGroupMember)
+
 void UTencentIMLibrary::MuteGroupMember(const FString& groupID, const FString& userID, int32 seconds, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	MuteGroupMember_Delegate = OnSuccessDelegate;
@@ -1402,11 +1411,12 @@ void UTencentIMLibrary::MuteGroupMember(const FString& groupID, const FString& u
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	Tencent_IM.GetInstance()->GetGroupManager()->MuteGroupMember(ToIMString(groupID),ToIMString(userID),seconds,Callback);
+	Tencent_IM.GetInstance()->GetGroupManager()->MuteGroupMember(ToIMString(groupID), ToIMString(userID), seconds, Callback);
 }
 
 DECLARATION_GroupInviteMem_DELEGATE(InviteUserToGroup)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(InviteUserToGroup)
+
 void UTencentIMLibrary::InviteUserToGroup(const FString& groupID, const TArray<FString>& userList, FGroupIniteUserCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	InviteUserToGroup_GPInviteMemDelegate = OnSuccessDelegate;
@@ -1438,8 +1448,7 @@ void UTencentIMLibrary::InviteUserToGroup(const FString& groupID, const TArray<F
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetGroupManager()->InviteUserToGroup(ToIMString(groupID),ToIMStringArray(userList),CallBack);
-
+	Tencent_IM.GetInstance()->GetGroupManager()->InviteUserToGroup(ToIMString(groupID), ToIMStringArray(userList), CallBack);
 }
 
 TArray<FTIMGroupMemberOperationResult> UTencentIMLibrary::ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector)
@@ -1447,23 +1456,23 @@ TArray<FTIMGroupMemberOperationResult> UTencentIMLibrary::ToGPMemOpArray(const V
 	//todo finish
 	TArray<FTIMGroupMemberOperationResult> TIMGroupMemberOperationResult;
 
-	for(int i=0;i<GPMemOPVector.Size();++i)
+	for (int i = 0; i < GPMemOPVector.Size(); ++i)
 	{
 		TIMGroupMemberOperationResult.Add(ToTIMGroupMemberOperationResult(GPMemOPVector[i]));
 	}
-	
+
 	return TArray<FTIMGroupMemberOperationResult>();
 }
 
 DECLARATION_GroupAPPResult_DELEGATE(GetGroupApplicationList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetGroupApplicationList)
+
 void UTencentIMLibrary::GetGroupApplicationList(FGroupAppRstCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetGroupApplicationList_GPAppRstDelegate = OnSuccessDelegate;
 	GetGroupApplicationList_FailureDelegate = OnFailureDelegate;
 	class FValueCallBack : public V2TIMValueCallback<V2TIMGroupApplicationResult>
 	{
-
 	public:
 		virtual ~FValueCallBack() override
 		{
@@ -1496,24 +1505,21 @@ void UTencentIMLibrary::GetGroupApplicationList(FGroupAppRstCallback OnSuccessDe
 
 FTIMGroupApplicationResult UTencentIMLibrary::ToGroupAppResArray(const V2TIMGroupApplicationResult& GroupApplicationResult)
 {
-	
 	//todo finish
 	FTIMGroupApplicationResult TIMGroupApplicationResult;
-	TIMGroupApplicationResult.unreadCount=FString::Printf(TEXT("%llu"), GroupApplicationResult.unreadCount);
+	TIMGroupApplicationResult.unreadCount = FString::Printf(TEXT("%llu"), GroupApplicationResult.unreadCount);
 	// TIMGroupApplicationResult.applicationList=GroupApplicationResult.applicationList;
 	return FTIMGroupApplicationResult();
 }
 
 V2TIMGroupApplicationResult UTencentIMLibrary::ToTIMGroupAppRes(const FTIMGroupApplicationResult& GroupApplicationResult)
 {
-	
 	//todo finish
 	return V2TIMGroupApplicationResult();
 }
 
 FTIMGroupApplication UTencentIMLibrary::ToGroupApp(const V2TIMGroupApplication& TIMGroupApplication)
 {
-	
 	//todo finish
 	return FTIMGroupApplication();
 }
@@ -1526,6 +1532,7 @@ V2TIMGroupApplication UTencentIMLibrary::ToTIMGroupApp(const FTIMGroupApplicatio
 
 DECLARATION_CALLBACK_DELEGATE(AcceptGroupApplication)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(AcceptGroupApplication)
+
 void UTencentIMLibrary::AcceptGroupApplication(const FTIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	AcceptGroupApplication_Delegate = OnSuccessDelegate;
@@ -1556,11 +1563,12 @@ void UTencentIMLibrary::AcceptGroupApplication(const FTIMGroupApplication& appli
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	Tencent_IM.GetInstance()->GetGroupManager()->AcceptGroupApplication(ToTIMGroupApp(application),ToIMString(reason),Callback);
-
+	Tencent_IM.GetInstance()->GetGroupManager()->AcceptGroupApplication(ToTIMGroupApp(application), ToIMString(reason), Callback);
 }
+
 DECLARATION_CALLBACK_DELEGATE(RefuseGroupApplication)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(RefuseGroupApplication)
+
 void UTencentIMLibrary::RefuseGroupApplication(const FTIMGroupApplication& application, const FString& reason, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	RefuseGroupApplication_Delegate = OnSuccessDelegate;
@@ -1591,12 +1599,13 @@ void UTencentIMLibrary::RefuseGroupApplication(const FTIMGroupApplication& appli
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	Tencent_IM.GetInstance()->GetGroupManager()->RefuseGroupApplication(ToTIMGroupApp(application),ToIMString(reason),Callback);
+	Tencent_IM.GetInstance()->GetGroupManager()->RefuseGroupApplication(ToTIMGroupApp(application), ToIMString(reason), Callback);
 }
 
 DECLARATION_CALLBACK_DELEGATE(SetGroupApplicationRead)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SetGroupApplicationRead)
-void UTencentIMLibrary::SetGroupApplicationRead(FIMCallbackDelegate OnSuccessDelegate,FIMFailureCallback OnFailureDelegate)
+
+void UTencentIMLibrary::SetGroupApplicationRead(FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	SetGroupApplicationRead_Delegate = OnSuccessDelegate;
 	SetGroupApplicationRead_FailureDelegate = OnFailureDelegate;
@@ -1628,7 +1637,7 @@ void UTencentIMLibrary::SetGroupApplicationRead(FIMCallbackDelegate OnSuccessDel
 	Tencent_IM.GetInstance()->GetGroupManager()->SetGroupApplicationRead(Callback);
 }
 
-V2TIMFriendshipListener* UTencentIMLibrary::Friendlistener=nullptr;
+V2TIMFriendshipListener* UTencentIMLibrary::Friendlistener = nullptr;
 
 
 DECLARATION_FriendApplicationListAdded_DELEGATE(AddFriendListener)
@@ -1640,36 +1649,40 @@ DECLARATION_FriendInfoArrayDeleted_DELEGATE(AddFriendListener)
 DECLARATION_BlackListDeleted_DELEGATE(AddFriendListener)
 DECLARATION_FriendInfoChanged_DELEGATE(AddFriendListener)
 
-void UTencentIMLibrary::AddFriendListener(FFriendAPPArrayAddedCallback FriendAppArrayAddedCallback,FFriendAPPArrayDeletedCallback APPDeleteDelegate,FIMCallbackDelegate FriendApplicationListRead,
-		FFriendListAddedCallback ListAddedCallback,FFriendListDeletedCallback FriendListDeletedCallback,FBlackListAddedCallback BlackListAddedCallback,
-		FBlackListDeletedCallback BlackListDeletedCallback,FFriendInfoChangedCallback FriendInfoChangedCallback)
+void UTencentIMLibrary::AddFriendListener(FFriendAPPArrayAddedCallback FriendAppArrayAddedCallback, FFriendAPPArrayDeletedCallback APPDeleteDelegate, FIMCallbackDelegate FriendApplicationListRead,
+                                          FFriendListAddedCallback ListAddedCallback, FFriendListDeletedCallback FriendListDeletedCallback, FBlackListAddedCallback BlackListAddedCallback,
+                                          FBlackListDeletedCallback BlackListDeletedCallback, FFriendInfoChangedCallback FriendInfoChangedCallback)
 {
-	AddFriendListener_FriendAPPArrayAddedDelegate=FriendAppArrayAddedCallback;
-	AddFriendListener_FriendAPPListDeleted=APPDeleteDelegate;
-	AddFriendListener_Delegate =FriendApplicationListRead;
-	AddFriendListener_FriendListAddedDelegate=ListAddedCallback;
-	AddFriendListener_FriendInfoArrayDeletedDelegate=FriendListDeletedCallback;
-	AddFriendListener_BlackListAddedDelegate=BlackListAddedCallback;
-	AddFriendListener_BlackListDeletedDelegate=BlackListDeletedCallback;
-	AddFriendListener_FriendInfoChangedDelegate=FriendInfoChangedCallback;
-	
-	class IMFriendshipListener: public V2TIMFriendshipListener
+	AddFriendListener_FriendAPPArrayAddedDelegate = FriendAppArrayAddedCallback;
+	AddFriendListener_FriendAPPListDeleted = APPDeleteDelegate;
+	AddFriendListener_Delegate = FriendApplicationListRead;
+	AddFriendListener_FriendListAddedDelegate = ListAddedCallback;
+	AddFriendListener_FriendInfoArrayDeletedDelegate = FriendListDeletedCallback;
+	AddFriendListener_BlackListAddedDelegate = BlackListAddedCallback;
+	AddFriendListener_BlackListDeletedDelegate = BlackListDeletedCallback;
+	AddFriendListener_FriendInfoChangedDelegate = FriendInfoChangedCallback;
+
+	class IMFriendshipListener : public V2TIMFriendshipListener
 	{
 	public:
-		IMFriendshipListener(){};
-	
-		virtual ~IMFriendshipListener(){};
-	
+		IMFriendshipListener()
+		{
+		};
+
+		virtual ~IMFriendshipListener()
+		{
+		};
+
 		/**
 		 * 好友申请新增通知，两种情况会收到这个回调：
 		 * 1. 自己申请加别人好友
 		 * 2. 别人申请加自己好友
 		 */
-		virtual void OnFriendApplicationListAdded(const V2TIMFriendApplicationVector &applicationList)
+		virtual void OnFriendApplicationListAdded(const V2TIMFriendApplicationVector& applicationList)
 		{
 			AddFriendListener_FriendAPPArrayAddedDelegate.ExecuteIfBound(ToTIMFriendApplicationArray(applicationList));
 		}
-	
+
 		/**
 		 * 好友申请删除通知，四种情况会收到这个回调
 		 * 1. 调用 DeleteFriendApplication 主动删除好友申请
@@ -1677,7 +1690,7 @@ void UTencentIMLibrary::AddFriendListener(FFriendAPPArrayAddedCallback FriendApp
 		 * 3. 调用 AcceptFriendApplication 同意好友申请且同意类型为 V2TIM_FRIEND_ACCEPT_AGREE 时
 		 * 4. 申请加别人好友被拒绝
 		 */
-		virtual void OnFriendApplicationListDeleted(const V2TIMStringVector &userIDList)
+		virtual void OnFriendApplicationListDeleted(const V2TIMStringVector& userIDList)
 		{
 			AddFriendListener_FriendAPPListDeleted.ExecuteIfBound(ToFStringArray(userIDList));
 		}
@@ -1690,57 +1703,58 @@ void UTencentIMLibrary::AddFriendListener(FFriendAPPArrayAddedCallback FriendApp
 		{
 			AddFriendListener_Delegate.ExecuteIfBound();
 		}
-	
+
 		/**
 		 * 好友新增通知
 		 */
-		virtual void OnFriendListAdded(const V2TIMFriendInfoVector &userIDList)
+		virtual void OnFriendListAdded(const V2TIMFriendInfoVector& userIDList)
 		{
 			AddFriendListener_FriendListAddedDelegate.ExecuteIfBound(ToFriendInfoArray(userIDList));
 		}
-	
+
 		/**
 		 * 好友删除通知，，两种情况会收到这个回调：
 		 * 1. 自己删除好友（单向和双向删除都会收到回调）
 		 * 2. 好友把自己删除（双向删除会收到）
 		 */
-		virtual void OnFriendListDeleted(const V2TIMStringVector &userIDList)
+		virtual void OnFriendListDeleted(const V2TIMStringVector& userIDList)
 		{
 			AddFriendListener_FriendInfoArrayDeletedDelegate.ExecuteIfBound(ToFStringArray(userIDList));
 		}
-	
+
 		/**
 		 * 黑名单新增通知
 		 */
-		virtual void OnBlackListAdded(const V2TIMFriendInfoVector &infoList)
+		virtual void OnBlackListAdded(const V2TIMFriendInfoVector& infoList)
 		{
 			AddFriendListener_BlackListAddedDelegate.ExecuteIfBound(ToFriendInfoArray(infoList));
 		}
-	
+
 		/**
 		 * 黑名单删除通知
 		 */
-		virtual void OnBlackListDeleted(const V2TIMStringVector &userIDList)
+		virtual void OnBlackListDeleted(const V2TIMStringVector& userIDList)
 		{
 			AddFriendListener_BlackListDeletedDelegate.ExecuteIfBound(ToFStringArray(userIDList));
 		}
-	
+
 		/**
 		 * 好友资料更新通知
 		 */
-		virtual void OnFriendInfoChanged(const V2TIMFriendInfoVector &infoList)
+		virtual void OnFriendInfoChanged(const V2TIMFriendInfoVector& infoList)
 		{
 			AddFriendListener_FriendInfoChangedDelegate.ExecuteIfBound(ToFriendInfoArray(infoList));
 		}
 	};
-	Friendlistener=new IMFriendshipListener();
+	Friendlistener = new IMFriendshipListener();
 	Tencent_IM.GetInstance()->GetFriendshipManager()->AddFriendListener(Friendlistener);
 }
 
 
 DECLARATION_ConversationRst_DELEGATE(GetConversationList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversationList)
-void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count, FMTIMConversationResultCallback OnSuccessDelegate,FIMFailureCallback OnFailureDelegate)
+
+void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count, FMTIMConversationResultCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetConversationList_CsRstDelegate = OnSuccessDelegate;
 	GetConversationList_FailureDelegate = OnFailureDelegate;
@@ -1772,22 +1786,21 @@ void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count,
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(FCString::Strtoui64(*nextSeq, NULL, 10),count,CallBack);
-
+	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(FCString::Strtoui64(*nextSeq, NULL, 10), count, CallBack);
 }
 
 FTIMConversationResult UTencentIMLibrary::ToTIMConversationResult(const V2TIMConversationResult& ConversationResult)
 {
-	FTIMConversationResult Temp=FTIMConversationResult();
-	Temp.conversationList=ToTIMConversationArray(ConversationResult.conversationList);
-	Temp.isFinished=ConversationResult.isFinished;
-	Temp.nextSeq=FString::Printf(TEXT("%llu"), ConversationResult.nextSeq);
+	FTIMConversationResult Temp = FTIMConversationResult();
+	Temp.conversationList = ToTIMConversationArray(ConversationResult.conversationList);
+	Temp.isFinished = ConversationResult.isFinished;
+	Temp.nextSeq = FString::Printf(TEXT("%llu"), ConversationResult.nextSeq);
 	return Temp;
 }
 
 V2TIMVConversationVector UTencentIMLibrary::ToV2TIMVConversationVector(const TArray<FTIMConversation>& Array_Conversation)
 {
-	V2TIMVConversationVector ConversationVector=V2TIMVConversationVector();
+	V2TIMVConversationVector ConversationVector = V2TIMVConversationVector();
 	for (FTIMConversation Conversation : Array_Conversation)
 	{
 		ConversationVector.PushBack(ToTIMConversation(Conversation));
@@ -1798,12 +1811,13 @@ V2TIMVConversationVector UTencentIMLibrary::ToV2TIMVConversationVector(const TAr
 TArray<FTIMConversation> UTencentIMLibrary::ToTIMConversationArray(const V2TIMVConversationVector& ConversationVector)
 {
 	TArray<FTIMConversation> Conversation;
-	for (int i=0;i<ConversationVector.Size();i++)
+	for (int i = 0; i < ConversationVector.Size(); i++)
 	{
 		Conversation.Add(ToConversation(ConversationVector[i]));
 	}
 	return Conversation;
 }
+
 FTIMConversation UTencentIMLibrary::ToConversation(V2TIMConversation Conversation)
 {
 	//todo
@@ -1819,6 +1833,7 @@ V2TIMConversation UTencentIMLibrary::ToTIMConversation(FTIMConversation Conversa
 
 DECLARATION_TIMConversation_DELEGATE(GetConversation)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversation)
+
 void UTencentIMLibrary::GetConversation(const FString& conversationID, FTIMConversationCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetConversation_ConversationDelegate = OnSuccessDelegate;
@@ -1851,11 +1866,12 @@ void UTencentIMLibrary::GetConversation(const FString& conversationID, FTIMConve
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetConversationManager()->GetConversation(ToIMString(conversationID),CallBack);
+	Tencent_IM.GetInstance()->GetConversationManager()->GetConversation(ToIMString(conversationID), CallBack);
 }
 
 DECLARATION_TIMConversationVector_DELEGATE(GetConversationListByIDList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetConversationListByIDList)
+
 void UTencentIMLibrary::GetConversationListByIDList(const TArray<FString>& conversationIDList, FTIMConversationVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetConversationListByIDList_ConversationVectorDelegate = OnSuccessDelegate;
@@ -1888,11 +1904,12 @@ void UTencentIMLibrary::GetConversationListByIDList(const TArray<FString>& conve
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(ToIMStringArray(conversationIDList),CallBack);
+	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(ToIMStringArray(conversationIDList), CallBack);
 }
 
 DECLARATION_CALLBACK_DELEGATE(DeleteConversation)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(DeleteConversation)
+
 void UTencentIMLibrary::DeleteConversation(const FString& conversationID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	DeleteConversation_FailureDelegate = OnFailureDelegate;
@@ -1927,6 +1944,7 @@ void UTencentIMLibrary::DeleteConversation(const FString& conversationID, FIMCal
 
 DECLARATION_CALLBACK_DELEGATE(SetConversationDraft)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SetConversationDraft)
+
 void UTencentIMLibrary::SetConversationDraft(const FString& conversationID, const FString& draftText, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	SetConversationDraft_FailureDelegate = OnFailureDelegate;
@@ -1956,11 +1974,12 @@ void UTencentIMLibrary::SetConversationDraft(const FString& conversationID, cons
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	Tencent_IM.GetInstance()->GetConversationManager()->SetConversationDraft(ToIMString(conversationID), ToIMString(draftText),Callback);
+	Tencent_IM.GetInstance()->GetConversationManager()->SetConversationDraft(ToIMString(conversationID), ToIMString(draftText), Callback);
 }
 
 DECLARATION_CALLBACK_DELEGATE(PinConversation)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(PinConversation)
+
 void UTencentIMLibrary::PinConversation(const FString& conversationID, bool isPinned, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	PinConversation_FailureDelegate = OnFailureDelegate;
@@ -1990,11 +2009,12 @@ void UTencentIMLibrary::PinConversation(const FString& conversationID, bool isPi
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	Tencent_IM.GetInstance()->GetConversationManager()->PinConversation(ToIMString(conversationID), isPinned,Callback);
+	Tencent_IM.GetInstance()->GetConversationManager()->PinConversation(ToIMString(conversationID), isPinned, Callback);
 }
 
 DECLARATION_TIMuint64_DELEGATE(GetTotalUnreadMessageCount)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetTotalUnreadMessageCount)
+
 void UTencentIMLibrary::GetTotalUnreadMessageCount(FTIMuint64Callback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetTotalUnreadMessageCount_uint64Delegate = OnSuccessDelegate;
@@ -2040,35 +2060,39 @@ DECLARATION_BlackListDeleted_DELEGATE(RemoveFriendListener)
 DECLARATION_FriendInfoChanged_DELEGATE(RemoveFriendListener)
 
 void UTencentIMLibrary::RemoveFriendListener(FFriendAPPArrayAddedCallback FriendAppArrayAddedCallback, FFriendAPPArrayDeletedCallback APPDeleteDelegate, FIMCallbackDelegate FriendApplicationListRead,
-	FFriendListAddedCallback ListAddedCallback, FFriendListDeletedCallback FriendListDeletedCallback, FBlackListAddedCallback BlackListAddedCallback,
-	FBlackListDeletedCallback BlackListDeletedCallback, FFriendInfoChangedCallback FriendInfoChangedCallback)
+                                             FFriendListAddedCallback ListAddedCallback, FFriendListDeletedCallback FriendListDeletedCallback, FBlackListAddedCallback BlackListAddedCallback,
+                                             FBlackListDeletedCallback BlackListDeletedCallback, FFriendInfoChangedCallback FriendInfoChangedCallback)
 {
-	RemoveFriendListener_FriendAPPArrayAddedDelegate=FriendAppArrayAddedCallback;
-	RemoveFriendListener_FriendAPPListDeleted=APPDeleteDelegate;
-	RemoveFriendListener_Delegate =FriendApplicationListRead;
-	RemoveFriendListener_FriendListAddedDelegate=ListAddedCallback;
-	RemoveFriendListener_FriendInfoArrayDeletedDelegate=FriendListDeletedCallback;
-	RemoveFriendListener_BlackListAddedDelegate=BlackListAddedCallback;
-	RemoveFriendListener_BlackListDeletedDelegate=BlackListDeletedCallback;
-	RemoveFriendListener_FriendInfoChangedDelegate=FriendInfoChangedCallback;
-	
-	class IMFriendshipListener: public V2TIMFriendshipListener
+	RemoveFriendListener_FriendAPPArrayAddedDelegate = FriendAppArrayAddedCallback;
+	RemoveFriendListener_FriendAPPListDeleted = APPDeleteDelegate;
+	RemoveFriendListener_Delegate = FriendApplicationListRead;
+	RemoveFriendListener_FriendListAddedDelegate = ListAddedCallback;
+	RemoveFriendListener_FriendInfoArrayDeletedDelegate = FriendListDeletedCallback;
+	RemoveFriendListener_BlackListAddedDelegate = BlackListAddedCallback;
+	RemoveFriendListener_BlackListDeletedDelegate = BlackListDeletedCallback;
+	RemoveFriendListener_FriendInfoChangedDelegate = FriendInfoChangedCallback;
+
+	class IMFriendshipListener : public V2TIMFriendshipListener
 	{
 	public:
-		IMFriendshipListener(){};
-	
-		virtual ~IMFriendshipListener(){};
-	
+		IMFriendshipListener()
+		{
+		};
+
+		virtual ~IMFriendshipListener()
+		{
+		};
+
 		/**
 		 * 好友申请新增通知，两种情况会收到这个回调：
 		 * 1. 自己申请加别人好友
 		 * 2. 别人申请加自己好友
 		 */
-		virtual void OnFriendApplicationListAdded(const V2TIMFriendApplicationVector &applicationList)
+		virtual void OnFriendApplicationListAdded(const V2TIMFriendApplicationVector& applicationList)
 		{
 			AddFriendListener_FriendAPPArrayAddedDelegate.ExecuteIfBound(ToTIMFriendApplicationArray(applicationList));
 		}
-	
+
 		/**
 		 * 好友申请删除通知，四种情况会收到这个回调
 		 * 1. 调用 DeleteFriendApplication 主动删除好友申请
@@ -2076,7 +2100,7 @@ void UTencentIMLibrary::RemoveFriendListener(FFriendAPPArrayAddedCallback Friend
 		 * 3. 调用 AcceptFriendApplication 同意好友申请且同意类型为 V2TIM_FRIEND_ACCEPT_AGREE 时
 		 * 4. 申请加别人好友被拒绝
 		 */
-		virtual void OnFriendApplicationListDeleted(const V2TIMStringVector &userIDList)
+		virtual void OnFriendApplicationListDeleted(const V2TIMStringVector& userIDList)
 		{
 			AddFriendListener_FriendAPPListDeleted.ExecuteIfBound(ToFStringArray(userIDList));
 		}
@@ -2089,52 +2113,53 @@ void UTencentIMLibrary::RemoveFriendListener(FFriendAPPArrayAddedCallback Friend
 		{
 			AddFriendListener_Delegate.ExecuteIfBound();
 		}
-	
+
 		/**
 		 * 好友新增通知
 		 */
-		virtual void OnFriendListAdded(const V2TIMFriendInfoVector &userIDList)
+		virtual void OnFriendListAdded(const V2TIMFriendInfoVector& userIDList)
 		{
 			AddFriendListener_FriendListAddedDelegate.ExecuteIfBound(ToFriendInfoArray(userIDList));
 		}
-	
+
 		/**
 		 * 好友删除通知，，两种情况会收到这个回调：
 		 * 1. 自己删除好友（单向和双向删除都会收到回调）
 		 * 2. 好友把自己删除（双向删除会收到）
 		 */
-		virtual void OnFriendListDeleted(const V2TIMStringVector &userIDList)
+		virtual void OnFriendListDeleted(const V2TIMStringVector& userIDList)
 		{
 			AddFriendListener_FriendInfoArrayDeletedDelegate.ExecuteIfBound(ToFStringArray(userIDList));
 		}
-	
+
 		/**
 		 * 黑名单新增通知
 		 */
-		virtual void OnBlackListAdded(const V2TIMFriendInfoVector &infoList)
+		virtual void OnBlackListAdded(const V2TIMFriendInfoVector& infoList)
 		{
 			AddFriendListener_BlackListAddedDelegate.ExecuteIfBound(ToFriendInfoArray(infoList));
 		}
-	
+
 		/**
 		 * 黑名单删除通知
 		 */
-		virtual void OnBlackListDeleted(const V2TIMStringVector &userIDList)
+		virtual void OnBlackListDeleted(const V2TIMStringVector& userIDList)
 		{
 			AddFriendListener_BlackListDeletedDelegate.ExecuteIfBound(ToFStringArray(userIDList));
 		}
-	
+
 		/**
 		 * 好友资料更新通知
 		 */
-		virtual void OnFriendInfoChanged(const V2TIMFriendInfoVector &infoList)
+		virtual void OnFriendInfoChanged(const V2TIMFriendInfoVector& infoList)
 		{
 			AddFriendListener_FriendInfoChangedDelegate.ExecuteIfBound(ToFriendInfoArray(infoList));
 		}
 	};
-	Friendlistener=new IMFriendshipListener();
+	Friendlistener = new IMFriendshipListener();
 	Tencent_IM.GetInstance()->GetFriendshipManager()->RemoveFriendListener(Friendlistener);
 }
+
 DECLARATION_TIMFriendInfoVector_DELEGATE(GetFriendList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetFriendList)
 
@@ -2175,6 +2200,7 @@ void UTencentIMLibrary::GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDele
 
 DECLARATION_TIMFriendInfoResultVector_DELEGATE(GetFriendsInfo)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetFriendsInfo)
+
 void UTencentIMLibrary::GetFriendsInfo(const TArray<FString>& userIDList, FTIMFriendInfoResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetFriendsInfo_TIMFriendInfoResultVectorDelegate = OnSuccessDelegate;
@@ -2207,34 +2233,35 @@ void UTencentIMLibrary::GetFriendsInfo(const TArray<FString>& userIDList, FTIMFr
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendsInfo(ToIMStringArray(userIDList),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendsInfo(ToIMStringArray(userIDList), CallBack);
 }
 
 TArray<FTIMFriendInfoResult> UTencentIMLibrary::ToFriendInfoResultArray(const V2TIMFriendInfoResultVector& FriendInfoResultVector)
 {
 	TArray<FTIMFriendInfoResult> Result;
 
-	for(int i=0;i<FriendInfoResultVector.Size();++i)
+	for (int i = 0; i < FriendInfoResultVector.Size(); ++i)
 	{
 		Result.Add(ToFriendInforResult(FriendInfoResultVector[i]));
 	}
-	
+
 	return Result;
 }
+
 FTIMFriendInfoResult UTencentIMLibrary::ToFriendInforResult(const V2TIMFriendInfoResult& FriendInfoResult)
 {
 	FTIMFriendInfoResult InfoResult;
-	InfoResult.resultCode=FriendInfoResult.resultCode;
-	InfoResult.resultInfo=ToFString(FriendInfoResult.resultInfo);
-	InfoResult.relation=ETIMFriendRelationType(FriendInfoResult.relation);
-	InfoResult.friendInfo=ToFriendInfo(FriendInfoResult.friendInfo);
+	InfoResult.resultCode = FriendInfoResult.resultCode;
+	InfoResult.resultInfo = ToFString(FriendInfoResult.resultInfo);
+	InfoResult.relation = ETIMFriendRelationType(FriendInfoResult.relation);
+	InfoResult.friendInfo = ToFriendInfo(FriendInfoResult.friendInfo);
 	return InfoResult;
 }
 
 TArray<FTIMFriendInfo> UTencentIMLibrary::ToFriendInfoArray(const V2TIMFriendInfoVector& Info)
 {
 	TArray<FTIMFriendInfo> Conversation;
-	for (int i=0;i<Info.Size();i++)
+	for (int i = 0; i < Info.Size(); i++)
 	{
 		Conversation.Add(ToFriendInfo(Info[i]));
 	}
@@ -2243,30 +2270,31 @@ TArray<FTIMFriendInfo> UTencentIMLibrary::ToFriendInfoArray(const V2TIMFriendInf
 
 FTIMFriendInfo UTencentIMLibrary::ToFriendInfo(const V2TIMFriendInfo& Info)
 {
-	FTIMFriendInfo info= FTIMFriendInfo();
-	info.userID=ToFString(Info.userID);
-	info.friendRemark=ToFString(Info.friendRemark);
-	info.friendCustomInfo=ToTIMCustomInfo_(Info.friendCustomInfo);
-	info.friendGroups= ToFStringArray(Info.friendGroups);
-	info.userFullInfo=ToTIMUserFullInfo(Info.userFullInfo);
-	info.modifyFlag=FString::Printf(TEXT("%lu"), Info.modifyFlag);
+	FTIMFriendInfo info = FTIMFriendInfo();
+	info.userID = ToFString(Info.userID);
+	info.friendRemark = ToFString(Info.friendRemark);
+	info.friendCustomInfo = ToTIMCustomInfo_(Info.friendCustomInfo);
+	info.friendGroups = ToFStringArray(Info.friendGroups);
+	info.userFullInfo = ToTIMUserFullInfo(Info.userFullInfo);
+	info.modifyFlag = FString::Printf(TEXT("%lu"), Info.modifyFlag);
 	return info;
 }
 
 V2TIMFriendInfo UTencentIMLibrary::ToTIMFriendInfo(const FTIMFriendInfo& Info)
 {
-	V2TIMFriendInfo info= V2TIMFriendInfo();
-	info.userID=ToIMString(Info.userID);
-	info.friendRemark=ToIMString(Info.friendRemark);
-	info.friendCustomInfo=ToV2TIMCustomInfo(Info.friendCustomInfo);
-	info.friendGroups= ToIMStringArray(Info.friendGroups);
-	info.userFullInfo=ToV2TIMUserFullInfo(Info.userFullInfo);
-	info.modifyFlag=  uint32_t(FCString::Atoi(GetData(Info.modifyFlag)));
+	V2TIMFriendInfo info = V2TIMFriendInfo();
+	info.userID = ToIMString(Info.userID);
+	info.friendRemark = ToIMString(Info.friendRemark);
+	info.friendCustomInfo = ToV2TIMCustomInfo(Info.friendCustomInfo);
+	info.friendGroups = ToIMStringArray(Info.friendGroups);
+	info.userFullInfo = ToV2TIMUserFullInfo(Info.userFullInfo);
+	info.modifyFlag = uint32_t(FCString::Atoi(GetData(Info.modifyFlag)));
 	return info;
 }
 
 DECLARATION_CALLBACK_DELEGATE(SetFriendInfo)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SetFriendInfo)
+
 void UTencentIMLibrary::SetFriendInfo(const FTIMFriendInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	SetFriendInfo_FailureDelegate = OnFailureDelegate;
@@ -2296,11 +2324,12 @@ void UTencentIMLibrary::SetFriendInfo(const FTIMFriendInfo& info, FIMCallbackDel
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->SetFriendInfo(ToTIMFriendInfo(info),Callback);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->SetFriendInfo(ToTIMFriendInfo(info), Callback);
 }
 
 DECLARATION_TIMFriendInfoResultVector_DELEGATE(SearchFriends)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SearchFriends)
+
 void UTencentIMLibrary::SearchFriends(const FTIMFriendSearchParam& searchParam, FTIMFriendInfoResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	SearchFriends_TIMFriendInfoResultVectorDelegate = OnSuccessDelegate;
@@ -2333,11 +2362,12 @@ void UTencentIMLibrary::SearchFriends(const FTIMFriendSearchParam& searchParam, 
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->SearchFriends(ToTIMFriendSearchParam(searchParam),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->SearchFriends(ToTIMFriendSearchParam(searchParam), CallBack);
 }
 
 DECLARATION_TIMFriendOperationResul_DELEGATE(AddFriend)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(AddFriend)
+
 void UTencentIMLibrary::AddFriend(const FTIMFriendAddApplication& application, FTIMFriendOperationResulCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	AddFriend_TIMFriendOperationResulDelegate = OnSuccessDelegate;
@@ -2370,12 +2400,14 @@ void UTencentIMLibrary::AddFriend(const FTIMFriendAddApplication& application, F
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->AddFriend(ToTIMFriendAddApplication(application),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->AddFriend(ToTIMFriendAddApplication(application), CallBack);
 }
 
 DECLARATION_TIMFriendOperationResultVector_DELEGATE(DeleteFromFriendList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(DeleteFromFriendList)
-void UTencentIMLibrary::DeleteFromFriendList(const TArray<FString>& userIDList, ETIMFriendType deleteType, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+
+void UTencentIMLibrary::DeleteFromFriendList(const TArray<FString>& userIDList, ETIMFriendType deleteType, FTIMFriendOperationResultVectorCallback OnSuccessDelegate,
+                                             FIMFailureCallback OnFailureDelegate)
 {
 	DeleteFromFriendList_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
 	DeleteFromFriendList_FailureDelegate = OnFailureDelegate;
@@ -2407,13 +2439,13 @@ void UTencentIMLibrary::DeleteFromFriendList(const TArray<FString>& userIDList, 
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFromFriendList(ToIMStringArray(userIDList),ToTIMFriendType(deleteType),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFromFriendList(ToIMStringArray(userIDList), ToTIMFriendType(deleteType), CallBack);
 }
 
 TArray<FTIMFriendOperationResult> UTencentIMLibrary::ToTIMFriendOperationResultArray(const V2TIMFriendOperationResultVector& TIMFriendOperationResultVector)
 {
 	TArray<FTIMFriendOperationResult> TIMFriendOperationResultArray;
-	for(int i=0;i<TIMFriendOperationResultVector.Size();++i)
+	for (int i = 0; i < TIMFriendOperationResultVector.Size(); ++i)
 	{
 		TIMFriendOperationResultArray.Add(ToFriendOperationResult(TIMFriendOperationResultVector[i]));
 	}
@@ -2422,9 +2454,9 @@ TArray<FTIMFriendOperationResult> UTencentIMLibrary::ToTIMFriendOperationResultA
 }
 
 
-
 DECLARATION_TIMFriendCheckResultVector_DELEGATE(CheckFriend)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(CheckFriend)
+
 void UTencentIMLibrary::CheckFriend(const TArray<FString>& userIDList, ETIMFriendType checkType, FTIMFriendCheckResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	CheckFriend_TIMFriendCheckResultVectorDelegate = OnSuccessDelegate;
@@ -2457,11 +2489,12 @@ void UTencentIMLibrary::CheckFriend(const TArray<FString>& userIDList, ETIMFrien
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->CheckFriend(ToIMStringArray(userIDList),ToTIMFriendType(checkType),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->CheckFriend(ToIMStringArray(userIDList), ToTIMFriendType(checkType), CallBack);
 }
 
 DECLARATION_TIMFriendApplicationResult_DELEGATE(GetFriendApplicationList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetFriendApplicationList)
+
 void UTencentIMLibrary::GetFriendApplicationList(FTIMFriendApplicationResultCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetFriendApplicationList_TIMFriendApplicationResultDelegate = OnSuccessDelegate;
@@ -2499,7 +2532,9 @@ void UTencentIMLibrary::GetFriendApplicationList(FTIMFriendApplicationResultCall
 
 DECLARATION_TIMFriendOperationResul_DELEGATE(AcceptFriendApplication)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(AcceptFriendApplication)
-void UTencentIMLibrary::AcceptFriendApplication(const FTIMFriendApplication& application, ETIMFriendAcceptType acceptType, FTIMFriendOperationResulCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+
+void UTencentIMLibrary::AcceptFriendApplication(const FTIMFriendApplication& application, ETIMFriendAcceptType acceptType, FTIMFriendOperationResulCallback OnSuccessDelegate,
+                                                FIMFailureCallback OnFailureDelegate)
 {
 	AcceptFriendApplication_TIMFriendOperationResulDelegate = OnSuccessDelegate;
 	AcceptFriendApplication_FailureDelegate = OnFailureDelegate;
@@ -2531,11 +2566,12 @@ void UTencentIMLibrary::AcceptFriendApplication(const FTIMFriendApplication& app
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->AcceptFriendApplication(ToV2TIMFriendApplication(application),ToV2TIMFriendAcceptType(acceptType),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->AcceptFriendApplication(ToV2TIMFriendApplication(application), ToV2TIMFriendAcceptType(acceptType), CallBack);
 }
 
 DECLARATION_TIMFriendOperationResul_DELEGATE(RefuseFriendApplication)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(RefuseFriendApplication)
+
 void UTencentIMLibrary::RefuseFriendApplication(const FTIMFriendApplication& application, FTIMFriendOperationResulCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	RefuseFriendApplication_TIMFriendOperationResulDelegate = OnSuccessDelegate;
@@ -2568,11 +2604,12 @@ void UTencentIMLibrary::RefuseFriendApplication(const FTIMFriendApplication& app
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->RefuseFriendApplication(ToV2TIMFriendApplication(application),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->RefuseFriendApplication(ToV2TIMFriendApplication(application), CallBack);
 }
 
 DECLARATION_CALLBACK_DELEGATE(DeleteFriendApplication)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(DeleteFriendApplication)
+
 void UTencentIMLibrary::DeleteFriendApplication(const FTIMFriendApplication& application, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	DeleteFriendApplication_FailureDelegate = OnFailureDelegate;
@@ -2602,11 +2639,12 @@ void UTencentIMLibrary::DeleteFriendApplication(const FTIMFriendApplication& app
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendApplication(ToV2TIMFriendApplication(application),Callback);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendApplication(ToV2TIMFriendApplication(application), Callback);
 }
 
 DECLARATION_CALLBACK_DELEGATE(SetFriendApplicationRead)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SetFriendApplicationRead)
+
 void UTencentIMLibrary::SetFriendApplicationRead(FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	SetFriendApplicationRead_FailureDelegate = OnFailureDelegate;
@@ -2641,6 +2679,7 @@ void UTencentIMLibrary::SetFriendApplicationRead(FIMCallbackDelegate OnSuccessDe
 
 DECLARATION_TIMFriendOperationResultVector_DELEGATE(AddToBlackList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(AddToBlackList)
+
 void UTencentIMLibrary::AddToBlackList(const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	AddToBlackList_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
@@ -2673,11 +2712,12 @@ void UTencentIMLibrary::AddToBlackList(const TArray<FString>& userIDList, FTIMFr
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->AddToBlackList(ToIMStringArray(userIDList),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->AddToBlackList(ToIMStringArray(userIDList), CallBack);
 }
 
 DECLARATION_TIMFriendOperationResultVector_DELEGATE(DeleteFromBlackList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(DeleteFromBlackList)
+
 void UTencentIMLibrary::DeleteFromBlackList(const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	DeleteFromBlackList_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
@@ -2710,11 +2750,12 @@ void UTencentIMLibrary::DeleteFromBlackList(const TArray<FString>& userIDList, F
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFromBlackList(ToIMStringArray(userIDList),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFromBlackList(ToIMStringArray(userIDList), CallBack);
 }
 
 DECLARATION_TIMFriendInfoVector_DELEGATE(GetBlackList)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetBlackList)
+
 void UTencentIMLibrary::GetBlackList(FTIMFriendInfoVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetBlackList_TIMFriendInfoVectorDelegate = OnSuccessDelegate;
@@ -2752,6 +2793,7 @@ void UTencentIMLibrary::GetBlackList(FTIMFriendInfoVectorCallback OnSuccessDeleg
 
 DECLARATION_TIMFriendOperationResultVector_DELEGATE(CreateFriendGroup)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(CreateFriendGroup)
+
 void UTencentIMLibrary::CreateFriendGroup(const FString& groupName, const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	CreateFriendGroup_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
@@ -2784,11 +2826,12 @@ void UTencentIMLibrary::CreateFriendGroup(const FString& groupName, const TArray
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->CreateFriendGroup(ToIMString(groupName),ToIMStringArray(userIDList),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->CreateFriendGroup(ToIMString(groupName), ToIMStringArray(userIDList), CallBack);
 }
 
 DECLARATION_TIMFriendGroupVector_DELEGATE(GetFriendGroups)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(GetFriendGroups)
+
 void UTencentIMLibrary::GetFriendGroups(const TArray<FString>& groupNameList, FTIMFriendGroupVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	GetFriendGroups_TIMFriendGroupVectorDelegate = OnSuccessDelegate;
@@ -2821,11 +2864,12 @@ void UTencentIMLibrary::GetFriendGroups(const TArray<FString>& groupNameList, FT
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendGroups(ToIMStringArray(groupNameList),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendGroups(ToIMStringArray(groupNameList), CallBack);
 }
 
 DECLARATION_CALLBACK_DELEGATE(DeleteFriendGroup)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(DeleteFriendGroup)
+
 void UTencentIMLibrary::DeleteFriendGroup(const TArray<FString>& groupNameList, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	DeleteFriendGroup_FailureDelegate = OnFailureDelegate;
@@ -2855,11 +2899,12 @@ void UTencentIMLibrary::DeleteFriendGroup(const TArray<FString>& groupNameList, 
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendGroup(ToIMStringArray(groupNameList),Callback);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendGroup(ToIMStringArray(groupNameList), Callback);
 }
 
 DECLARATION_CALLBACK_DELEGATE(RenameFriendGroup)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(RenameFriendGroup)
+
 void UTencentIMLibrary::RenameFriendGroup(const FString& oldName, const FString& newName, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	RenameFriendGroup_FailureDelegate = OnFailureDelegate;
@@ -2889,12 +2934,14 @@ void UTencentIMLibrary::RenameFriendGroup(const FString& oldName, const FString&
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->RenameFriendGroup(ToIMString(oldName),ToIMString(newName),Callback);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->RenameFriendGroup(ToIMString(oldName), ToIMString(newName), Callback);
 }
 
 DECLARATION_TIMFriendOperationResultVector_DELEGATE(AddFriendsToFriendGroup)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(AddFriendsToFriendGroup)
-void UTencentIMLibrary::AddFriendsToFriendGroup(const FString& groupName, const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+
+void UTencentIMLibrary::AddFriendsToFriendGroup(const FString& groupName, const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate,
+                                                FIMFailureCallback OnFailureDelegate)
 {
 	AddFriendsToFriendGroup_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
 	AddFriendsToFriendGroup_FailureDelegate = OnFailureDelegate;
@@ -2926,12 +2973,14 @@ void UTencentIMLibrary::AddFriendsToFriendGroup(const FString& groupName, const 
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->AddFriendsToFriendGroup(ToIMString(groupName),ToIMStringArray(userIDList),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->AddFriendsToFriendGroup(ToIMString(groupName), ToIMStringArray(userIDList), CallBack);
 }
 
 DECLARATION_TIMFriendOperationResultVector_DELEGATE(DeleteFriendsFromFriendGroup)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(DeleteFriendsFromFriendGroup)
-void UTencentIMLibrary::DeleteFriendsFromFriendGroup(const FString& groupName, const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+
+void UTencentIMLibrary::DeleteFriendsFromFriendGroup(const FString& groupName, const TArray<FString>& userIDList, FTIMFriendOperationResultVectorCallback OnSuccessDelegate,
+                                                     FIMFailureCallback OnFailureDelegate)
 {
 	DeleteFriendsFromFriendGroup_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
 	DeleteFriendsFromFriendGroup_FailureDelegate = OnFailureDelegate;
@@ -2963,12 +3012,14 @@ void UTencentIMLibrary::DeleteFriendsFromFriendGroup(const FString& groupName, c
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendsFromFriendGroup(ToIMString(groupName),ToIMStringArray(userIDList),CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendsFromFriendGroup(ToIMString(groupName), ToIMStringArray(userIDList), CallBack);
 }
 
 DECLARATION_CALLBACK_DELEGATE(Invite)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(Invite)
-FString UTencentIMLibrary::Invite(const FString& invitee, const FString& data, bool onlineUserOnly, const FTIMOfflinePushInfo& offlinePushInfo, int32 timeout, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+
+FString UTencentIMLibrary::Invite(const FString& invitee, const FString& data, bool onlineUserOnly, const FTIMOfflinePushInfo& offlinePushInfo, int32 timeout, FIMCallbackDelegate OnSuccessDelegate,
+                                  FIMFailureCallback OnFailureDelegate)
 {
 	Invite_FailureDelegate = OnFailureDelegate;
 	Invite_Delegate = OnSuccessDelegate;
@@ -2997,12 +3048,14 @@ FString UTencentIMLibrary::Invite(const FString& invitee, const FString& data, b
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	return Tencent_IM.Invite(invitee,data,onlineUserOnly,ToTIMOfflinePushInfo(offlinePushInfo),timeout,Callback);
+	return Tencent_IM.Invite(invitee, data, onlineUserOnly, ToTIMOfflinePushInfo(offlinePushInfo), timeout, Callback);
 }
 
 DECLARATION_CALLBACK_DELEGATE(InviteInGroup)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(InviteInGroup)
-FString UTencentIMLibrary::InviteInGroup(const FString& groupID, const TArray<FString>& inviteeList, const FString& data, bool onlineUserOnly, int timeout, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
+
+FString UTencentIMLibrary::InviteInGroup(const FString& groupID, const TArray<FString>& inviteeList, const FString& data, bool onlineUserOnly, int timeout, FIMCallbackDelegate OnSuccessDelegate,
+                                         FIMFailureCallback OnFailureDelegate)
 {
 	InviteInGroup_FailureDelegate = OnFailureDelegate;
 	InviteInGroup_Delegate = OnSuccessDelegate;
@@ -3031,11 +3084,12 @@ FString UTencentIMLibrary::InviteInGroup(const FString& groupID, const TArray<FS
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	return Tencent_IM.InviteInGroup(groupID,inviteeList,data,onlineUserOnly,timeout,Callback);
+	return Tencent_IM.InviteInGroup(groupID, inviteeList, data, onlineUserOnly, timeout, Callback);
 }
 
 DECLARATION_CALLBACK_DELEGATE(Cancel)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(Cancel)
+
 void UTencentIMLibrary::Cancel(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	Cancel_FailureDelegate = OnFailureDelegate;
@@ -3065,11 +3119,12 @@ void UTencentIMLibrary::Cancel(const FString& inviteID, const FString& data, FIM
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	return Tencent_IM.Cancel(inviteID,data,Callback);
+	return Tencent_IM.Cancel(inviteID, data, Callback);
 }
 
 DECLARATION_CALLBACK_DELEGATE(Accept)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(Accept)
+
 void UTencentIMLibrary::Accept(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	Accept_FailureDelegate = OnFailureDelegate;
@@ -3099,11 +3154,12 @@ void UTencentIMLibrary::Accept(const FString& inviteID, const FString& data, FIM
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	return Tencent_IM.Accept(inviteID,data,Callback);
+	return Tencent_IM.Accept(inviteID, data, Callback);
 }
 
 DECLARATION_CALLBACK_DELEGATE(Reject)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(Reject)
+
 void UTencentIMLibrary::Reject(const FString& inviteID, const FString& data, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	Reject_FailureDelegate = OnFailureDelegate;
@@ -3133,7 +3189,7 @@ void UTencentIMLibrary::Reject(const FString& inviteID, const FString& data, FIM
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	return Tencent_IM.Reject(inviteID,data,Callback);
+	return Tencent_IM.Reject(inviteID, data, Callback);
 }
 
 FTIMSignalingInfo UTencentIMLibrary::GetSignalingInfo(const FTIMMessage& msg)
@@ -3144,6 +3200,7 @@ FTIMSignalingInfo UTencentIMLibrary::GetSignalingInfo(const FTIMMessage& msg)
 DECLARATION_CALLBACK_DELEGATE(AddInvitedSignaling)
 
 DECLARATION_FAILURE_CALLBACK_DELEGATE(AddInvitedSignaling)
+
 void UTencentIMLibrary::AddInvitedSignaling(const FTIMSignalingInfo& info, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate)
 {
 	AddInvitedSignaling_FailureDelegate = OnFailureDelegate;
@@ -3173,20 +3230,20 @@ void UTencentIMLibrary::AddInvitedSignaling(const FTIMSignalingInfo& info, FIMCa
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	return Tencent_IM.AddInvitedSignaling(ToTIMSignalingInfo(info),Callback);
+	return Tencent_IM.AddInvitedSignaling(ToTIMSignalingInfo(info), Callback);
 }
 
 V2TIMOfflinePushInfo UTencentIMLibrary::ToTIMOfflinePushInfo(const FTIMOfflinePushInfo& Info)
 {
-	V2TIMOfflinePushInfo TIMOfflinePushInfo ;
-	TIMOfflinePushInfo.title=ToIMString(Info.title);
-	TIMOfflinePushInfo.desc=ToIMString(Info.desc);
-	TIMOfflinePushInfo.ext=ToIMString(Info.ext);
-	TIMOfflinePushInfo.disablePush=Info.disablePush;
-	TIMOfflinePushInfo.iOSSound=ToIMString(Info.iOSSound);
-	TIMOfflinePushInfo.ignoreIOSBadge=Info.ignoreIOSBadge;
-	TIMOfflinePushInfo.AndroidOPPOChannelID=ToIMString(Info.AndroidOPPOChannelID);
-	TIMOfflinePushInfo.AndroidVIVOClassification=Info.AndroidVIVOClassification;
+	V2TIMOfflinePushInfo TIMOfflinePushInfo;
+	TIMOfflinePushInfo.title = ToIMString(Info.title);
+	TIMOfflinePushInfo.desc = ToIMString(Info.desc);
+	TIMOfflinePushInfo.ext = ToIMString(Info.ext);
+	TIMOfflinePushInfo.disablePush = Info.disablePush;
+	TIMOfflinePushInfo.iOSSound = ToIMString(Info.iOSSound);
+	TIMOfflinePushInfo.ignoreIOSBadge = Info.ignoreIOSBadge;
+	TIMOfflinePushInfo.AndroidOPPOChannelID = ToIMString(Info.AndroidOPPOChannelID);
+	TIMOfflinePushInfo.AndroidVIVOClassification = Info.AndroidVIVOClassification;
 
 	return TIMOfflinePushInfo;
 }
@@ -3194,13 +3251,13 @@ V2TIMOfflinePushInfo UTencentIMLibrary::ToTIMOfflinePushInfo(const FTIMOfflinePu
 V2TIMSignalingInfo UTencentIMLibrary::ToTIMSignalingInfo(const FTIMSignalingInfo& Info)
 {
 	V2TIMSignalingInfo TIMSignalingInfo;
-	TIMSignalingInfo.inviteID=ToIMString(Info.inviteID);
-	TIMSignalingInfo.groupID=ToIMString(Info.groupID);
-	TIMSignalingInfo.inviter=ToIMString(Info.inviter);
-	TIMSignalingInfo.inviteeList=ToIMStringArray(Info.inviteeList);
-	TIMSignalingInfo.data=ToIMString(Info.data);
-	TIMSignalingInfo.actionType=ToV2TIMSignalingActionType(Info.actionType);
-	TIMSignalingInfo.timeout=Info.timeout;
+	TIMSignalingInfo.inviteID = ToIMString(Info.inviteID);
+	TIMSignalingInfo.groupID = ToIMString(Info.groupID);
+	TIMSignalingInfo.inviter = ToIMString(Info.inviter);
+	TIMSignalingInfo.inviteeList = ToIMStringArray(Info.inviteeList);
+	TIMSignalingInfo.data = ToIMString(Info.data);
+	TIMSignalingInfo.actionType = ToV2TIMSignalingActionType(Info.actionType);
+	TIMSignalingInfo.timeout = Info.timeout;
 
 	return TIMSignalingInfo;
 }
@@ -3208,13 +3265,13 @@ V2TIMSignalingInfo UTencentIMLibrary::ToTIMSignalingInfo(const FTIMSignalingInfo
 FTIMSignalingInfo UTencentIMLibrary::ToSignalingInfo(const V2TIMSignalingInfo& Info)
 {
 	FTIMSignalingInfo TIMSignalingInfo;
-	TIMSignalingInfo.inviteID=ToFString(Info.inviteID);
-	TIMSignalingInfo.groupID=ToFString(Info.groupID);
-	TIMSignalingInfo.inviter=ToFString(Info.inviter);
-	TIMSignalingInfo.inviteeList=ToFStringArray(Info.inviteeList);
-	TIMSignalingInfo.data=ToFString(Info.data);
-	TIMSignalingInfo.actionType=ToTIMSignalingActionType(Info.actionType);
-	TIMSignalingInfo.timeout=Info.timeout;
+	TIMSignalingInfo.inviteID = ToFString(Info.inviteID);
+	TIMSignalingInfo.groupID = ToFString(Info.groupID);
+	TIMSignalingInfo.inviter = ToFString(Info.inviter);
+	TIMSignalingInfo.inviteeList = ToFStringArray(Info.inviteeList);
+	TIMSignalingInfo.data = ToFString(Info.data);
+	TIMSignalingInfo.actionType = ToTIMSignalingActionType(Info.actionType);
+	TIMSignalingInfo.timeout = Info.timeout;
 
 	return TIMSignalingInfo;
 }
@@ -3270,7 +3327,7 @@ V2TIMSignalingActionType UTencentIMLibrary::ToV2TIMSignalingActionType(const ETI
 TArray<FTIMFriendGroup> UTencentIMLibrary::ToTIMFriendGroupArray(const V2TIMFriendGroupVector& TIMFriendGroup)
 {
 	TArray<FTIMFriendGroup> Result;
-	for(int i=0;i<TIMFriendGroup.Size();++i)
+	for (int i = 0; i < TIMFriendGroup.Size(); ++i)
 	{
 		Result.Add(ToTIMFriendGroup(TIMFriendGroup[i]));
 	}
@@ -3281,13 +3338,13 @@ TArray<FTIMFriendGroup> UTencentIMLibrary::ToTIMFriendGroupArray(const V2TIMFrie
 FTIMFriendGroup UTencentIMLibrary::ToTIMFriendGroup(const V2TIMFriendGroup& Group)
 {
 	FTIMFriendGroup TIMFriendGroup;
-	TIMFriendGroup.groupName=ToFString(Group.groupName);
-	TIMFriendGroup.userCount=FString::Printf(TEXT("%llu"),Group.userCount);
-	TIMFriendGroup.friendList=ToFStringArray(Group.friendList);
+	TIMFriendGroup.groupName = ToFString(Group.groupName);
+	TIMFriendGroup.userCount = FString::Printf(TEXT("%llu"), Group.userCount);
+	TIMFriendGroup.friendList = ToFStringArray(Group.friendList);
 	return TIMFriendGroup;
 }
 
-V2TIMFriendAcceptType UTencentIMLibrary::ToV2TIMFriendAcceptType (const ETIMFriendAcceptType& Type)
+V2TIMFriendAcceptType UTencentIMLibrary::ToV2TIMFriendAcceptType(const ETIMFriendAcceptType& Type)
 {
 	switch (Type)
 	{
@@ -3305,13 +3362,13 @@ V2TIMFriendAcceptType UTencentIMLibrary::ToV2TIMFriendAcceptType (const ETIMFrie
 V2TIMFriendApplication UTencentIMLibrary::ToV2TIMFriendApplication(const FTIMFriendApplication& TIMFriendApplication)
 {
 	V2TIMFriendApplication Application;
-	Application.userID=ToIMString(TIMFriendApplication.userID);
-	Application.nickName=ToIMString(TIMFriendApplication.nickName);
-	Application.faceUrl=ToIMString(TIMFriendApplication.faceUrl);
-	Application.addTime=FCString::Strtoui64(GetData(TIMFriendApplication.addTime),NULL,10);
-	Application.addSource=ToIMString(TIMFriendApplication.addSource);
-	Application.addWording=ToIMString(TIMFriendApplication.addWording);
-	Application.type=ToV2TIMFriendApplicationType(TIMFriendApplication.type);
+	Application.userID = ToIMString(TIMFriendApplication.userID);
+	Application.nickName = ToIMString(TIMFriendApplication.nickName);
+	Application.faceUrl = ToIMString(TIMFriendApplication.faceUrl);
+	Application.addTime = FCString::Strtoui64(GetData(TIMFriendApplication.addTime),NULL, 10);
+	Application.addSource = ToIMString(TIMFriendApplication.addSource);
+	Application.addWording = ToIMString(TIMFriendApplication.addWording);
+	Application.type = ToV2TIMFriendApplicationType(TIMFriendApplication.type);
 	return Application;
 }
 
@@ -3321,30 +3378,30 @@ V2TIMFriendApplicationType UTencentIMLibrary::ToV2TIMFriendApplicationType(const
 	{
 	case ETIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_COME_IN:
 		return V2TIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_COME_IN;
-	break;
+		break;
 	case ETIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_SEND_OUT:
 		return V2TIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_SEND_OUT;
-	break;
+		break;
 	case ETIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_BOTH:
 		return V2TIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_BOTH;
-	break;
-}
+		break;
+	}
 
-return V2TIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_COME_IN;
+	return V2TIMFriendApplicationType::V2TIM_FRIEND_APPLICATION_COME_IN;
 }
 
 FTIMFriendApplicationResult UTencentIMLibrary::ToTIMFriendApplicationResult(const V2TIMFriendApplicationResult& TIMFriendApplicationResult)
 {
 	FTIMFriendApplicationResult Result;
-	Result.unreadCount=FString::Printf(TEXT("%llu"),TIMFriendApplicationResult.unreadCount);
-	Result.applicationList=ToTIMFriendApplicationArray(TIMFriendApplicationResult.applicationList);
+	Result.unreadCount = FString::Printf(TEXT("%llu"), TIMFriendApplicationResult.unreadCount);
+	Result.applicationList = ToTIMFriendApplicationArray(TIMFriendApplicationResult.applicationList);
 	return Result;
 }
 
 V2TIMGroupMemberFullInfoVector UTencentIMLibrary::ToTIMGroupMemberFullInfoVector(const TArray<FTIMGroupMemberFullInfo>& GroupMemberFullInfoArray)
 {
 	V2TIMGroupMemberFullInfoVector FullInfoVector;
-	for(int i=0;i<GroupMemberFullInfoArray.Num();++i)
+	for (int i = 0; i < GroupMemberFullInfoArray.Num(); ++i)
 	{
 		FullInfoVector.PushBack(ToV2TIMGroupMemberFullInfo(GroupMemberFullInfoArray[i]));
 	}
@@ -3355,11 +3412,11 @@ V2TIMGroupMemberFullInfoVector UTencentIMLibrary::ToTIMGroupMemberFullInfoVector
 V2TIMGroupMemberFullInfo UTencentIMLibrary::ToV2TIMGroupMemberFullInfo(const FTIMGroupMemberFullInfo& Info)
 {
 	V2TIMGroupMemberFullInfo TIMGroupMemberFullInfo;
-	TIMGroupMemberFullInfo.customInfo=ToV2TIMCustomInfo(Info.customInfo);
-	TIMGroupMemberFullInfo.role=Info.role;
-	TIMGroupMemberFullInfo.muteUntil=Info.muteUntil;
-	TIMGroupMemberFullInfo.joinTime= Info.joinTime;
-	TIMGroupMemberFullInfo.modifyFlag=Info.modifyFlag;
+	TIMGroupMemberFullInfo.customInfo = ToV2TIMCustomInfo(Info.customInfo);
+	TIMGroupMemberFullInfo.role = Info.role;
+	TIMGroupMemberFullInfo.muteUntil = Info.muteUntil;
+	TIMGroupMemberFullInfo.joinTime = Info.joinTime;
+	TIMGroupMemberFullInfo.modifyFlag = Info.modifyFlag;
 
 	return TIMGroupMemberFullInfo;
 }
@@ -3367,7 +3424,7 @@ V2TIMGroupMemberFullInfo UTencentIMLibrary::ToV2TIMGroupMemberFullInfo(const FTI
 TArray<FTIMFriendApplication> UTencentIMLibrary::ToTIMFriendApplicationArray(const V2TIMFriendApplicationVector& FriendApplicationVector)
 {
 	TArray<FTIMFriendApplication> TIMFriendApplicationArray;
-	for(int i=0;i<FriendApplicationVector.Size();++i)
+	for (int i = 0; i < FriendApplicationVector.Size(); ++i)
 	{
 		TIMFriendApplicationArray.Add(ToTIMFriendApplication(FriendApplicationVector[i]));
 	}
@@ -3377,13 +3434,13 @@ TArray<FTIMFriendApplication> UTencentIMLibrary::ToTIMFriendApplicationArray(con
 FTIMFriendApplication UTencentIMLibrary::ToTIMFriendApplication(const V2TIMFriendApplication& IMFriendApplication)
 {
 	FTIMFriendApplication TIMFriendApplication;
-	TIMFriendApplication.userID=ToFString(IMFriendApplication.userID);
-	TIMFriendApplication.nickName=ToFString(IMFriendApplication.nickName);
-	TIMFriendApplication.faceUrl=ToFString(IMFriendApplication.faceUrl);
-	TIMFriendApplication.addTime=FString::Printf(TEXT("%llu"),IMFriendApplication.addTime);
-	TIMFriendApplication.addSource=ToFString(IMFriendApplication.addSource);
-	TIMFriendApplication.addWording=ToFString(IMFriendApplication.addWording);
-	TIMFriendApplication.type=ToTIMFriendApplicationType(IMFriendApplication.type);
+	TIMFriendApplication.userID = ToFString(IMFriendApplication.userID);
+	TIMFriendApplication.nickName = ToFString(IMFriendApplication.nickName);
+	TIMFriendApplication.faceUrl = ToFString(IMFriendApplication.faceUrl);
+	TIMFriendApplication.addTime = FString::Printf(TEXT("%llu"), IMFriendApplication.addTime);
+	TIMFriendApplication.addSource = ToFString(IMFriendApplication.addSource);
+	TIMFriendApplication.addWording = ToFString(IMFriendApplication.addWording);
+	TIMFriendApplication.type = ToTIMFriendApplicationType(IMFriendApplication.type);
 
 	return TIMFriendApplication;
 }
@@ -3409,7 +3466,7 @@ ETIMFriendApplicationType UTencentIMLibrary::ToTIMFriendApplicationType(const V2
 TArray<FTIMFriendCheckResult> UTencentIMLibrary::ToTIMFriendCheckResultArray(const V2TIMFriendCheckResultVector& TIMFriendCheckResultVector)
 {
 	TArray<FTIMFriendCheckResult> Result;
-	for(int i=0;i<TIMFriendCheckResultVector.Size();++i)
+	for (int i = 0; i < TIMFriendCheckResultVector.Size(); ++i)
 	{
 		Result.Add(ToFTIMFriendCheckResult(TIMFriendCheckResultVector[i]));
 	}
@@ -3420,18 +3477,18 @@ FTIMFriendCheckResult UTencentIMLibrary::ToFTIMFriendCheckResult(const V2TIMFrie
 {
 	FTIMFriendCheckResult TIMFriendCheckResult;
 
-	TIMFriendCheckResult.userID=ToFString(FriendCheckResult.userID);
-	TIMFriendCheckResult.resultCode=FriendCheckResult.resultCode;
-	TIMFriendCheckResult.resultInfo=ToFString(FriendCheckResult.resultInfo);
-	TIMFriendCheckResult.relationType=ToFTIMFriendRelationType(FriendCheckResult.relationType);
+	TIMFriendCheckResult.userID = ToFString(FriendCheckResult.userID);
+	TIMFriendCheckResult.resultCode = FriendCheckResult.resultCode;
+	TIMFriendCheckResult.resultInfo = ToFString(FriendCheckResult.resultInfo);
+	TIMFriendCheckResult.relationType = ToFTIMFriendRelationType(FriendCheckResult.relationType);
 	return TIMFriendCheckResult;
 }
 
 V2TIMGroupMemberInfoResult UTencentIMLibrary::ToTIMGroupMemberInfoResult(const FTIMGroupMemberInfoResult& Result)
 {
 	V2TIMGroupMemberInfoResult TIMGroupMemberInfoResult;
-	TIMGroupMemberInfoResult.nextSequence=FCString::Strtoui64(GetData(Result.nextSequence),nullptr,10);
-	TIMGroupMemberInfoResult.memberInfoList=ToTIMGroupMemberFullInfoVector(Result.memberInfoList);
+	TIMGroupMemberInfoResult.nextSequence = FCString::Strtoui64(GetData(Result.nextSequence), nullptr, 10);
+	TIMGroupMemberInfoResult.memberInfoList = ToTIMGroupMemberFullInfoVector(Result.memberInfoList);
 	return TIMGroupMemberInfoResult;
 }
 
@@ -3459,7 +3516,7 @@ ETIMFriendRelationType UTencentIMLibrary::ToFTIMFriendRelationType(const V2TIMFr
 V2TIMFriendCheckResultVector UTencentIMLibrary::ToV2TIMFriendCheckResultVector(const TArray<FTIMFriendCheckResult>& TIMFriendCheckResult)
 {
 	V2TIMFriendCheckResultVector TIMFriendCheckResultVector;
-	for(auto& FriendCheck:TIMFriendCheckResult)
+	for (auto& FriendCheck : TIMFriendCheckResult)
 	{
 		TIMFriendCheckResultVector.PushBack(ToV2TIMFriendCheckResult(FriendCheck));
 	}
@@ -3468,21 +3525,20 @@ V2TIMFriendCheckResultVector UTencentIMLibrary::ToV2TIMFriendCheckResultVector(c
 
 V2TIMFriendCheckResult UTencentIMLibrary::ToV2TIMFriendCheckResult(const FTIMFriendCheckResult& FriendCheckResult)
 {
-	
 	V2TIMFriendCheckResult TIMFriendCheckResult;
-	TIMFriendCheckResult.userID=ToIMString(FriendCheckResult.userID);
-	TIMFriendCheckResult.resultCode=FriendCheckResult.resultCode;
-	TIMFriendCheckResult.resultInfo=ToIMString(FriendCheckResult.resultInfo);
-	TIMFriendCheckResult.relationType=V2TIMFriendRelationType(FriendCheckResult.relationType);
+	TIMFriendCheckResult.userID = ToIMString(FriendCheckResult.userID);
+	TIMFriendCheckResult.resultCode = FriendCheckResult.resultCode;
+	TIMFriendCheckResult.resultInfo = ToIMString(FriendCheckResult.resultInfo);
+	TIMFriendCheckResult.relationType = V2TIMFriendRelationType(FriendCheckResult.relationType);
 	return TIMFriendCheckResult;
 }
 
 FTIMFriendOperationResult UTencentIMLibrary::ToFriendOperationResult(const V2TIMFriendOperationResult& FriendOperationResult)
 {
 	FTIMFriendOperationResult Result;
-	Result.userID=ToFString(FriendOperationResult.userID);
-	Result.resultCode=FriendOperationResult.resultCode;
-	Result.resultInfo=ToFString(FriendOperationResult.resultInfo);
+	Result.userID = ToFString(FriendOperationResult.userID);
+	Result.resultCode = FriendOperationResult.resultCode;
+	Result.resultInfo = ToFString(FriendOperationResult.resultInfo);
 
 	return Result;
 }
@@ -3505,13 +3561,13 @@ V2TIMFriendType UTencentIMLibrary::ToTIMFriendType(ETIMFriendType Type)
 V2TIMFriendAddApplication UTencentIMLibrary::ToTIMFriendAddApplication(const FTIMFriendAddApplication& FriendAddApplication)
 {
 	V2TIMFriendAddApplication Application;
-	Application.userID=ToIMString(FriendAddApplication.userID);
-	Application.friendRemark=ToIMString(FriendAddApplication.friendRemark);
-	Application.friendGroup=ToIMString(FriendAddApplication.friendGroup);
-	Application.addWording=ToIMString(FriendAddApplication.addWording);
-	Application.addSource=ToIMString(FriendAddApplication.addSource);
-	Application.userID=ToIMString(FriendAddApplication.userID);
-	Application.addType=ToTIMFriendType(FriendAddApplication.addType);
+	Application.userID = ToIMString(FriendAddApplication.userID);
+	Application.friendRemark = ToIMString(FriendAddApplication.friendRemark);
+	Application.friendGroup = ToIMString(FriendAddApplication.friendGroup);
+	Application.addWording = ToIMString(FriendAddApplication.addWording);
+	Application.addSource = ToIMString(FriendAddApplication.addSource);
+	Application.userID = ToIMString(FriendAddApplication.userID);
+	Application.addType = ToTIMFriendType(FriendAddApplication.addType);
 
 	return Application;
 }
@@ -3519,10 +3575,10 @@ V2TIMFriendAddApplication UTencentIMLibrary::ToTIMFriendAddApplication(const FTI
 V2TIMFriendSearchParam UTencentIMLibrary::ToTIMFriendSearchParam(const FTIMFriendSearchParam& FriendSearchParam)
 {
 	V2TIMFriendSearchParam TIMFriendSearchParam;
-	TIMFriendSearchParam.keywordList=ToIMStringArray(FriendSearchParam.keywordList);
-	TIMFriendSearchParam.isSearchUserID=FriendSearchParam.isSearchUserID;
-	TIMFriendSearchParam.isSearchNickName=FriendSearchParam.isSearchNickName;
-	TIMFriendSearchParam.isSearchRemark=FriendSearchParam.isSearchRemark;
+	TIMFriendSearchParam.keywordList = ToIMStringArray(FriendSearchParam.keywordList);
+	TIMFriendSearchParam.isSearchUserID = FriendSearchParam.isSearchUserID;
+	TIMFriendSearchParam.isSearchNickName = FriendSearchParam.isSearchNickName;
+	TIMFriendSearchParam.isSearchRemark = FriendSearchParam.isSearchRemark;
 
 	return TIMFriendSearchParam;
 }
@@ -3536,7 +3592,6 @@ TArray<FTIMCreateGroupMemberInfo> UTencentIMLibrary::ToGroupMemberInfoArray(cons
 
 V2TIMCreateGroupMemberInfoVector UTencentIMLibrary::ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector)
 {
-
 	//todo finish
 	return V2TIMCreateGroupMemberInfoVector();
 }
@@ -3544,14 +3599,12 @@ V2TIMCreateGroupMemberInfoVector UTencentIMLibrary::ToCreateGroupMemberInfoVecto
 
 FTIMGroupInfo UTencentIMLibrary::ToGroupInfo(const V2TIMGroupInfo& GroupInfo)
 {
-	
-		//todo finish
+	//todo finish
 	return FTIMGroupInfo();
 }
 
 V2TIMGroupInfo UTencentIMLibrary::ToTIMGroupInfo(const FTIMGroupInfo& GroupInfo)
 {
-	
 	//todo finish
 	return V2TIMGroupInfo();
 }
@@ -3560,11 +3613,12 @@ V2TIMGroupInfo UTencentIMLibrary::ToTIMGroupInfo(const FTIMGroupInfo& GroupInfo)
 //base convert function
 
 
-
 V2TIMString UTencentIMLibrary::ToIMString(const FString& InStr)
 {
-	const char* OutIMString = TCHAR_TO_ANSI(*InStr);
-	return static_cast<V2TIMString>(OutIMString);
+	// const char* OutIMString = TCHAR_TO_ANSI(*InStr);
+	std::string strInputMessage(TCHAR_TO_UTF8(*InStr));
+	const char* charInputMessage = strInputMessage.c_str();
+	return static_cast<V2TIMString>(charInputMessage);
 }
 
 FString UTencentIMLibrary::ToFString(const V2TIMString& InStr)
@@ -3586,7 +3640,7 @@ V2TIMStringVector UTencentIMLibrary::ToIMStringArray(TArray<FString> InStrArray)
 TArray<FString> UTencentIMLibrary::ToFStringArray(V2TIMStringVector TIMStringVector)
 {
 	TArray<FString> res;
-	for(int i=0;i<TIMStringVector.Size();i++)
+	for (int i = 0; i < TIMStringVector.Size(); i++)
 	{
 		res.Add(ToFString(TIMStringVector[i]));
 	}
@@ -3730,13 +3784,13 @@ FBuffer UTencentIMLibrary::ToBuffer(V2TIMBuffer TIMBuffer)
 {
 	FBuffer Buffer;
 	Buffer.Buffer.AddUninitialized(TIMBuffer.Size());
-	FMemory::Memcpy(Buffer.Buffer.GetData(),TIMBuffer.Data(),TIMBuffer.Size());
+	FMemory::Memcpy(Buffer.Buffer.GetData(), TIMBuffer.Data(), TIMBuffer.Size());
 	return Buffer;
 }
 
 V2TIMBuffer UTencentIMLibrary::ToTIMBuffer(FBuffer TIMBuffer)
 {
-	V2TIMBuffer Buffer(TIMBuffer.Buffer.GetData(),TIMBuffer.Buffer.Num());
+	V2TIMBuffer Buffer(TIMBuffer.Buffer.GetData(), TIMBuffer.Buffer.Num());
 	return Buffer;
 }
 
@@ -3746,7 +3800,7 @@ TMap<FString, FBuffer> UTencentIMLibrary::ToTIMCustomInfo_(V2TIMCustomInfo Custo
 	for (int32 i = 0; i < CustomInfo.AllKeys().Size(); i++)
 	{
 		V2TIMString Key = CustomInfo.AllKeys()[i];
-		OutCustomInfo.Add(ToFString(Key),ToBuffer(CustomInfo.Get(Key)));
+		OutCustomInfo.Add(ToFString(Key), ToBuffer(CustomInfo.Get(Key)));
 	}
 	return OutCustomInfo;
 }
@@ -3811,14 +3865,13 @@ V2TIMMessage UTencentIMLibrary::ToIMMessage(const FTIMMessage& TimMessage)
 	OutTimMessage.faceURL = ToIMString(TimMessage.faceURL);
 	OutTimMessage.groupID = ToIMString(TimMessage.groupID);
 	OutTimMessage.userID = ToIMString(TimMessage.userID);
-	OutTimMessage.seq = FCString::Strtoui64(GetData(TimMessage.seq),NULL,10);
+	OutTimMessage.seq = FCString::Strtoui64(GetData(TimMessage.seq),NULL, 10);
 	//todo finish
 	// OutTimMessage.status =((uint8)TimMessage.status+1);
 	OutTimMessage.isSelf = TimMessage.isSelf;
-	OutTimMessage.isRead =TimMessage.isRead;
-	OutTimMessage.isPeerRead =TimMessage.isPeerRead;
+	OutTimMessage.isRead = TimMessage.isRead;
+	OutTimMessage.isPeerRead = TimMessage.isPeerRead;
 	//todo finish
-
 
 
 	return OutTimMessage;
@@ -4008,14 +4061,14 @@ V2TIMKeywordListMatchType UTencentIMLibrary::ToTIMKeywordListMatchType(const ETI
 FTIMElem UTencentIMLibrary::ToTIMElem(const V2TIMElem& TimElem)
 {
 	FTIMElem Element;
-	Element.elemType=ToElemType(TimElem.elemType);
+	Element.elemType = ToElemType(TimElem.elemType);
 	return Element;
 }
 
 TArray<FTIMElem> UTencentIMLibrary::ToTIMElemArray(const V2TIMElemVector& ElementVector)
 {
 	TArray<FTIMElem> ElementArray;
-	for (int i=0;i<ElementVector.Size();i++)
+	for (int i = 0; i < ElementVector.Size(); i++)
 	{
 		ElementArray.Add(ToTIMElem(*ElementVector[i]));
 	}
