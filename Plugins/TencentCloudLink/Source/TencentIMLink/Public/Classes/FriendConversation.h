@@ -75,6 +75,7 @@ public:
 						OnReceiveNewMessage(other,ele);
 					});
 				}
+				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_TEXT"));
 				break;
 			case V2TIM_ELEM_TYPE_CUSTOM:
 				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_CUSTOM"));

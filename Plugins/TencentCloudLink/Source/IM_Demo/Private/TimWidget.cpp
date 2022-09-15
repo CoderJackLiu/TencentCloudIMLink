@@ -208,26 +208,37 @@ void UTimWidget::OnRecvNewMessage(const V2TIMMessage& v2_message)
 					sbMessageList->ScrollToEnd();
 				});
 			}
+			UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_TEXT"));
 			break;
 		case V2TIM_ELEM_TYPE_CUSTOM:
+				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_CUSTOM"));
 			break;
 		case V2TIM_ELEM_TYPE_IMAGE:
+				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_IMAGE"));
 			break;
 		case V2TIM_ELEM_TYPE_SOUND:
+				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_SOUND"));
 			break;
 		case V2TIM_ELEM_TYPE_VIDEO:
+				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_VIDEO"));
 			break;
 		case V2TIM_ELEM_TYPE_FILE:
+				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_FILE"));
 			break;
 		case V2TIM_ELEM_TYPE_LOCATION:
+				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_LOCATION"));
 			break;
 		case V2TIM_ELEM_TYPE_FACE:
+				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_FACE"));
 			break;
 		case V2TIM_ELEM_TYPE_GROUP_TIPS:
+				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_GROUP_TIPS"));
 			break;
 		case V2TIM_ELEM_TYPE_MERGER:
+				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_MERGER"));
 			break;
 		default:
+				UE_LOG(LogTemp,Warning,TEXT("default"));
 			break;
 		}
 	}
