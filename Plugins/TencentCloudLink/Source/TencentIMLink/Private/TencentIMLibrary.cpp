@@ -172,6 +172,50 @@ FString UTencentIMLibrary::SendC2CTextMessage(FString text, FString userId, FIMC
 	return ToFString(Tencent_IM.GetInstance()->SendC2CTextMessage(ToIMString(text), ToIMString(userId), LogOut_callback_));
 }
 
+DECLARATION_CALLBACK_DELEGATE(SendC2CCustomMessage)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(SendC2CCustomMessage)
+DECLARATION_Progress_CALLBACK_DELEGATE(SendC2CCustomMessage)
+FString UTencentIMLibrary::SendC2CCustomMessage(const FBuffer& customData, const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
+	FIMProgressCallback OnProgressDelegate)
+{
+	SendC2CTextMessage_Delegate = OnSuccessDelegate;
+	SendC2CTextMessage_FailureDelegate = OnFailureDelegate;
+	SendC2CTextMessage_ProgressDelegate = OnProgressDelegate;
+
+	class SendCustomCallback : public V2TIMSendCallback
+	{
+	public:
+		SendCustomCallback()
+		{
+		};
+
+		~SendCustomCallback()
+		{
+		};
+
+		void OnSuccess(const V2TIMMessage& InStr) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== SendC2CTextMessage OnSuccess"));
+			SendC2CTextMessage_Delegate.ExecuteIfBound();
+		};
+
+		void OnProgress(uint32_t progress) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== SendC2CTextMessage progress"));
+			SendC2CTextMessage_ProgressDelegate.ExecuteIfBound(progress);
+		}
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== logOut failed OnError ======: %d"), error_code);
+			SendC2CTextMessage_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		};
+	};
+
+	SendCustomCallback* LogOut_callback_ = new SendCustomCallback();
+	return ToFString(Tencent_IM.GetInstance()->SendC2CCustomMessage(ToTIMBuffer(customData) ,ToIMString(userID), LogOut_callback_));
+}
+
 FString UTencentIMLibrary::SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority)
 {
 	// return Tencent_IM.SendGroupTextMessage(text, groupID, priority);

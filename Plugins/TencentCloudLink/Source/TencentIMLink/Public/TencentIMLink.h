@@ -22,7 +22,7 @@
 #include "Runtime/Core/Public/Android/AndroidJavaEnv.h"
 #include "Runtime/ApplicationCore/Public/Android/AndroidApplication.h"
 #else
-#include "GenerateTestUserSig.h"
+// #include "GenerateTestUserSig.h"
 #endif
 
 

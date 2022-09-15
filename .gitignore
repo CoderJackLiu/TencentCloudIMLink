@@ -66,3 +66,4 @@ DerivedDataCache/*
 /Windows
 /.idea
 /Plugins/Developer
+/Plugins/SDRedis

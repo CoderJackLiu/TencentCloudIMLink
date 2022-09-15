@@ -80,8 +80,9 @@ public:
 	/*
 	 * 3.4 发送单聊自定义（信令）消息（最大支持 8KB）
 	 */
-
-	//static FString SendC2CCustomMessage(const V2TIMBuffer& customData, const FString& userID) ;
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Log")
+	static FString SendC2CCustomMessage(const FBuffer& customData, const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
+											  FIMProgressCallback OnProgressDelegate) ;
 
 	/*
 	 * 3.5 发送群聊普通文本消息（最大支持 8KB）
