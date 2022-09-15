@@ -18,3 +18,19 @@ void UFriendshipListener::OnFriendListDeleted_Implementation(const TArray<FStrin
 void UFriendshipListener::OnFriendInfoChanged_Implementation(const TArray<FTIMFriendInfo>& FriendsInfoChangeList)
 {
 }
+
+void UFriendshipListener::OnFriendApplicationListDeleted_Implementation(const TArray<FString>& UserAPPDeleteList)
+{
+}
+
+void UFriendshipListener::OnFriendApplicationListHasRead_Implementation()
+{
+}
+
+void UFriendshipListener::OnBlackListAdded_Implementation(const TArray<FTIMFriendInfo>& NewBlackListList)
+{
+}
+
+void UFriendshipListener::OnBlackListDeleted_Implementation(const TArray<FString>& BlackListDeletedList)
+{
+}

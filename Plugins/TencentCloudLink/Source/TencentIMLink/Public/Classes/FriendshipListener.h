@@ -24,6 +24,21 @@ public:
 	  */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnFriendApplicationListAdded(const TArray<FTIMFriendApplication>& UserAPPList);
+	/**
+	 * 好友申请删除通知，四种情况会收到这个回调
+	 * 1. 调用 DeleteFriendApplication 主动删除好友申请
+	 * 2. 调用 RefuseFriendApplication 拒绝好友申请
+	 * 3. 调用 AcceptFriendApplication 同意好友申请且同意类型为 V2TIM_FRIEND_ACCEPT_AGREE 时
+	 * 4. 申请加别人好友被拒绝
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnFriendApplicationListDeleted(const TArray<FString>& UserAPPDeleteList);
+	/**
+     * 好友申请已读通知，如果调用 setFriendApplicationRead
+     * 设置好友申请列表已读，会收到这个回调（主要用于多端同步）
+     */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnFriendApplicationListHasRead();
 
 	/**
 	 * 好友删除通知，，两种情况会收到这个回调：
@@ -38,6 +53,16 @@ public:
 	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnFriendListAdded(const TArray<FTIMFriendInfo>& NewFriendList);
+	/**
+	 * 黑名单新增通知
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnBlackListAdded(const TArray<FTIMFriendInfo>& NewBlackListList);
+	/**
+	 * 黑名单删除通知
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnBlackListDeleted(const TArray<FString>& BlackListDeletedList);
 
 	/**
 	 * 好友资料更新通知
@@ -51,51 +76,35 @@ private:
 		OnFriendApplicationListAdded(UTencentIMLibrary::ToTIMFriendApplicationArray(applicationList));
 	}
 
-	/**
-	 * 好友申请删除通知，四种情况会收到这个回调
-	 * 1. 调用 DeleteFriendApplication 主动删除好友申请
-	 * 2. 调用 RefuseFriendApplication 拒绝好友申请
-	 * 3. 调用 AcceptFriendApplication 同意好友申请且同意类型为 V2TIM_FRIEND_ACCEPT_AGREE 时
-	 * 4. 申请加别人好友被拒绝
-	 */
 	virtual void OnFriendApplicationListDeleted(const V2TIMStringVector& userIDList) override
 	{
+		OnFriendApplicationListDeleted(UTencentIMLibrary::ToFStringArray(userIDList));
 	}
 
-	/**
-	 * 好友申请已读通知，如果调用 setFriendApplicationRead
-	 * 设置好友申请列表已读，会收到这个回调（主要用于多端同步）
-	 */
 	virtual void OnFriendApplicationListRead() override
 	{
+		OnFriendApplicationListHasRead();
 	}
-
 
 	virtual void OnFriendListAdded(const V2TIMFriendInfoVector& userIDList) override
 	{
 		OnFriendListAdded(UTencentIMLibrary::ToFriendInfoArray(userIDList));
 	}
 
-
 	virtual void OnFriendListDeleted(const V2TIMStringVector& userIDList) override
 	{
 		OnFriendListDeleted(UTencentIMLibrary::ToFStringArray(userIDList));
 	}
 
-	/**
-	 * 黑名单新增通知
-	 */
-	virtual auto OnBlackListAdded(const V2TIMFriendInfoVector& infoList) -> void
+	virtual void OnBlackListAdded(const V2TIMFriendInfoVector& infoList) override
 	{
+		OnBlackListAdded(UTencentIMLibrary::ToFriendInfoArray(infoList));
 	}
 
-	/**
-	 * 黑名单删除通知
-	 */
 	virtual void OnBlackListDeleted(const V2TIMStringVector& userIDList) override
 	{
+		OnBlackListDeleted(UTencentIMLibrary::ToFStringArray(userIDList));
 	}
-
 
 	virtual void OnFriendInfoChanged(const V2TIMFriendInfoVector& infoList) override
 	{

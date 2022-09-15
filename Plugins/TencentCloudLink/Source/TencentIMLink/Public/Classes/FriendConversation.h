@@ -51,7 +51,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnReceiveNewMessage(const FString &UserName,const FString &message);
 	
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnRecvMessageRevoked(const FString &message);
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnRecvMessageModified(const FTIMMessage &message);
+
+private:
 	virtual void OnRecvNewMessage(const V2TIMMessage &message) override
 	{
 		UE_LOG(LogTemp, Log, TEXT("==>OnRecvNewMessage ======"));
@@ -128,7 +135,7 @@ public:
 	 */
 	virtual void OnRecvMessageRevoked(const V2TIMString &messageID) override
 	{
-		
+		OnRecvMessageRevoked(UTencentIMLibrary::ToFString(messageID));
 	}
 
 	/**
@@ -136,6 +143,6 @@ public:
 	 */
 	virtual void OnRecvMessageModified(const V2TIMMessage &message) override
 	{
-		
+		OnRecvMessageModified(UTencentIMLibrary::ToMessage(message));
 	}
 };

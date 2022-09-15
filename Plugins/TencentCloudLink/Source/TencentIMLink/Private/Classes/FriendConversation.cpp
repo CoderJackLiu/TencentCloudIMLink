@@ -18,6 +18,14 @@ void UFriendConversation::NativeDestruct()
 	Super::NativeDestruct();
 }
 
+void UFriendConversation::OnRecvMessageModified_Implementation(const FTIMMessage& message)
+{
+}
+
+void UFriendConversation::OnRecvMessageRevoked_Implementation(const FString& message)
+{
+}
+
 void UFriendConversation::OnReceiveNewMessage_Implementation(const FString& UserName, const FString& message)
 {
 }
