@@ -13,9 +13,12 @@
  * 
  */
 UCLASS()
-class TENCENTIMLINK_API UFriendshipListener : public UUserWidget, public V2TIMFriendshipListener
+class TENCENTIMLINK_API UFriendshipListenerWidget : public UUserWidget, public V2TIMFriendshipListener
 {
 	GENERATED_BODY()
+	
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 public:
 	/**
 	  * 好友申请新增通知，两种情况会收到这个回调：

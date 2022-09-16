@@ -35,7 +35,7 @@
  * 
  */
 UCLASS()
-class TENCENTIMLINK_API UFriendConversation : public UUserWidget,public V2TIMAdvancedMsgListener
+class TENCENTIMLINK_API UFriendConversationWidget : public UUserWidget,public V2TIMAdvancedMsgListener
 {
 	GENERATED_BODY()
 

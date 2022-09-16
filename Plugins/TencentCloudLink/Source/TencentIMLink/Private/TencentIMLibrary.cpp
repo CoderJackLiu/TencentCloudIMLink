@@ -65,7 +65,7 @@ void UTencentIMLibrary::LogIn(const FString& InUserId, const FString& InIMUserSi
 	std::string sRand = std::to_string(r);
 	const char* imTestUserId = sRand.c_str();
 #else
-	
+
 	const char* imTestUserId = TCHAR_TO_ANSI(*guidUser);
 #endif
 
@@ -175,8 +175,9 @@ FString UTencentIMLibrary::SendC2CTextMessage(FString text, FString userId, FIMC
 DECLARATION_CALLBACK_DELEGATE(SendC2CCustomMessage)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SendC2CCustomMessage)
 DECLARATION_Progress_CALLBACK_DELEGATE(SendC2CCustomMessage)
+
 FString UTencentIMLibrary::SendC2CCustomMessage(const FBuffer& customData, const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
-	FIMProgressCallback OnProgressDelegate)
+                                                FIMProgressCallback OnProgressDelegate)
 {
 	SendC2CTextMessage_Delegate = OnSuccessDelegate;
 	SendC2CTextMessage_FailureDelegate = OnFailureDelegate;
@@ -213,7 +214,7 @@ FString UTencentIMLibrary::SendC2CCustomMessage(const FBuffer& customData, const
 	};
 
 	SendCustomCallback* LogOut_callback_ = new SendCustomCallback();
-	return ToFString(Tencent_IM.GetInstance()->SendC2CCustomMessage(ToTIMBuffer(customData) ,ToIMString(userID), LogOut_callback_));
+	return ToFString(Tencent_IM.GetInstance()->SendC2CCustomMessage(ToTIMBuffer(customData), ToIMString(userID), LogOut_callback_));
 }
 
 FString UTencentIMLibrary::SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority)
@@ -1304,6 +1305,17 @@ FTIMGroupMemberInfoResult UTencentIMLibrary::ToV2TIMGroupMemberInfoResult(const 
 	TIMGroupMemberInfoResult.nextSequence = FString::Printf(TEXT("%llu"), Result.nextSequence);
 	TIMGroupMemberInfoResult.memberInfoList = ToFTIMGroupMemberFullInfoArray(Result.memberInfoList);
 	return TIMGroupMemberInfoResult;
+}
+
+FTIMGroupMemberInfo UTencentIMLibrary::ToTIMGroupMemberInfo(const V2TIMGroupMemberInfo& GroupMemberInfo)
+{
+	FTIMGroupMemberInfo OutGroupMemberInfo;
+	OutGroupMemberInfo.friendRemark = ToFString(GroupMemberInfo.friendRemark);
+	OutGroupMemberInfo.userID = ToFString(GroupMemberInfo.userID);
+	OutGroupMemberInfo.nickName = ToFString(GroupMemberInfo.nickName);
+	OutGroupMemberInfo.nameCard = ToFString(GroupMemberInfo.nameCard);
+	OutGroupMemberInfo.faceURL = ToFString(GroupMemberInfo.faceURL);
+	return OutGroupMemberInfo;
 }
 
 TArray<FTIMGroupMemberFullInfo> UTencentIMLibrary::ToFTIMGroupMemberFullInfoArray(const V2TIMGroupMemberFullInfoVector& GroupMemberFullInfoVector)
@@ -3465,6 +3477,79 @@ V2TIMGroupMemberFullInfo UTencentIMLibrary::ToV2TIMGroupMemberFullInfo(const FTI
 	return TIMGroupMemberFullInfo;
 }
 
+TArray<FTIMGroupMemberInfo> UTencentIMLibrary::ToTIMGroupMemberInfoArray(const V2TIMGroupMemberInfoVector& GroupMemberInfo)
+{
+	TArray<FTIMGroupMemberInfo> Result;
+	for (int i = 0; i < GroupMemberInfo.Size(); ++i)
+	{
+		Result.Add(ToTIMGroupMemberInfo(GroupMemberInfo[i]));
+	}
+	return Result;
+}
+
+FTIMGroupMemberChangeInfo UTencentIMLibrary::ToTIMGroupMemberChangeInfo(const V2TIMGroupMemberChangeInfo& MemberChangeInfo)
+{
+	FTIMGroupMemberChangeInfo OutMemberChangeInfo;
+	OutMemberChangeInfo.muteTime = MemberChangeInfo.muteTime;
+	OutMemberChangeInfo.userID = ToFString(MemberChangeInfo.userID);
+	return OutMemberChangeInfo;
+}
+
+TArray<FTIMGroupMemberChangeInfo> UTencentIMLibrary::ToTIMGroupMemberChangeInfoArray(const V2TIMGroupMemberChangeInfoVector& MemberChangeInfo)
+{
+	TArray<FTIMGroupMemberChangeInfo> TIMFriendApplicationArray;
+	for (int i = 0; i < MemberChangeInfo.Size(); ++i)
+	{
+		TIMFriendApplicationArray.Add(ToTIMGroupMemberChangeInfo(MemberChangeInfo[i]));
+	}
+	return TIMFriendApplicationArray;
+}
+
+ETIMGroupInfoChangeType UTencentIMLibrary::ToTIMGroupInfoChangeType(const V2TIMGroupInfoChangeType& GroupInfo)
+{
+	ETIMGroupInfoChangeType InfoChangeType;
+	switch (GroupInfo)
+	{
+	case V2TIM_GROUP_INFO_CHANGE_TYPE_NAME:
+		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_NAME;
+		break;
+	case V2TIM_GROUP_INFO_CHANGE_TYPE_INTRODUCTION:
+		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_INTRODUCTION;
+		break;
+	case V2TIM_GROUP_INFO_CHANGE_TYPE_NOTIFICATION:
+		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_NOTIFICATION;
+		break;
+	case V2TIM_GROUP_INFO_CHANGE_TYPE_FACE:
+		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_FACE;
+		break;
+	case V2TIM_GROUP_INFO_CHANGE_TYPE_OWNER:
+		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_OWNER;
+		break;
+	case V2TIM_GROUP_INFO_CHANGE_TYPE_CUSTOM:
+		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_CUSTOM;
+		break;
+	}
+}
+
+FTIMGroupChangeInfo UTencentIMLibrary::ToTIMGroupChangeInfo(const V2TIMGroupChangeInfo& GroupChangeInfo)
+{
+	FTIMGroupChangeInfo OutGroupChangeInfo;
+	OutGroupChangeInfo.key = ToFString(GroupChangeInfo.key);
+	OutGroupChangeInfo.value = ToFString(GroupChangeInfo.value);
+	OutGroupChangeInfo.type = ToTIMGroupInfoChangeType(GroupChangeInfo.type);
+	return OutGroupChangeInfo;
+}
+
+TArray<FTIMGroupChangeInfo> UTencentIMLibrary::ToTIMGroupChangeInfoArray(const V2TIMGroupChangeInfoVector& GroupChangeInfo)
+{
+	TArray<FTIMGroupChangeInfo> TIMFriendApplicationArray;
+	for (int i = 0; i < GroupChangeInfo.Size(); ++i)
+	{
+		TIMFriendApplicationArray.Add(ToTIMGroupChangeInfo(GroupChangeInfo[i]));
+	}
+	return TIMFriendApplicationArray;
+}
+
 TArray<FTIMFriendApplication> UTencentIMLibrary::ToTIMFriendApplicationArray(const V2TIMFriendApplicationVector& FriendApplicationVector)
 {
 	TArray<FTIMFriendApplication> TIMFriendApplicationArray;
@@ -3524,7 +3609,7 @@ FTIMFriendCheckResult UTencentIMLibrary::ToFTIMFriendCheckResult(const V2TIMFrie
 	TIMFriendCheckResult.userID = ToFString(FriendCheckResult.userID);
 	TIMFriendCheckResult.resultCode = FriendCheckResult.resultCode;
 	TIMFriendCheckResult.resultInfo = ToFString(FriendCheckResult.resultInfo);
-	TIMFriendCheckResult.relationType = ToFTIMFriendRelationType(FriendCheckResult.relationType);
+	TIMFriendCheckResult.relationType = ToTIMFriendRelationType(FriendCheckResult.relationType);
 	return TIMFriendCheckResult;
 }
 
@@ -3536,7 +3621,7 @@ V2TIMGroupMemberInfoResult UTencentIMLibrary::ToTIMGroupMemberInfoResult(const F
 	return TIMGroupMemberInfoResult;
 }
 
-ETIMFriendRelationType UTencentIMLibrary::ToFTIMFriendRelationType(const V2TIMFriendRelationType& Type)
+ETIMFriendRelationType UTencentIMLibrary::ToTIMFriendRelationType(const V2TIMFriendRelationType& Type)
 {
 	switch (Type)
 	{
@@ -3690,6 +3775,16 @@ TArray<FString> UTencentIMLibrary::ToFStringArray(V2TIMStringVector TIMStringVec
 	}
 
 	return res;
+}
+
+TMap<FString, FString> UTencentIMLibrary::ToFStringMap(V2TIMGroupAttributeMap TIMStringVector)
+{
+	TMap<FString, FString> OutMap;
+	for (int i = 0; i < TIMStringVector.Size(); i++)
+	{
+		OutMap.Add(ToFString(TIMStringVector.AllKeys()[i]),ToFString(TIMStringVector.Get(TIMStringVector.AllKeys()[i])));
+	}
+	return OutMap;
 }
 
 ELoginStatus UTencentIMLibrary::ToTIMLoginStatus(const V2TIMLoginStatus& Status)

@@ -872,9 +872,27 @@ public:
 
 	static V2TIMGroupMemberInfoResult ToTIMGroupMemberInfoResult(const FTIMGroupMemberInfoResult& Result);
 	static FTIMGroupMemberInfoResult ToV2TIMGroupMemberInfoResult(const V2TIMGroupMemberInfoResult& Result);
+
+	//群组相关
+	static FTIMGroupMemberInfo ToTIMGroupMemberInfo(const V2TIMGroupMemberInfo& GroupMemberInfo);
+	
+	static TArray<FTIMGroupMemberInfo> ToTIMGroupMemberInfoArray(const V2TIMGroupMemberInfoVector& GroupMemberInfo);
+
+	static FTIMGroupMemberChangeInfo ToTIMGroupMemberChangeInfo(const V2TIMGroupMemberChangeInfo& MemberChangeInfo);
+	
+	static TArray<FTIMGroupMemberChangeInfo> ToTIMGroupMemberChangeInfoArray(const V2TIMGroupMemberChangeInfoVector& MemberChangeInfo);
+
+	static ETIMGroupInfoChangeType ToTIMGroupInfoChangeType(const V2TIMGroupInfoChangeType& GroupInfo);
+
+	static FTIMGroupChangeInfo ToTIMGroupChangeInfo (const V2TIMGroupChangeInfo& GroupChangeInfo);
+	static TArray<FTIMGroupChangeInfo> ToTIMGroupChangeInfoArray (const V2TIMGroupChangeInfoVector& GroupChangeInfo);
+	
+	//玩家请求相关
 	static TArray<FTIMFriendApplication> ToTIMFriendApplicationArray(const V2TIMFriendApplicationVector& FriendApplicationVector);
 
-	static ETIMFriendRelationType ToFTIMFriendRelationType(const V2TIMFriendRelationType& Type);
+	
+	static ETIMFriendRelationType ToTIMFriendRelationType(const V2TIMFriendRelationType& Type);
+	
 	static FTIMFriendApplication ToTIMFriendApplication(const V2TIMFriendApplication& IMFriendApplication);
 	static FTIMFriendApplicationResult ToTIMFriendApplicationResult(const V2TIMFriendApplicationResult& TIMFriendApplicationResult);
 
@@ -912,6 +930,8 @@ public:
 	static V2TIMStringVector ToIMStringArray(TArray<FString> InStrArray);
 
 	static TArray<FString> ToFStringArray(V2TIMStringVector TIMStringVector);
+	
+	static TMap<FString,FString> ToFStringMap(V2TIMGroupAttributeMap TIMStringVector);
 	
 	static V2TIMSignalingActionType ToV2TIMSignalingActionType(const ETIMSignalingActionType& Type);
 	

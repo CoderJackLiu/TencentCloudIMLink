@@ -13,9 +13,12 @@
  * 
  */
 UCLASS()
-class TENCENTIMLINK_API USimpleMsgListener : public UUserWidget, public V2TIMSimpleMsgListener
+class TENCENTIMLINK_API USimpleMsgListenerWidget : public UUserWidget, public V2TIMSimpleMsgListener
 {
 	GENERATED_BODY()
+
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 public:
 	/**
 	* 收到 C2C 文本消息

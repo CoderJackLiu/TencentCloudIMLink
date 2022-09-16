@@ -9,7 +9,7 @@
 #include "TencentDataType.generated.h"
 
 
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ELoginStatus :uint8
 {
 	/// 已登录
@@ -21,7 +21,7 @@ enum class ELoginStatus :uint8
 	V2TIM_STATUS_LOGOUT = 3,
 };
 
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class EIMMessagePriority :uint8
 {
 	/// 默认
@@ -51,7 +51,7 @@ struct TENCENTIMLINK_API FV2TIMSDKConfig
 	struct V2TIMSDKConfig;
 };
 
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ETIMGender:uint8
 {
 	/// 未知性别
@@ -63,7 +63,7 @@ enum class ETIMGender:uint8
 };
 
 /// 好友验证方式
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ETIMFriendAllowType:uint8
 {
 	/// 同意任何用户加好友
@@ -76,7 +76,7 @@ enum class ETIMFriendAllowType:uint8
 
 
 /// 好友申请类型
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class FV2TIMFriendApplicationType:uint8
 {
 	/// 别人发给我的
@@ -89,7 +89,7 @@ enum class FV2TIMFriendApplicationType:uint8
 };
 
 /// 好友类型
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class FV2TIMFriendType:uint8
 {
 	/// 单向好友
@@ -100,7 +100,7 @@ enum class FV2TIMFriendType:uint8
 };
 
 /// 好友关系类型
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class FV2TIMFriendRelationType:uint8
 {
 	/// 不是好友
@@ -114,7 +114,7 @@ enum class FV2TIMFriendRelationType:uint8
 };
 
 /// 好友申请接受类型
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class FV2TIMFriendAcceptType:uint8
 {
 	/// 接受加好友（建立单向好友）
@@ -125,7 +125,7 @@ enum class FV2TIMFriendAcceptType:uint8
 
 
 // 用户资料修改标记
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class FV2TIMUserInfoModifyFlag:uint8
 {
 	// 未定义
@@ -151,7 +151,7 @@ enum class FV2TIMUserInfoModifyFlag:uint8
 };
 
 // 好友资料修改标记
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ETIMFriendInfoModifyFlag:uint8
 {
 	// 未定义
@@ -214,7 +214,7 @@ struct TENCENTIMLINK_API FTIMUserFullInfo
 };
 
 /// 消息状态
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ETIMMessageStatus:uint8
 {
 	///< 消息发送中
@@ -232,7 +232,7 @@ enum class ETIMMessageStatus:uint8
 };
 
 /// 消息类型
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ETIMElemType:uint8
 {
 	///< 未知消息
@@ -258,12 +258,13 @@ enum class ETIMElemType:uint8
 	///< 合并消息
 	V2TIM_ELEM_TYPE_MERGER = 10,
 };
+
 //高级消息
 USTRUCT(Blueprintable, BlueprintType)
 struct TENCENTIMLINK_API FTIMElem
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	ETIMElemType elemType;
 };
@@ -630,10 +631,10 @@ struct TENCENTIMLINK_API FTIMMessageSearchResultItem
 {
 	GENERATED_BODY()
 	/// 会话ID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchResultItem)
 	FString conversationID;
 	/// 当前会话一共搜索到了多少条符合要求的消息
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchResultItem)
 	int64 messageCount;
 
 	/**
@@ -646,7 +647,7 @@ struct TENCENTIMLINK_API FTIMMessageSearchResultItem
 	 * - 如果某个会话中匹配到的消息条数 = 1，则 messageList 为匹配到的那条消息，您可以在 UI
 	 * 上显示之，并高亮匹配关键词。
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchResultItem)
 	TArray<FTIMMessage> messageList;
 
 	// V2TIMMessageSearchResultItem();
@@ -664,14 +665,14 @@ struct TENCENTIMLINK_API FTIMMessageSearchResult
 	 * 如果您本次搜索【指定会话】，那么返回满足搜索条件的消息总数量；
 	 * 如果您本次搜索【全部会话】，那么返回满足搜索条件的消息所在的所有会话总数量。
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchResult)
 	int64 totalCount;
 
 	/**
 	 * 如果您本次搜索【指定会话】，那么返回结果列表只包含该会话结果；
 	 * 如果您本次搜索【全部会话】，那么对满足搜索条件的消息根据会话 ID 分组，分页返回分组结果；
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchParam)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessageSearchResult)
 	TArray<FTIMMessageSearchResultItem> messageSearchResultItems;
 
 	// V2TIMMessageSearchResult();
@@ -714,20 +715,26 @@ struct TENCENTIMLINK_API FTIMGroupInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	FString groupID;
 	/// 群类型
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	FString groupType;
 	/// 群名称
 	/// 群名称最长30字节
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	FString groupName;
 	/// 群公告
 	/// 群公告最长300字节
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	FString notification;
 	/// 群简介
 	/// 群简介最长240字节
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	FString introduction;
 	/// 群头像
 	/// 群头像 URL 最长100字节
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	FString faceURL;
 	/// 是否全员禁言
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	bool allMuted;
 	/// 设置群自定义字段需要两个步骤：
 	/// 1.在 [控制台](https://console.cloud.tencent.com/im) (功能配置 -> 群自定义字段)
@@ -735,10 +742,12 @@ struct TENCENTIMLINK_API FTIMGroupInfo
 	/// 接口设置该字段，value 为 V2TIMSBuffer 数据，长度不超过 512 字节。
 	V2TIMCustomInfo customInfo;
 	/// 群创建人/管理员
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	FString owner;
 	/// 群创建时间
 	uint32_t createTime;
 	/// 加群是否需要管理员审批，工作群（Work）不能主动加入，不支持此设置项
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	ETIMGroupAddOpt groupAddOpt;
 	/// 群最近一次群资料修改时间
 	uint32_t lastInfoTime;
@@ -755,6 +764,7 @@ struct TENCENTIMLINK_API FTIMGroupInfo
 	/// 当前用户在此群组中的角色，切换角色请调用 setGroupMemberRole 接口
 	uint32_t role;
 	/// 当前用户在此群组中的消息接收选项,修改群消息接收选项请调用 SetGroupReceiveMessageOpt 接口
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	ETIMReceiveMessageOpt recvOpt;
 	/// 当前用户在此群中的加入时间，不支持设置，系统自动生成
 	uint32_t joinTime;
@@ -819,10 +829,10 @@ struct TENCENTIMLINK_API FTIMGroupAtInfo
 	GENERATED_BODY()
 	/// 消息序列号，即带有 “@我” 或者 “@所有人” 标记的消息的序列号
 	/// uint64_t
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupAtInfo)
 	FString seq;
 	/// @ 提醒类型，分成 “@我” 、“@所有人” 以及 “@我并@所有人” 三类
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupAtInfo)
 	ETIMGroupAtType atType;
 
 	// V2TIMGroupAtInfo();
@@ -841,47 +851,47 @@ struct TENCENTIMLINK_API FTIMConversation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	ETIMConversationType type;
 	/// 会话唯一 ID，如果是 C2C 单聊，组成方式为 c2c_userID，如果是群聊，组成方式为 group_groupID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	FString conversationID;
 	/// 如果会话类型为 C2C 单聊，userID 会存储对方的用户ID，否则为空字符串
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	FString userID;
 	/// 如果会话类型为群聊，groupID 会存储当前群的群 ID，否则为空字符串
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	FString groupID;
 	/// 如果会话类型为群聊，groupType 为当前群类型，否则为空字符串
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	FString groupType;
 	/// 会话展示名称（群组：群名称 >> 群 ID；C2C：对方好友备注 >> 对方昵称 >> 对方的 userID）
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	FString showName;
 	/// 会话展示头像（群组：群头像；C2C：对方头像）
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	FString faceUrl;
 	/// 会话未读消息数量,直播群（AVChatRoom）不支持未读计数，默认为 0
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	int32 unreadCount;
 	/// 消息接收选项（接收 | 接收但不提醒 | 不接收）
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	ETIMReceiveMessageOpt recvOpt;
 	/// 会话最后一条消息，如果会话没有消息，lastMessage 字段为 NULL
 	/// 5.5.892 以前版本，请您使用 lastMessage -> timestamp 对会话做排序，timestamp 越大，会话越靠前
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	FTIMMessage lastMessage;
 	/// 群会话 @ 信息列表，用于展示 “有人@我” 或 “@所有人” 这两种提醒状态
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	TArray<FTIMGroupAtInfo> groupAtInfolist;
 
 	/// 草稿信息，设置草稿信息请调用 SetConversationDraft() 接口
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	FString draftText;
 
 	/// 草稿编辑时间，草稿设置的时候自动生成   uint64_t
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	FString draftTimestamp;
 
 	/// 是否置顶
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMConversation)
 	bool isPinned;
 
 	// 排序字段（5.5.892 及以后版本支持）
@@ -930,13 +940,13 @@ struct TENCENTIMLINK_API FTIMUserInfo
 {
 	GENERATED_BODY()
 	/// 用户 ID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMUserInfo)
 	FString userID;
 	/// 用户昵称
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMUserInfo)
 	FString nickName;
 	/// 用户头像
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMUserInfo)
 	FString faceURL;
 };
 
@@ -953,19 +963,19 @@ struct TENCENTIMLINK_API FTIMFriendInfo
 {
 	GENERATED_BODY()
 	/// 好友 ID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendInfo)
 	FString userID;
 	/// 好友备注
 	/// 备注长度最长不得超过 96 个字节;
 	/// 字段描述详见
 	/// [控制台](https://cloud.tencent.com/document/product/269/1501#.E6.A0.87.E9.85.8D.E5.A5.BD.E5.8F.8B.E5.AD.97.E6.AE.B5)。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendInfo)
 	FString friendRemark;
 	/// 好友自定义字段
 	/// 首先要在 [控制台](https://console.cloud.tencent.com/im) (功能配置 -> 好友自定义字段)
 	/// 配置好友自定义字段，然后再调用该接口进行设置，key 值不需要加 Tag_SNS_Custom_ 前缀。
 	/// Map<FString, V2TIMBuffer>
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendInfo)
 	TMap<FString, FBuffer> friendCustomInfo;
 	/// 好友所在分组列表
 	/// - 最多支持 32 个分组；
@@ -974,11 +984,11 @@ struct TENCENTIMLINK_API FTIMFriendInfo
 	/// - 同一个好友可以有多个不同的分组。
 	/// - 字段描述详见
 	/// [控制台](https://cloud.tencent.com/document/product/269/1501#.E6.A0.87.E9.85.8D.E5.A5.BD.E5.8F.8B.E5.AD.97.E6.AE.B5)。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendInfo)
 	TArray<FString> friendGroups;
 	/// 好友个人资料
 	/// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendInfo)
 	FTIMUserFullInfo userFullInfo;
 	// 用户资料修改标记位
 	// 枚举 V2TIMFriendInfoModifyFlag 列出哪些字段支持修改，如果您修改好友资料，请设置这个字段值
@@ -987,7 +997,7 @@ struct TENCENTIMLINK_API FTIMFriendInfo
 	// info.friendCustomInfo = friendCustomInfo;
 	// info.modifyFlag = V2TIM_FRIEND_INFO_MODIFY_FLAG_REMARK | V2TIM_FRIEND_INFO_MODIFY_FLAG_CUSTOM;
 	//uint32_t
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendInfo)
 	FString modifyFlag;
 };
 
@@ -999,19 +1009,19 @@ struct TENCENTIMLINK_API FTIMGroupMemberInfo
 {
 	GENERATED_BODY()
 	/// 用户 ID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberInfo)
 	FString userID;
 	/// 用户昵称
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberInfo)
 	FString nickName;
 	/// 用户好友备注
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberInfo)
 	FString friendRemark;
 	/// 群成员名片
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberInfo)
 	FString nameCard;
 	/// 用户头像
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberInfo)
 	FString faceURL;
 };
 
@@ -1027,13 +1037,13 @@ struct TENCENTIMLINK_API FTIMGroupMemberFullInfo : public FTIMGroupMemberInfo
 	// V2TIMCustomInfo customInfo;
 	TMap<FString, FBuffer> customInfo;
 	/// 群成员角色,修改群成员角色请调用 V2TIMManagerGroup.h -> SetGroupMemberRole 接口
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberFullInfo)
 	int64 role;
 	/// 群成员禁言结束时间戳，禁言用户请调用 V2TIMManagerGroup.h -> MuteGroupMember 接口
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberFullInfo)
 	int64 muteUntil;
 	/// 群成员入群时间，自动生成，不可修改
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberFullInfo)
 	int64 joinTime;
 	// 群成员资料修改标记位
 	// 枚举 V2TIMGroupMemberInfoModifyFlag 列出哪些字段支持修改，如果您修改群成员资料，请设置这个字段值
@@ -1041,13 +1051,13 @@ struct TENCENTIMLINK_API FTIMGroupMemberFullInfo : public FTIMGroupMemberInfo
 	// info.nameCard = "new name card";
 	// info.role = V2TIM_GROUP_MEMBER_ROLE_ADMIN;
 	// info.modifyFlag = V2TIM_GROUP_MEMBER_INFO_MODIFY_FLAG_NAME_CARD | V2TIM_GROUP_MEMBER_INFO_MODIFY_FLAG_MEMBER_ROLE;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberFullInfo)
 	int64 modifyFlag;
 };
 
 
 /// 好友关系类型
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ETIMFriendRelationType:uint8
 {
 	/// 不是好友
@@ -1066,16 +1076,16 @@ struct TENCENTIMLINK_API FTIMFriendInfoResult
 {
 	GENERATED_BODY()
 	/// 返回码
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendInfoResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendInfoResult)
 	int32 resultCode;
 	/// 返结果表述
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendInfoResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendInfoResult)
 	FString resultInfo;
 	/// 好友类型
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendInfoResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendInfoResult)
 	ETIMFriendRelationType relation;
 	/// 好友个人资料，如果不是好友，除了 userID 字段，其他字段都为空
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendInfoResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendInfoResult)
 	FTIMFriendInfo friendInfo;
 };
 
@@ -1084,21 +1094,21 @@ struct TENCENTIMLINK_API FTIMFriendSearchParam
 {
 	GENERATED_BODY()
 	/// 搜索的关键字列表，关键字列表最多支持 5 个
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendSearchParam)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendSearchParam)
 	TArray<FString> keywordList;
 	/// 设置是否搜索 userID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendSearchParam)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendSearchParam)
 	bool isSearchUserID;
 	/// 是否设置搜索昵称
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendSearchParam)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendSearchParam)
 	bool isSearchNickName;
 	/// 是否设置搜索备注
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendSearchParam)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendSearchParam)
 	bool isSearchRemark;
 };
 
 /// 好友类型
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ETIMFriendType:uint8
 {
 	None=0,
@@ -1113,22 +1123,22 @@ struct TENCENTIMLINK_API FTIMFriendAddApplication
 {
 	GENERATED_BODY()
 	/// 用户 userID（必填）
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendAddApplication)
 	FString userID;
 	/// 备注（备注最大96字节）
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendAddApplication)
 	FString friendRemark;
 	/// 预分组名（最大96字节）
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendAddApplication)
 	FString friendGroup;
 	/// 请求说明（最大120字节）
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendAddApplication)
 	FString addWording;
 	/// 添加来源
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendAddApplication)
 	FString addSource;
 	/// 加好友方式
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendAddApplication)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendAddApplication)
 	ETIMFriendType addType;
 };
 
@@ -1138,13 +1148,13 @@ struct TENCENTIMLINK_API FTIMFriendOperationResult
 {
 	GENERATED_BODY()
 	/// 用户Id
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendOperationResult)
 	FString userID;
 	/// 返回码
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendOperationResult)
 	int32 resultCode;
 	/// 返回信息
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendOperationResult)
 	FString resultInfo;
 };
 
@@ -1154,21 +1164,21 @@ struct TENCENTIMLINK_API FTIMFriendCheckResult
 {
 	GENERATED_BODY()
 	/// 用户id
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendCheckResult)
 	FString userID;
 	/// 返回码
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendCheckResult)
 	int32 resultCode;
 	/// 返回信息
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendCheckResult)
 	FString resultInfo;
 	/// 检查结果
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendCheckResult)
 	ETIMFriendRelationType relationType;
 };
 
 /// 好友申请类型
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ETIMFriendApplicationType:uint8
 {
 	None=0,
@@ -1185,25 +1195,25 @@ struct TENCENTIMLINK_API FTIMFriendApplication
 {
 	GENERATED_BODY()
 	/// 用户标识
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendApplication)
 	FString userID;
 	/// 用户昵称
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendApplication)
 	FString nickName;
 	/// 用户头像
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendApplication)
 	FString faceUrl;
 	/// 添加时间   uint64_t
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendApplication)
 	FString addTime;
 	/// 来源
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendApplication)
 	FString addSource;
 	/// 加好友附言
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendApplication)
 	FString addWording;
 	/// 好友申请类型
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendApplication)
 	ETIMFriendApplicationType type;
 };
 
@@ -1212,16 +1222,16 @@ struct TENCENTIMLINK_API FTIMFriendApplicationResult
 {
 	GENERATED_BODY()
 	/// 好友申请未读数量   uint64_t
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendApplicationResult)
 	FString unreadCount;
 	/// 好友申请列表
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMFriendOperationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMFriendApplicationResult)
 	TArray<FTIMFriendApplication> applicationList;
 };
 
 
 /// 好友申请接受类型
-UENUM(Blueprintable,BlueprintType)
+UENUM(Blueprintable, BlueprintType)
 enum class ETIMFriendAcceptType:uint8
 {
 	/// 接受加好友（建立单向好友）
@@ -1268,10 +1278,10 @@ struct TENCENTIMLINK_API FTIMGroupMemberOperationResult
 {
 	GENERATED_BODY()
 	/// 被操作成员
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberOperationResult)
 	FString userID;
 	/// 返回状态
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FV2TIMFriendInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberOperationResult)
 	ETIMGroupMemberResult result;
 };
 
@@ -1280,37 +1290,37 @@ struct TENCENTIMLINK_API FTIMOfflinePushInfo
 {
 	GENERATED_BODY()
 	/// 离线推送展示的标题。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	FString title;
 	/// 离线推送展示的内容。
 	/// 自定义消息进行离线推送，必须设置此字段内容。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	FString desc;
 	/// 离线推送扩展字段，
 	/// iOS: 收到离线推送的一方可以在 UIApplicationDelegate -> didReceiveRemoteNotification ->
 	/// userInfo 拿到这个字段，用这个字段可以做 UI 跳转逻辑
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	FString ext;
 	/// 是否关闭推送（默认开启推送）。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	bool disablePush;
 	/// 离线推送声音设置（仅对 iOS 生效），
 	/// 当 iOSSound = kIOSOfflinePushNoSound，表示接收时不会播放声音。
 	/// 当 iOSSound = kIOSOfflinePushDefaultSound，表示接收时播放系统声音。
 	/// 如果要自定义 iOSSound，需要先把语音文件链接进 Xcode 工程，然后把语音文件名（带后缀）设置给
 	/// iOSSound。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	FString iOSSound;
 	/// 离线推送忽略 badge 计数（仅对 iOS 生效），
 	/// 如果设置为 true，在 iOS 接收端，这条消息不会使 APP 的应用图标未读计数增加。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	bool ignoreIOSBadge;
 	/// 离线推送设置 OPPO 手机 8.0 系统及以上的渠道 ID（仅对 Android 生效）。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	FString AndroidOPPOChannelID;
 	/// 离线推送设置 VIVO 手机 （仅对 Android 生效）。
 	/// VIVO 手机离线推送消息分类，0：运营消息，1：系统消息。默认取值为 1 。
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	int32 AndroidVIVOClassification;
 };
 
@@ -1335,25 +1345,25 @@ struct TENCENTIMLINK_API FTIMSignalingInfo
 {
 	GENERATED_BODY()
 	// 信令ID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	FString inviteID;
 	// 如果是群组信令，groupID 为会话群组ID，否则为空
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	FString groupID;
 	// 邀请方的ID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	FString inviter;
 	// 被邀请方列表
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	TArray<FString> inviteeList;
 	// 信令内容
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	FString data;
 	// 信令操作类型
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	ETIMSignalingActionType actionType;
 	// 信令超时时间
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMOfflinePushInfo)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMOfflinePushInfo)
 	int32 timeout;
 };
 
@@ -1363,13 +1373,13 @@ USTRUCT(Blueprintable, BlueprintType)
 struct TENCENTIMLINK_API FTIMGroupMemberInfoResult
 {
 	GENERATED_BODY()
-	
+
 	///获取分页拉取的 seq。如果为 0 表示拉取结束  uint64_t
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMGroupMemberInfoResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberInfoResult)
 	FString nextSequence;
-	
+
 	// 群成员信息列表
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMGroupMemberInfoResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberInfoResult)
 	TArray<FTIMGroupMemberFullInfo> memberInfoList;
 };
 
@@ -1421,37 +1431,37 @@ struct TENCENTIMLINK_API FTIMGroupApplication : public FTIMBaseObject
 	GENERATED_BODY()
 
 	/// 群组 ID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	FString groupID;
 	/// 请求者 userID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	FString fromUser;
 	/// 请求者昵称
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	FString fromUserNickName;
 	/// 请求者头像
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	FString fromUserFaceUrl;
 	/// 判决者id，有人请求加群:0，邀请其他人加群:被邀请人用户 ID
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	FString toUser;
 	/// 申请时间
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	FString addTime;
 	/// 申请或邀请附加信息
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	FString requestMsg;
 	/// 审批信息：同意或拒绝信息
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	FString handledMsg;
 	/// 请求类型
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	ETIMGroupApplicationGetType getType;
 	/// 处理标志
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	ETIMGroupApplicationHandleStatus handleStatus;
 	/// 处理结果
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplication)
 	ETIMGroupApplicationHandleResult handleResult;
 };
 
@@ -1462,14 +1472,61 @@ struct TENCENTIMLINK_API FTIMGroupApplicationResult
 	GENERATED_BODY()
 
 	/// 未读的申请数量
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMGroupApplicationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplicationResult)
 	FString unreadCount;
 	/// 加群申请的列表
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=FTIMGroupApplicationResult)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupApplicationResult)
 	TArray<FTIMGroupApplication> applicationList;
 };
 
+/// 群tips，成员变更信息
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMGroupMemberChangeInfo
+{
+	GENERATED_BODY()
+	/// 变更用户
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberChangeInfo)
+	FString userID;
+	/// 禁言时间（秒，表示还剩多少秒可以发言）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupMemberChangeInfo)
+	int64 muteTime;
+};
 
+/// 群变更信息 Tips 类型
+UENUM(Blueprintable, BlueprintType)
+enum class ETIMGroupInfoChangeType:uint8
+{
+	/// 群名修改
+	V2TIM_GROUP_INFO_CHANGE_TYPE_NAME = 0x01,
+	/// 群简介修改
+	V2TIM_GROUP_INFO_CHANGE_TYPE_INTRODUCTION = 0x02,
+	/// 群公告修改
+	V2TIM_GROUP_INFO_CHANGE_TYPE_NOTIFICATION = 0x03,
+	/// 群头像修改
+	V2TIM_GROUP_INFO_CHANGE_TYPE_FACE = 0x04,
+	/// 群主变更
+	V2TIM_GROUP_INFO_CHANGE_TYPE_OWNER = 0x05,
+	/// 群自定义字段变更
+	V2TIM_GROUP_INFO_CHANGE_TYPE_CUSTOM = 0x06,
+};
+
+/// 群 tips，群变更信息
+USTRUCT(Blueprintable, BlueprintType)
+struct TIM_API FTIMGroupChangeInfo
+{
+	GENERATED_BODY()
+	/// 变更类型
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupChangeInfo)
+	ETIMGroupInfoChangeType type;
+	/// 根据变更类型表示不同的值,例如 type = V2TIM_GROUP_INFO_CHANGE_TYPE_NAME，value 表示群新的
+	/// groupName
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupChangeInfo)
+	FString value;
+	/// 变更自定义字段的 key 值（type = V2TIM_GROUP_INFO_CHANGE_TYPE_CUSTOM 生效）
+	/// 因为历史遗留原因，如果只修改了群自定义字段，当前消息不会存漫游和 DB
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupChangeInfo)
+	FString key;
+};
 
 /**
  * 
