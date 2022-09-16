@@ -18,6 +18,9 @@ class TENCENTIMLINK_API UGroupListenerWidget : public UUserWidget, public V2TIMG
 {
 	GENERATED_BODY()
 
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
+	
 public:
 	/**
 	 * 有新成员加入群（该群所有的成员都能收到，会议群（Meeting）默认无此回调，如需回调请提交工单配置）

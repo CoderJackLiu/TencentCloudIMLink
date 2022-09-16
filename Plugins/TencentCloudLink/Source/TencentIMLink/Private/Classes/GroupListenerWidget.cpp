@@ -2,7 +2,17 @@
 
 
 #include "Classes/GroupListenerWidget.h"
+void UGroupListenerWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	V2TIMManager::GetInstance()->AddGroupListener(this);
+}
 
+void UGroupListenerWidget::NativeDestruct()
+{
+	V2TIMManager::GetInstance()->RemoveGroupListener(this);
+	Super::NativeDestruct();
+}
 void UGroupListenerWidget::OnMemberEnter_Implementation(const FString& groupID, const TArray<FTIMGroupMemberInfo>& memberList)
 {
 }
@@ -67,3 +77,5 @@ void UGroupListenerWidget::OnReceiveRESTCustomData_Implementation(const FString&
 void UGroupListenerWidget::OnGroupAttributeChanged_Implementation(const FString& groupID, const TMap<FString, FString>& groupAttributeMap)
 {
 }
+
+
