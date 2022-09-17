@@ -1242,7 +1242,6 @@ void UTencentIMLibrary::GetJoinedGroupList(FIMGroupInfoArrayCallback OnSuccessDe
 
 TArray<FTIMGroupInfo> UTencentIMLibrary::ToGroupInfoArray(const V2TIMGroupInfoVector& GroupInfoVector)
 {
-	//todo finish
 	TArray<FTIMGroupInfo> TIMGroupInfoArray;
 
 	for (int i = 0; i < GroupInfoVector.Size(); ++i)
@@ -1255,7 +1254,6 @@ TArray<FTIMGroupInfo> UTencentIMLibrary::ToGroupInfoArray(const V2TIMGroupInfoVe
 
 V2TIMGroupInfoVector UTencentIMLibrary::ToTIMGroupInfoVector(const TArray<FTIMGroupInfo>& GroupInfo)
 {
-	//todo finish
 	V2TIMGroupInfoVector TIMGroupInfoVector;
 
 	for (int i = 0; i < GroupInfo.Num(); ++i)
@@ -1489,7 +1487,6 @@ void UTencentIMLibrary::GetGroupMembersInfo(const FString& groupID, const TArray
 
 V2TIMGroupMemberFullInfoVector UTencentIMLibrary::ToGroupMemberFullInfoVector(const TArray<FTIMGroupMemberFullInfo>& GPFullInfos)
 {
-	//todo finish
 	V2TIMGroupMemberFullInfoVector TIMGroupMemberFullInfoVector;
 
 	for (int i = 0; i < GPFullInfos.Num(); ++i)
@@ -1502,7 +1499,6 @@ V2TIMGroupMemberFullInfoVector UTencentIMLibrary::ToGroupMemberFullInfoVector(co
 
 TArray<FTIMGroupMemberFullInfo> UTencentIMLibrary::ToTIMGroupMemberFullInfoArray(const V2TIMGroupMemberFullInfoVector& GPFullInfos)
 {
-	//todo finish
 	TArray<FTIMGroupMemberFullInfo> TIMGroupMemberFullInfoArray;
 
 	for (int i = 0; i < GPFullInfos.Size(); ++i)

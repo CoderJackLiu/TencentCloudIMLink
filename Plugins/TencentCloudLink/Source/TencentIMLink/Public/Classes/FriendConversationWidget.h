@@ -6,29 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "IM_Demo/TIMSDK/include/V2TIMListener.h"
 #include "UObject/Object.h"
-#include "Blueprint/UserWidget.h"
-
-#include "CoreMinimal.h"
 #include "TencentDataType.h"
 #include "TencentIMLibrary.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/TextBlock.h"
-#include "Components/EditableTextBox.h"
-#include "Components/VerticalBox.h"
-#include "Components/ScrollBox.h"
-#include "Components/TextBlock.h"
-
-#include "V2TIMBuffer.h"
-#include "V2TIMConversationManager.h"
-#include "V2TIMDefine.h"
-#include "V2TIMManager.h"
-#include "V2TIMMessage.h"
-#include "V2TIMMessageManager.h"
-#include "V2TIMGroupManager.h"
-#include "V2TIMFriendshipManager.h"
-#include "V2TIMSignaling.h"
-#include "V2TIMSignalingManager.h"
-
 #include "FriendConversationWidget.generated.h"
 
 /**
@@ -74,7 +53,6 @@ private:
 					AsyncTask(ENamedThreads::GameThread, [=]()
 					{
 						const char* msgEle = ((V2TIMTextElem*)message.elemList[j])->text.CString();
-						UTextBlock* textBlock = NewObject<UTextBlock>(this, UTextBlock::StaticClass());
 						FString other = message.sender.CString();
 						FString ele = UTF8_TO_TCHAR(msgEle); // FString(TEXT("&msgEle"));
 						

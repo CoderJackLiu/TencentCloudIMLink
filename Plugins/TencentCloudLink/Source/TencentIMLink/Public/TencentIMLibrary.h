@@ -99,8 +99,16 @@ public:
 
 
 	///-----------------------------------------------------------------------------
-	///Group Func
-	///todo group category
+	/*
+	 *	groupType	群类型，我们为您预定义好了几种常用的群类型，您也可以在控制台定义自己需要的群类型：
+		"Work" ：工作群，成员上限 200 人，不支持由用户主动加入，需要他人邀请入群，适合用于类似微信中随意组建的工作群（对应老版本的 Private 群）。
+		"Public" ：公开群，成员上限 2000 人，任何人都可以申请加群，但加群需群主或管理员审批，适合用于类似 QQ 中由群主管理的兴趣群。
+		"Meeting" ：会议群，成员上限 6000 人，任何人都可以自由进出，且加群无需被审批，适合用于视频会议和在线培训等场景（对应老版本的 ChatRoom 群）。
+		"Community" ：社群，成员上限 100000 人，任何人都可以自由进出，且加群无需被审批，适合用于知识分享和游戏交流等超大社区群聊场景。5.8 版本开始支持，需要您购买旗舰版套餐。
+		"AVChatRoom" ：直播群，人数无上限，任何人都可以自由进出，消息吞吐量大，适合用作直播场景中的高并发弹幕聊天室。
+		groupID	自定义群组 ID，可以传空字符串，此时系统会自动分配 groupID，并通过 callback 返回。 "Community" 类型自定义群组 ID 必须以 "@TGS#_" 作为前缀。
+		groupName	群名称，不能为空字符串。
+	*/
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Group")
 	static void CreateGroup(const FString& groupType, const FString& groupID, const FString& groupName, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
 
