@@ -745,29 +745,39 @@ struct TENCENTIMLINK_API FTIMGroupInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	FString owner;
 	/// 群创建时间
-	uint32_t createTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	int64 createTime;
 	/// 加群是否需要管理员审批，工作群（Work）不能主动加入，不支持此设置项
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	ETIMGroupAddOpt groupAddOpt;
 	/// 群最近一次群资料修改时间
-	uint32_t lastInfoTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	int64 lastInfoTime;
 	/// 群最近一次发消息时间
-	uint32_t lastMessageTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	int64 lastMessageTime;
 	/// 已加入的群成员数量
-	uint32_t memberCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	int64 memberCount;
 	/// 在线的群成员数量
-	uint32_t onlineCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	int64 onlineCount;
 	/// 最多允许加入的群成员数量
 	/// 各类群成员人数限制详见:
 	/// https://cloud.tencent.com/document/product/269/1502#.E7.BE.A4.E7.BB.84.E9.99.90.E5.88.B6.E5.B7.AE.E5.BC.82
-	uint32_t memberMaxCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	int64 memberMaxCount;
 	/// 当前用户在此群组中的角色，切换角色请调用 setGroupMemberRole 接口
-	uint32_t role;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	int64 role;
 	/// 当前用户在此群组中的消息接收选项,修改群消息接收选项请调用 SetGroupReceiveMessageOpt 接口
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
 	ETIMReceiveMessageOpt recvOpt;
 	/// 当前用户在此群中的加入时间，不支持设置，系统自动生成
-	uint32_t joinTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	int64 joinTime;
 	// 群资料修改标记位
 	// 枚举 V2TIMGroupInfoModifyFlag 列出哪些字段支持修改，如果您修改群资料，请设置这个字段值
 	// 如果您同时修改多个字段，多个枚举值按位或 | 组合，例如，同时修改群名称和头像
@@ -775,7 +785,8 @@ struct TENCENTIMLINK_API FTIMGroupInfo
 	// info.faceURL = "new face url";
 	// info.modifyFlag = V2TIM_GROUP_INFO_MODIFY_FLAG_GROUP_NAME |
 	// V2TIM_GROUP_INFO_MODIFY_FLAG_FACE_URL;
-	uint32_t modifyFlag;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMGroupInfo)
+	int64 modifyFlag;
 
 	// V2TIMGroupInfo();
 	// V2TIMGroupInfo(const V2TIMGroupInfo& groupInfo);

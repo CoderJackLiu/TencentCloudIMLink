@@ -203,7 +203,7 @@ void FTencentIMManage::FTencentIM::CreateGroup(const FString& groupType, const F
                                                V2TIMValueCallback<V2TIMString>* callback) const
 {
 	
-	GetInstance()->CreateGroup(ToIMString(groupType), ToIMString(groupType), ToIMString(groupType), callback);
+	GetInstance()->CreateGroup(ToIMString(groupType), ToIMString(groupID), ToIMString(groupType), callback);
 }
 
 void FTencentIMManage::FTencentIM::JoinGroup(const FString& groupID, const FString& message, V2TIMCallback* callback) const

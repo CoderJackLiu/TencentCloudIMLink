@@ -112,8 +112,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Group")
 	static void DismissGroup(const FString& groupID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate);
-
-
+	
 	//--------------------------------------------
 	//User func
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|User")
@@ -1019,10 +1018,15 @@ public:
 
 	//-------------------------
 	//Group Info
+	static ETIMGroupAddOpt  ToGroupAddOpt(const V2TIMGroupAddOpt& GroupAddOpt);
+	static V2TIMGroupAddOpt  ToTIMGroupAddOpt(const ETIMGroupAddOpt& GroupAddOpt);
+
 	static FTIMGroupInfo ToGroupInfo(const V2TIMGroupInfo& GroupInfo);
 
 	static V2TIMGroupInfo ToTIMGroupInfo(const FTIMGroupInfo& GroupInfo);
 
+	static FTIMCreateGroupMemberInfo  ToGroupMemberInfo(const V2TIMCreateGroupMemberInfo& GroupMemberInfo);
+	static V2TIMCreateGroupMemberInfo  ToIMGroupMemberInfo(const FTIMCreateGroupMemberInfo& GroupMemberInfo);
 
 	static TArray<FTIMCreateGroupMemberInfo> ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector);
 	static V2TIMCreateGroupMemberInfoVector ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector);

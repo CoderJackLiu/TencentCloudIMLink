@@ -243,19 +243,19 @@ FString UTencentIMLibrary::SendGroupTextMessage(const FString& text, const FStri
 
 		void OnSuccess(const V2TIMMessage& InStr) override
 		{
-			UE_LOG(LogTemp, Log, TEXT("<== SendC2CTextMessage OnSuccess"));
+			UE_LOG(LogTemp, Log, TEXT("<== SendGroupTextMessage OnSuccess"));
 			SendGroupTextMessage_MessageDelegate.ExecuteIfBound(ToMessage(InStr));
 		};
 
 		void OnProgress(uint32_t progress) override
 		{
-			UE_LOG(LogTemp, Log, TEXT("<== SendC2CTextMessage progress"));
+			UE_LOG(LogTemp, Log, TEXT("<== SendGroupTextMessage progress"));
 			SendGroupTextMessage_ProgressDelegate.ExecuteIfBound(progress);
 		}
 
 		void OnError(int error_code, const V2TIMString& error_message) override
 		{
-			UE_LOG(LogTemp, Log, TEXT("<== logOut failed OnError ======: %d"), error_code);
+			UE_LOG(LogTemp, Log, TEXT("<== SendGroupTextMessage failed OnError ======: %d"), error_code);
 			SendGroupTextMessage_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
 		};
 	};
@@ -306,7 +306,7 @@ void UTencentIMLibrary::CreateGroup(const FString& groupType, const FString& gro
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.CreateGroup(groupType, groupID, groupName, CallBack);
+	Tencent_IM.GetInstance()->CreateGroup(ToIMString(groupType), ToIMString(groupID), ToIMString(groupName), CallBack);
 }
 
 
@@ -3786,30 +3786,90 @@ V2TIMFriendSearchParam UTencentIMLibrary::ToTIMFriendSearchParam(const FTIMFrien
 	return TIMFriendSearchParam;
 }
 
-
 TArray<FTIMCreateGroupMemberInfo> UTencentIMLibrary::ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector)
 {
-	//todo finish
+	TArray<FTIMCreateGroupMemberInfo> GroupInfo;
+	for (int i =0;i<MemberInfoVector.Size();i++)
+	{
+		GroupInfo.Add(ToGroupMemberInfo(MemberInfoVector[i]));
+	}
 	return TArray<FTIMCreateGroupMemberInfo>();
 }
 
 V2TIMCreateGroupMemberInfoVector UTencentIMLibrary::ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector)
 {
-	//todo finish
-	return V2TIMCreateGroupMemberInfoVector();
+	V2TIMCreateGroupMemberInfoVector GroupMemberInfoVector;
+	for (FTIMCreateGroupMemberInfo InfoVector : MemberInfoVector)
+	{
+		GroupMemberInfoVector.PushBack(ToIMGroupMemberInfo(InfoVector));
+	} 
+	return GroupMemberInfoVector;
 }
-
 
 FTIMGroupInfo UTencentIMLibrary::ToGroupInfo(const V2TIMGroupInfo& GroupInfo)
 {
-	//todo finish
-	return FTIMGroupInfo();
+	FTIMGroupInfo TIMGroupInfo;
+	TIMGroupInfo.groupID=ToFString(GroupInfo.groupID);
+	TIMGroupInfo.groupType=ToFString(GroupInfo.groupType);
+	TIMGroupInfo.groupName=ToFString(GroupInfo.groupName);
+	TIMGroupInfo.notification=ToFString(GroupInfo.notification);
+	TIMGroupInfo.introduction=ToFString(GroupInfo.introduction);
+	TIMGroupInfo.faceURL=ToFString(GroupInfo.faceURL);
+	TIMGroupInfo.allMuted=GroupInfo.allMuted;
+	TIMGroupInfo.owner=ToFString(GroupInfo.owner);
+	TIMGroupInfo.createTime=(GroupInfo.createTime);
+	TIMGroupInfo.groupAddOpt=ToGroupAddOpt(GroupInfo.groupAddOpt);
+	TIMGroupInfo.lastInfoTime=(GroupInfo.lastInfoTime);
+	TIMGroupInfo.lastMessageTime=(GroupInfo.lastMessageTime);
+	TIMGroupInfo.memberCount=(GroupInfo.memberCount);
+	TIMGroupInfo.onlineCount=(GroupInfo.onlineCount);
+	TIMGroupInfo.memberMaxCount=(GroupInfo.memberMaxCount);
+	TIMGroupInfo.role=GroupInfo.role;
+	TIMGroupInfo.recvOpt=ToReceiveMessageOpt(GroupInfo.recvOpt);
+	TIMGroupInfo.joinTime=GroupInfo.joinTime;
+	TIMGroupInfo.modifyFlag=GroupInfo.modifyFlag;
+	return TIMGroupInfo;
 }
 
 V2TIMGroupInfo UTencentIMLibrary::ToTIMGroupInfo(const FTIMGroupInfo& GroupInfo)
 {
-	//todo finish
-	return V2TIMGroupInfo();
+	V2TIMGroupInfo TIMGroupInfo;
+	TIMGroupInfo.groupID=ToIMString(GroupInfo.groupID);
+	TIMGroupInfo.groupType=ToIMString(GroupInfo.groupType);
+	TIMGroupInfo.groupName=ToIMString(GroupInfo.groupName);
+	TIMGroupInfo.notification=ToIMString(GroupInfo.notification);
+	TIMGroupInfo.introduction=ToIMString(GroupInfo.introduction);
+	TIMGroupInfo.faceURL=ToIMString(GroupInfo.faceURL);
+	TIMGroupInfo.allMuted=GroupInfo.allMuted;
+	TIMGroupInfo.owner=ToIMString(GroupInfo.owner);
+	TIMGroupInfo.createTime=(GroupInfo.createTime);
+	TIMGroupInfo.groupAddOpt=ToTIMGroupAddOpt(GroupInfo.groupAddOpt);
+	TIMGroupInfo.lastInfoTime=(GroupInfo.lastInfoTime);
+	TIMGroupInfo.lastMessageTime=(GroupInfo.lastMessageTime);
+	TIMGroupInfo.memberCount=(GroupInfo.memberCount);
+	TIMGroupInfo.onlineCount=(GroupInfo.onlineCount);
+	TIMGroupInfo.memberMaxCount=(GroupInfo.memberMaxCount);
+	TIMGroupInfo.role=GroupInfo.role;
+	TIMGroupInfo.recvOpt=ToTIMReceiveMessageOpt(GroupInfo.recvOpt);
+	TIMGroupInfo.joinTime=GroupInfo.joinTime;
+	TIMGroupInfo.modifyFlag=GroupInfo.modifyFlag;
+	return TIMGroupInfo;
+}
+
+FTIMCreateGroupMemberInfo UTencentIMLibrary::ToGroupMemberInfo(const V2TIMCreateGroupMemberInfo& GroupMemberInfo)
+{
+	FTIMCreateGroupMemberInfo GroupMemInfo;
+	GroupMemInfo.role=GroupMemberInfo.role;
+	GroupMemInfo.userID=ToFString(GroupMemberInfo.userID);
+	return GroupMemInfo;
+}
+
+V2TIMCreateGroupMemberInfo UTencentIMLibrary::ToIMGroupMemberInfo(const FTIMCreateGroupMemberInfo& GroupMemberInfo)
+{
+	V2TIMCreateGroupMemberInfo GroupMemInfo;
+	GroupMemInfo.role=GroupMemberInfo.role;
+	GroupMemInfo.userID=ToIMString(GroupMemberInfo.userID);
+	return GroupMemInfo;
 }
 
 //------------------------------------------------------
@@ -4396,4 +4456,34 @@ FTIMMessageSearchResultItem UTencentIMLibrary::ToMessageSearchResultItem(const V
 	Result.messageList = ToMessageArray(TIMMessageSearchResultItem.messageList);
 	Result.conversationID = ToFString(TIMMessageSearchResultItem.conversationID);
 	return Result;
+}
+
+ETIMGroupAddOpt UTencentIMLibrary::ToGroupAddOpt(const V2TIMGroupAddOpt& GroupAddOpt)
+{
+	switch (GroupAddOpt)
+	{
+		case V2TIM_GROUP_ADD_FORBID:
+			return ETIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+		case V2TIM_GROUP_ADD_AUTH:
+			return ETIMGroupAddOpt::V2TIM_GROUP_ADD_AUTH;
+		case V2TIM_GROUP_ADD_ANY:
+			return ETIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+		default:
+			return ETIMGroupAddOpt::V2TIM_GROUP_ADD_AUTH;
+	}
+}
+
+V2TIMGroupAddOpt UTencentIMLibrary::ToTIMGroupAddOpt(const ETIMGroupAddOpt& GroupAddOpt)
+{
+	switch (GroupAddOpt)
+	{
+		case ETIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID:
+			return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+		case ETIMGroupAddOpt::V2TIM_GROUP_ADD_AUTH: 
+			return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+		case ETIMGroupAddOpt::V2TIM_GROUP_ADD_ANY: 
+			return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+		default: 
+			return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+	}
 }
