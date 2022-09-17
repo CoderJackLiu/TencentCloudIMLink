@@ -180,7 +180,7 @@ public:
 	static FTIMMessage CreateForwardMessage(const FTIMMessage& message);
 
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	static FString SendMessage(FTIMMessage& message, const FString& receiver, const FString& groupID, EIMMessagePriority priority,
+	static FString SendMessage(const FTIMMessage& message, const FString& receiver, const FString& groupID, EIMMessagePriority priority,
 	bool onlineUserOnly, const FTIMOfflinePushInfo& offlinePushInfo, FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
 				   FIMProgressCallback OnProgressDelegate);
 

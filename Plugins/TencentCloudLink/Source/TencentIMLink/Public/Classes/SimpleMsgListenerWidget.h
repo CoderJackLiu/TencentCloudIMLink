@@ -7,7 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UObject/Object.h"
 #include "IM_Demo/TIMSDK/include/V2TIMListener.h"
-#include "SimpleMsgListener.generated.h"
+#include "SimpleMsgListenerWidget.generated.h"
 
 /**
  * 

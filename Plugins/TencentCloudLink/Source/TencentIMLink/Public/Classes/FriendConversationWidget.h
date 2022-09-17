@@ -29,7 +29,7 @@
 #include "V2TIMSignaling.h"
 #include "V2TIMSignalingManager.h"
 
-#include "FriendConversation.generated.h"
+#include "FriendConversationWidget.generated.h"
 
 /**
  * 

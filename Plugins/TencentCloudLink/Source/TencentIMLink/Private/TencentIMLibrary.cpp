@@ -554,22 +554,22 @@ FTIMMessage UTencentIMLibrary::CreateForwardMessage(const FTIMMessage& message)
 DECLARATION_MessageCALLBACK_DELEGATE(SendMessage)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SendMessage)
 DECLARATION_Progress_CALLBACK_DELEGATE(SendMessage)
-FString UTencentIMLibrary::SendMessage(FTIMMessage& message, const FString& receiver, const FString& groupID, EIMMessagePriority priority, bool onlineUserOnly,
+FString UTencentIMLibrary::SendMessage(const FTIMMessage& message, const FString& receiver, const FString& groupID, EIMMessagePriority priority, bool onlineUserOnly,
 const FTIMOfflinePushInfo& offlinePushInfo,FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
 	   FIMProgressCallback OnProgressDelegate)
 {
 	SendMessage_MessageDelegate = OnSuccessDelegate;
 	SendMessage_FailureDelegate = OnFailureDelegate;
 	SendMessage_ProgressDelegate = OnProgressDelegate;
-	class SendC2CTextMessageCallback : public V2TIMSendCallback
+	class SendMessageCallback : public V2TIMSendCallback
 	{
 	public:
-		SendC2CTextMessageCallback()
+		SendMessageCallback()
 		{
 		};
 
 
-		~SendC2CTextMessageCallback()
+		~SendMessageCallback()
 		{
 		};
 
@@ -591,10 +591,10 @@ const FTIMOfflinePushInfo& offlinePushInfo,FIMMessageInfoCallback OnSuccessDeleg
 			SendMessage_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
 		};
 	};
-
-	SendC2CTextMessageCallback* SendC2CTextMessage_Callback = new SendC2CTextMessageCallback();
-	return ToFString(Tencent_IM.GetInstance()->GetMessageManager()->SendMessage(ToIMMessage(message),ToIMString(receiver),ToIMString(groupID),GetMessagePriority(priority),onlineUserOnly,
-		ToTIMOfflinePushInfo(offlinePushInfo),SendC2CTextMessage_Callback));
+	V2TIMMessage TimMessage=ToIMMessage(message);
+	SendMessageCallback* SendMessage_Callback = new SendMessageCallback();
+	return ToFString(Tencent_IM.GetInstance()->GetMessageManager()->SendMessage(
+		TimMessage,ToIMString(receiver),ToIMString(groupID),GetMessagePriority(priority),onlineUserOnly,ToTIMOfflinePushInfo(offlinePushInfo),SendMessage_Callback));
 }
 
 DECLARATION_CALLBACK_DELEGATE(SetC2CReceiveMessageOpt)
@@ -3585,27 +3585,23 @@ TArray<FTIMGroupMemberChangeInfo> UTencentIMLibrary::ToTIMGroupMemberChangeInfoA
 
 ETIMGroupInfoChangeType UTencentIMLibrary::ToTIMGroupInfoChangeType(const V2TIMGroupInfoChangeType& GroupInfo)
 {
-	ETIMGroupInfoChangeType InfoChangeType;
+	// ETIMGroupInfoChangeType InfoChangeType;
 	switch (GroupInfo)
 	{
 	case V2TIM_GROUP_INFO_CHANGE_TYPE_NAME:
 		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_NAME;
-		break;
 	case V2TIM_GROUP_INFO_CHANGE_TYPE_INTRODUCTION:
 		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_INTRODUCTION;
-		break;
 	case V2TIM_GROUP_INFO_CHANGE_TYPE_NOTIFICATION:
 		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_NOTIFICATION;
-		break;
 	case V2TIM_GROUP_INFO_CHANGE_TYPE_FACE:
 		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_FACE;
-		break;
 	case V2TIM_GROUP_INFO_CHANGE_TYPE_OWNER:
 		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_OWNER;
-		break;
 	case V2TIM_GROUP_INFO_CHANGE_TYPE_CUSTOM:
 		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_CUSTOM;
-		break;
+	default:
+		return ETIMGroupInfoChangeType::V2TIM_GROUP_INFO_CHANGE_TYPE_NAME;
 	}
 }
 

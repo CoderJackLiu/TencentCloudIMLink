@@ -7,7 +7,7 @@
 #include "UObject/Object.h"
 #include "IM_Demo/TIMSDK/include/V2TIMListener.h"
 #include "TencentIMLibrary.h"
-#include "FriendshipListener.generated.h"
+#include "FriendshipListenerWidget.generated.h"
 
 /**
  * 
