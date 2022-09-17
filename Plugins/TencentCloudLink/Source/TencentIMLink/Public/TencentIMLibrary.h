@@ -74,21 +74,22 @@ public:
 	// static void RemoveSimpleMsgListener(V2TIMSimpleMsgListener* listener);
 
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Log")
-	static FString SendC2CTextMessage(FString text, FString userId, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
+	static FString SendC2CTextMessage(FString text, FString userId, FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
 	                                  FIMProgressCallback OnProgressDelegate);
 
 	/*
 	 * 3.4 发送单聊自定义（信令）消息（最大支持 8KB）
 	 */
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Log")
-	static FString SendC2CCustomMessage(const FBuffer& customData, const FString& userID, FIMCallbackDelegate OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
+	static FString SendC2CCustomMessage(const FBuffer& customData, const FString& userID, FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
 											  FIMProgressCallback OnProgressDelegate) ;
 
 	/*
 	 * 3.5 发送群聊普通文本消息（最大支持 8KB）
 	 */
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink")
-	static FString SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority);
+	static FString SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority, FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
+												FIMProgressCallback OnProgressDelegate);
 
 	/**
 	 *	3.6 发送群聊自定义（信令）消息（最大支持 8KB）
@@ -169,8 +170,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
 	static FTIMMessage CreateLocationMessage(const FString& desc, double longitude, double latitude);
 
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	static FTIMMessage CreateFaceMessage(int32 index, const V2TIMBuffer& data);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	static FTIMMessage CreateFaceMessage(int32 index, const FBuffer& data);
 
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
 	static FTIMMessage CreateMergerMessage(const TArray<FTIMMessage>& messageList, const FString& title, const TArray<FString>& abstractList, const FString& compatibleText);
@@ -178,9 +179,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
 	static FTIMMessage CreateForwardMessage(const FTIMMessage& message);
 
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	static FString SendMessage(FTIMMessage& message, const FString& receiver, const FString& groupID, V2TIMMessagePriority priority,
-	                           bool onlineUserOnly, const V2TIMOfflinePushInfo& offlinePushInfo, V2TIMSendCallback* callback);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	static FString SendMessage(FTIMMessage& message, const FString& receiver, const FString& groupID, EIMMessagePriority priority,
+	bool onlineUserOnly, const FTIMOfflinePushInfo& offlinePushInfo, FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
+				   FIMProgressCallback OnProgressDelegate);
 
 
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
