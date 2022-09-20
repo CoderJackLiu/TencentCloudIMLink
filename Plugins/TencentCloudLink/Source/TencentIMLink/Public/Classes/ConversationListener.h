@@ -69,25 +69,25 @@ public:
 	
 private:
 
-	virtual void OnRecvC2CTextMessage(const V2TIMString &msgID, const V2TIMUserFullInfo &sender, const V2TIMString &text)
+	virtual void OnRecvC2CTextMessage(const V2TIMString &msgID, const V2TIMUserFullInfo &sender, const V2TIMString &text) override
 	{
 		OnRecvC2CTextMessage(UTencentIMLibrary::ToFString(msgID),UTencentIMLibrary::ToTIMUserFullInfo(sender),UTencentIMLibrary::ToFString(text));
 	}
 
 
-	virtual void OnRecvC2CCustomMessage(const V2TIMString &msgID, const V2TIMUserFullInfo &sender,const V2TIMBuffer &customData)
+	virtual void OnRecvC2CCustomMessage(const V2TIMString &msgID, const V2TIMUserFullInfo &sender,const V2TIMBuffer &customData) override
 	{
 		OnRecvC2CCustomMessage(UTencentIMLibrary::ToFString(msgID),UTencentIMLibrary::ToTIMUserFullInfo(sender),UTencentIMLibrary::ToBuffer(customData));
 	}
 
 
-	virtual void OnRecvGroupTextMessage(const V2TIMString &msgID, const V2TIMString &groupID,const V2TIMGroupMemberFullInfo &sender,const V2TIMString &text)
+	virtual void OnRecvGroupTextMessage(const V2TIMString &msgID, const V2TIMString &groupID,const V2TIMGroupMemberFullInfo &sender,const V2TIMString &text) override
 	{
 		OnRecvGroupTextMessage(UTencentIMLibrary::ToFString(msgID),UTencentIMLibrary::ToFString(groupID),UTencentIMLibrary::ToTIMGroupMemberFullInfo(sender),UTencentIMLibrary::ToFString(text));
 	}
 
 
-	virtual void OnRecvGroupCustomMessage(const V2TIMString &msgID, const V2TIMString &groupID, const V2TIMGroupMemberFullInfo &sender,const V2TIMBuffer &customData)
+	virtual void OnRecvGroupCustomMessage(const V2TIMString &msgID, const V2TIMString &groupID, const V2TIMGroupMemberFullInfo &sender,const V2TIMBuffer &customData) override
 	{
 		OnRecvGroupCustomMessage(UTencentIMLibrary::ToFString(msgID),UTencentIMLibrary::ToFString(groupID),UTencentIMLibrary::ToTIMGroupMemberFullInfo(sender),UTencentIMLibrary::ToBuffer(customData));
 	}
@@ -99,6 +99,9 @@ public:
 	*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnReceiveNewMessage(const FString &UserName,const FString &message);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnReceiveNewMessages(const FTIMMessage &message);
 	
 	/**
 	 * 收到消息撤回的通知
@@ -117,60 +120,64 @@ public:
 private:
 	virtual void OnRecvNewMessage(const V2TIMMessage &message) override
 	{
-		UE_LOG(LogTemp, Log, TEXT("==>OnRecvNewMessage ======"));
-		V2TIMSignalingInfo info = V2TIMManager::GetInstance()->GetSignalingManager()->GetSignalingInfo(message);
+		OnReceiveNewMessages(UTencentIMLibrary::ToMessage(message));
 
-		for (unsigned long j = 0; j < message.elemList.Size(); ++j)
-		{
-			
-			switch (message.elemList[j]->elemType)
-			{
-			case V2TIM_ELEM_TYPE_TEXT:
-				{
-					AsyncTask(ENamedThreads::GameThread, [=]()
-					{
-						const char* msgEle = ((V2TIMTextElem*)message.elemList[j])->text.CString();
-						FString other = message.sender.CString();
-						FString ele = UTF8_TO_TCHAR(msgEle); // FString(TEXT("&msgEle"));
-						
-						// FString UserId=message.nickName.CString();
-						OnReceiveNewMessage(other,ele);
-					});
-				}
-				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_TEXT"));
-				break;
-			case V2TIM_ELEM_TYPE_CUSTOM:
-				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_CUSTOM"));
-				break;
-			case V2TIM_ELEM_TYPE_IMAGE:
-				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_IMAGE"));
-				break;
-			case V2TIM_ELEM_TYPE_SOUND:
-				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_SOUND"));
-				break;
-			case V2TIM_ELEM_TYPE_VIDEO:
-				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_VIDEO"));
-				break;
-			case V2TIM_ELEM_TYPE_FILE:
-				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_FILE"));
-				break;
-			case V2TIM_ELEM_TYPE_LOCATION:
-				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_LOCATION"));
-				break;
-			case V2TIM_ELEM_TYPE_FACE:
-				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_FACE"));
-				break;
-			case V2TIM_ELEM_TYPE_GROUP_TIPS:
-				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_GROUP_TIPS"));
-				break;
-			case V2TIM_ELEM_TYPE_MERGER:
-				UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_MERGER"));
-				break;
-			default:
-				UE_LOG(LogTemp,Warning,TEXT("default"));
-				break;
-			}
-		}
+		UE_LOG(LogTemp, Log, TEXT("==>OnRecvNewMessage ======"));
+		//V2TIMSignalingInfo info = V2TIMManager::GetInstance()->GetSignalingManager()->GetSignalingInfo(message);
+
+		// for (unsigned long j = 0; j < message.elemList.Size(); ++j)
+		// {
+		// 	
+		// 	switch (message.elemList[j]->elemType)
+		// 	{
+		// 	case V2TIM_ELEM_TYPE_TEXT:
+		// 		{
+		// 			AsyncTask(ENamedThreads::GameThread, [=]()
+		// 			{
+		// 				const char* msgEle = ((V2TIMTextElem*)message.elemList[j])->text.CString();
+		// 				FString other = message.sender.CString();
+		// 				FString ele = UTF8_TO_TCHAR(msgEle); // FString(TEXT("&msgEle"));
+		// 				FString GroupId = message.groupID.CString();
+		//
+		// 				// FString UserId=message.nickName.CString();
+		// 				OnReceiveNewMessage(other,ele);
+		// 			});
+		// 		}
+		// 		UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_TEXT"));
+		// 		break;
+		// 	case V2TIM_ELEM_TYPE_CUSTOM:
+		// 		UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_CUSTOM"));
+		// 		break;
+		// 	case V2TIM_ELEM_TYPE_IMAGE:
+		// 		UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_IMAGE"));
+		// 		break;
+		// 	case V2TIM_ELEM_TYPE_SOUND:
+		// 		UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_SOUND"));
+		// 		break;
+		// 	case V2TIM_ELEM_TYPE_VIDEO:
+		// 		UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_VIDEO"));
+		// 		break;
+		// 	case V2TIM_ELEM_TYPE_FILE:
+		// 		UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_FILE"));
+		// 		break;
+		// 	case V2TIM_ELEM_TYPE_LOCATION:
+		// 		UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_LOCATION"));
+		// 		break;
+		// 	case V2TIM_ELEM_TYPE_FACE:
+		// 		UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_FACE"));
+		// 		break;
+		// 	case V2TIM_ELEM_TYPE_GROUP_TIPS:
+		// 		UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_GROUP_TIPS"));
+		// 		break;
+		// 	case V2TIM_ELEM_TYPE_MERGER:
+		// 		UE_LOG(LogTemp,Warning,TEXT("V2TIM_ELEM_TYPE_MERGER"));
+		// 		break;
+		// 	default:
+		// 		UE_LOG(LogTemp,Warning,TEXT("default"));
+		// 		break;
+		// 	}
+		// }
+		//
 	}
 
 	/**

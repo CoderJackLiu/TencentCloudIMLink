@@ -120,7 +120,7 @@ void UTimWidget::timLogin()
 
 
 // V2TIMString groupID = "test-UE4-IM";
-V2TIMString groupID = "test-UE4-IM";
+V2TIMString groupID = "LiaoTian";
 
 class SendCallback : public V2TIMSendCallback
 {

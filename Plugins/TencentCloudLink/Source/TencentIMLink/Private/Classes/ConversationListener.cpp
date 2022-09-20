@@ -20,6 +20,10 @@ void UConversationListener::NativeDestruct()
 	Super::NativeDestruct();
 }
 
+void UConversationListener::OnReceiveNewMessages_Implementation(const FTIMMessage& message)
+{
+}
+
 void UConversationListener::OnRecvGroupCustomMessage_Implementation(const FString& msgID, const FString& groupID, const FTIMGroupMemberFullInfo& sender, const FBuffer& customData)
 {
 }

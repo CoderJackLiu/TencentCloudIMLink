@@ -112,6 +112,13 @@ enum class FV2TIMFriendRelationType:uint8
 	/// 互为好友
 	FV2TIM_FRIEND_RELATION_TYPE_BOTH_WAY = 0x3,
 };
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FBuffer
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
+	TArray<uint8> Buffer;
+};
 
 /// 好友申请接受类型
 UENUM(Blueprintable, BlueprintType)
@@ -314,10 +321,10 @@ struct TENCENTIMLINK_API FTIMMessage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	FString seq;
 	/// 消息随机码
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
-	uint64 random;
-	/// 消息发送状态
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
+	FString random;
+	/// 消息发送状态
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	ETIMMessageStatus status;
 	/// 消息发送者是否是自己
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
@@ -383,25 +390,30 @@ struct TENCENTIMLINK_API FTIMMessage
 	message.elemList.PushBack(customElem);*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
-	TArray<ETIMElemType> elemList;
+	TArray<FString> elemList;
 	/// 消息自定义数据（本地保存，不会发送到对端，程序卸载重装后失效）
-	V2TIMBuffer localCustomData;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
+	FBuffer localCustomData;
 	/// 消息自定义数据,可以用来标记语音、视频消息是否已经播放（本地保存，不会发送到对端，程序卸载重装后失效）
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	int localCustomInt;
 	/// 消息自定义数据（云端保存，会发送到对端，程序卸载重装后还能拉取到）
-	V2TIMBuffer cloudCustomData;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
+	FBuffer cloudCustomData;
 	/// 消息是否不计入会话未读数：默认为 false，表明需要计入会话未读数，设置为
 	/// true，表明不需要计入会话未读数
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	bool isExcludedFromUnreadCount;
 	/// 消息是否不计入会话 lastMsg：默认为 false，表明需要计入会话 lastMsg，设置为
 	/// true，表明不需要计入会话 lastMsg
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	bool isExcludedFromLastMessage;
 	/// 指定群消息接收成员，即发送群内定向消息（5.9及以上版本支持）
 	/// 请注意：
 	/// - 发送群 @ 消息时，设置该字段无效
 	/// - 向社群（Community）和直播群（AVChatRoom）里发送消息时，设置该字段无效
 	/// - 群内定向消息默认不计入群会话的未读计数
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	TArray<FString> targetGroupMemberList;
 };
 
@@ -961,13 +973,6 @@ struct TENCENTIMLINK_API FTIMUserInfo
 	FString faceURL;
 };
 
-USTRUCT(Blueprintable, BlueprintType)
-struct TENCENTIMLINK_API FBuffer
-{
-	GENERATED_BODY()
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=V2TIMConversationResult)
-	TArray<uint8> Buffer;
-};
 
 USTRUCT(Blueprintable, BlueprintType)
 struct TENCENTIMLINK_API FTIMFriendInfo
@@ -1539,6 +1544,14 @@ struct TENCENTIMLINK_API FTIMGroupChangeInfo
 	FString key;
 };
 
+USTRUCT(Blueprintable, BlueprintType)
+struct TENCENTIMLINK_API FTIMTextElem
+{
+	GENERATED_BODY()
+	/// 消息文本
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMTextElem)
+	FString text;
+};
 /**
  * 
  */

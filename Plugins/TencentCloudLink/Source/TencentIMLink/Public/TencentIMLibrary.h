@@ -1009,6 +1009,8 @@ public:
 	static FTIMElem ToTIMElem(const V2TIMElem& TimElem);
 
 	static TArray<FTIMElem> ToTIMElemArray(const V2TIMElemVector& ElementVector);
+	static TArray<FString> ToTIMElemStringArray(const V2TIMElemVector& ElementVector);
+	static V2TIMElemVector ToElemVector(const TArray<FTIMElem>& ElementVector);
 
 	static V2TIMElemType ToTIMElemType(const ETIMElemType& MessageSearchParam);
 

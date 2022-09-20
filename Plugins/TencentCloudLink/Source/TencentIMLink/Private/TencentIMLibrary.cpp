@@ -3882,8 +3882,11 @@ V2TIMString UTencentIMLibrary::ToIMString(const FString& InStr)
 
 FString UTencentIMLibrary::ToFString(const V2TIMString& InStr)
 {
-	const std::string tempStr = InStr.CString();
-	return tempStr.c_str();
+	// const std::string tempStr = InStr.CString();
+	std::string stdStrTemp2(InStr.CString());
+	FString tempUserText = stdStrTemp2.c_str();
+	// V2TIMString TempStr=InStr;
+	return tempUserText;
 }
 
 V2TIMStringVector UTencentIMLibrary::ToIMStringArray(TArray<FString> InStrArray)
@@ -4149,16 +4152,29 @@ V2TIMMessage UTencentIMLibrary::ToIMMessage(const FTIMMessage& TimMessage)
 
 FTIMMessage UTencentIMLibrary::ToMessage(const V2TIMMessage& TimMessage)
 {
-	//todo DingLuckyGirl
 	FTIMMessage OutTIMMessage;
 	OutTIMMessage.msgID = ToFString(TimMessage.msgID);
 	OutTIMMessage.timestamp = TimMessage.timestamp;
-	OutTIMMessage.sender = ToFString(TimMessage.msgID);
-	OutTIMMessage.nickName = ToFString(TimMessage.msgID);
-	OutTIMMessage.friendRemark = ToFString(TimMessage.msgID);
-	OutTIMMessage.nameCard = ToFString(TimMessage.msgID);
-	OutTIMMessage.faceURL = ToFString(TimMessage.msgID);
-	OutTIMMessage.groupID = ToFString(TimMessage.msgID);
+	OutTIMMessage.sender = ToFString(TimMessage.sender);
+	OutTIMMessage.nickName = ToFString(TimMessage.nickName);
+	OutTIMMessage.friendRemark = ToFString(TimMessage.friendRemark);
+	OutTIMMessage.nameCard = ToFString(TimMessage.nameCard);
+	OutTIMMessage.faceURL = ToFString(TimMessage.faceURL);
+	OutTIMMessage.groupID = ToFString(TimMessage.groupID);
+	OutTIMMessage.userID = ToFString(TimMessage.userID);
+	OutTIMMessage.seq = FString::Printf(TEXT("%lld"), TimMessage.seq);
+	OutTIMMessage.random = FString::Printf(TEXT("%lld"), TimMessage.random);
+	OutTIMMessage.isSelf = (TimMessage.isSelf);
+	OutTIMMessage.isRead = (TimMessage.isRead);
+	OutTIMMessage.isPeerRead = (TimMessage.isPeerRead);
+	OutTIMMessage.groupAtUserList = ToFStringArray(TimMessage.groupAtUserList);
+	OutTIMMessage.elemList = ToTIMElemStringArray(TimMessage.elemList);
+	OutTIMMessage.localCustomData = ToBuffer(TimMessage.localCustomData);
+	OutTIMMessage.localCustomInt = (TimMessage.localCustomInt);
+	OutTIMMessage.cloudCustomData = ToBuffer(TimMessage.localCustomData);
+	OutTIMMessage.isExcludedFromUnreadCount = (TimMessage.isExcludedFromUnreadCount);
+	OutTIMMessage.isExcludedFromLastMessage = (TimMessage.isExcludedFromLastMessage);
+	OutTIMMessage.targetGroupMemberList = ToFStringArray(TimMessage.targetGroupMemberList);
 
 	return OutTIMMessage;
 }
@@ -4342,6 +4358,25 @@ TArray<FTIMElem> UTencentIMLibrary::ToTIMElemArray(const V2TIMElemVector& Elemen
 		ElementArray.Add(ToTIMElem(*ElementVector[i]));
 	}
 	return ElementArray;
+}
+
+TArray<FString> UTencentIMLibrary::ToTIMElemStringArray(const V2TIMElemVector& ElementVector)
+{
+	TArray<FString> OutMessages;
+	for (int i = 0; i < ElementVector.Size(); i++)
+	{
+		const char* msgEle=((V2TIMTextElem*)ElementVector[i])->text.CString();
+		FString ele = UTF8_TO_TCHAR(msgEle);
+		OutMessages.Add(ele);
+	}
+	
+	return OutMessages;
+}
+
+V2TIMElemVector UTencentIMLibrary::ToElemVector(const TArray<FTIMElem>& ElementVector)
+{
+	//todo??
+	return V2TIMElemVector();
 }
 
 
