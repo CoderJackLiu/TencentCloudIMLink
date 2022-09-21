@@ -3877,16 +3877,17 @@ V2TIMString UTencentIMLibrary::ToIMString(const FString& InStr)
 	// const char* OutIMString = TCHAR_TO_ANSI(*InStr);
 	std::string strInputMessage(TCHAR_TO_UTF8(*InStr));
 	const char* charInputMessage = strInputMessage.c_str();
-	return static_cast<V2TIMString>(charInputMessage);
+	return (charInputMessage);
 }
 
 FString UTencentIMLibrary::ToFString(const V2TIMString& InStr)
 {
-	// const std::string tempStr = InStr.CString();
-	std::string stdStrTemp2(InStr.CString());
-	FString tempUserText = stdStrTemp2.c_str();
-	// V2TIMString TempStr=InStr;
-	return tempUserText;
+	// std::string stdStrTemp2(InStr.CString());
+	// FString tempUserText = stdStrTemp2.c_str();
+	// // V2TIMString TempStr=InStr;
+	// return tempUserText;
+	const char* msgEle = InStr.CString();
+	return UTF8_TO_TCHAR(msgEle);
 }
 
 V2TIMStringVector UTencentIMLibrary::ToIMStringArray(TArray<FString> InStrArray)
@@ -4152,7 +4153,7 @@ V2TIMMessage UTencentIMLibrary::ToIMMessage(const FTIMMessage& TimMessage)
 
 FTIMMessage UTencentIMLibrary::ToMessage(const V2TIMMessage& TimMessage)
 {
-	FTIMMessage OutTIMMessage;
+	FTIMMessage OutTIMMessage=FTIMMessage();
 	OutTIMMessage.msgID = ToFString(TimMessage.msgID);
 	OutTIMMessage.timestamp = TimMessage.timestamp;
 	OutTIMMessage.sender = ToFString(TimMessage.sender);

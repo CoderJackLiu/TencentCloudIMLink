@@ -324,7 +324,7 @@ struct TENCENTIMLINK_API FTIMMessage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	FString random;
 	/// 消息发送状态
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	ETIMMessageStatus status;
 	/// 消息发送者是否是自己
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
@@ -339,49 +339,6 @@ struct TENCENTIMLINK_API FTIMMessage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TIMMessage)
 	TArray<FString> groupAtUserList;
 	/*消息元素列表
-	
-	推荐一条消息只存放一个 elem，在收到这条消息时，调用 elemList[0] 获取这个elem，示例代码如下：
-	if (1 == message.elemList.Size()) {
-	    V2TIMElem *elem = message.elemList[0];
-	    switch (elem->elemType) {
-	        case V2TIM_ELEM_TYPE_TEXT:
-	            V2TIMTextElem *textElem = static_cast<V2TIMTextElem *>(elem);
-	            break;
-	        case V2TIM_ELEM_TYPE_CUSTOM:
-	            V2TIMCustomElem *customElem = static_cast<V2TIMCustomElem *>(elem);
-	            break;
-	        case V2TIM_ELEM_TYPE_FACE:
-	            V2TIMFaceElem *faceElem = static_cast<V2TIMFaceElem *>(elem);
-	            break;
-	        case V2TIM_ELEM_TYPE_LOCATION:
-	            V2TIMLocationElem *locationElem = static_cast<V2TIMLocationElem *>(elem);
-	            break;
-	        default:
-	            break;
-	    }
-	}
-	
-	如果一条消息有多个 elem，遍历 elemList 列表，获取全部 elem 元素，示例代码如下：
-	for (size_t i = 0; i < message.elemList.Size(); ++i) {
-	    V2TIMElem *elem = message.elemList[i];
-	    switch (elem->elemType) {
-	        case V2TIM_ELEM_TYPE_TEXT:
-	            V2TIMTextElem *textElem = static_cast<V2TIMTextElem *>(elem);
-	            break;
-	        case V2TIM_ELEM_TYPE_CUSTOM:
-	            V2TIMCustomElem *customElem = static_cast<V2TIMCustomElem *>(elem);
-	            break;
-	        case V2TIM_ELEM_TYPE_FACE:
-	            V2TIMFaceElem *faceElem = static_cast<V2TIMFaceElem *>(elem);
-	            break;
-	        case V2TIM_ELEM_TYPE_LOCATION:
-	            V2TIMLocationElem *locationElem = static_cast<V2TIMLocationElem *>(elem);
-	            break;
-	        default:
-	            break;
-	    }
-	}
-	
 	如果您的一条消息需要多个 elem，可以在创建 Message 对象后，调用 elemList.PushBack 添加新
 	elem， 以 V2TIMTextElem 和 V2TIMCustomElem 多 elem 为例，示例代码如下： 
 	V2TIMCustomElem *customElem = new V2TIMCustomElem(); 

@@ -935,6 +935,7 @@ public:
 	static V2TIMString ToIMString(const FString& InStr);
 
 	static FString ToFString(const V2TIMString& InStr);
+	
 
 	static V2TIMStringVector ToIMStringArray(TArray<FString> InStrArray);
 
