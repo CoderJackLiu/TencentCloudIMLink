@@ -94,8 +94,9 @@ public:
 	/**
 	 *	3.6 发送群聊自定义（信令）消息（最大支持 8KB）
 	*/
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink")
-	static FString SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, EIMMessagePriority priority);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink")
+	static FString SendGroupCustomMessage(const FBuffer& customData, const FString& groupID, EIMMessagePriority priority,FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
+	   FIMProgressCallback OnProgressDelegate);
 
 
 	///-----------------------------------------------------------------------------
@@ -155,11 +156,12 @@ public:
 	static FTIMMessage CreateTextAtMessage(const FString& text, const TArray<FString>& atUserList);
 
 
-	//todo ufunction
-	// UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
-	static FTIMMessage CreateCustomMessage(const V2TIMBuffer& data);
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	static FTIMMessage CreateCustomMessage(const FBuffer& data);
 
-	static FTIMMessage CreateCustomMessage(const V2TIMBuffer& data, const FString& description, const FString& extension);
+	
+	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|Message")
+	static FTIMMessage CreateCustomMessage_MultiPara(const FBuffer& data, const FString& description, const FString& extension);
 
 
 	UFUNCTION(BlueprintCallable, Category = "TencentIMLink|Advanced|IMMessageManager")
@@ -852,8 +854,20 @@ public:
 	static FTIMConversationResult ToTIMConversationResult(const V2TIMConversationResult& ConversationResult);
 	static V2TIMVConversationVector ToV2TIMVConversationVector(const TArray<FTIMConversation>& Array_Conversation);
 	static TArray<FTIMConversation> ToTIMConversationArray(const V2TIMVConversationVector& ConversationVector);
-	static V2TIMConversation ToTIMConversation(FTIMConversation Conversation);
-	static FTIMConversation ToConversation(V2TIMConversation Conversation);
+	static V2TIMConversation ToTIMConversation(const FTIMConversation& Conversation);
+	static FTIMConversation ToConversation(const V2TIMConversation& Conversation);
+
+	static TArray<FTIMGroupAtInfo> ToGroupAtInfoArray(const V2TIMGroupAtInfoVector& GroupAtInfoVector);
+	static V2TIMGroupAtInfoVector ToTIMGroupAtInfoVector(const TArray<FTIMGroupAtInfo>& GroupAtInfoVector);
+
+	static FTIMGroupAtInfo  ToGroupAtInfo(const V2TIMGroupAtInfo& GroupAtInfo);
+	static V2TIMGroupAtInfo  ToTIMGroupAtInfo(const FTIMGroupAtInfo& GroupAtInfo);
+
+	static ETIMGroupAtType ToGroupAtType(const V2TIMGroupAtType& GroupType);
+	static V2TIMGroupAtType ToTIMGroupAtType(const ETIMGroupAtType& GroupType);
+
+	static ETIMConversationType ToConversationType(const V2TIMConversationType& ConvType);
+	static V2TIMConversationType ToTimConversationType(const ETIMConversationType& ConvType);
 
 	static TArray<FTIMFriendInfo> ToFriendInfoArray(const V2TIMFriendInfoVector& Info);
 
@@ -937,7 +951,7 @@ public:
 	static FString ToFString(const V2TIMString& InStr);
 	
 
-	static V2TIMStringVector ToIMStringArray(TArray<FString> InStrArray);
+	static V2TIMStringVector ToIMStringVector(TArray<FString> InStrArray);
 
 	static TArray<FString> ToFStringArray(V2TIMStringVector TIMStringVector);
 	
@@ -978,6 +992,8 @@ public:
 	static V2TIMMessage ToIMMessage(const FTIMMessage& TimMessage);
 
 	static FTIMMessage ToMessage(const V2TIMMessage& TimMessage);
+	
+	static V2TIMMessageStatus ToTimMessageStatus(const ETIMMessageStatus& MessageStatus);
 
 	static TArray<FTIMMessage> ToMessageArray(const V2TIMMessageVector& MessageVector);
 
@@ -1007,11 +1023,13 @@ public:
 
 	static V2TIMKeywordListMatchType ToTIMKeywordListMatchType(const ETIMKeywordListMatchType& MessageSearchParam);
 
-	static FTIMElem ToTIMElem(const V2TIMElem& TimElem);
+	static FTIMElem ToElem(const V2TIMElem& TimElem);
+	
+	static V2TIMElem ToTIMElem(const FTIMElem& TimElem);
 
-	static TArray<FTIMElem> ToTIMElemArray(const V2TIMElemVector& ElementVector);
+	// static TArray<FTIMElem> ToTIMElemArray(const V2TIMElemVector& ElementVector);
 	static TArray<FString> ToTIMElemStringArray(const V2TIMElemVector& ElementVector);
-	static V2TIMElemVector ToElemVector(const TArray<FTIMElem>& ElementVector);
+	static V2TIMElemVector ToElemVector(const TArray<FString>& ElementVector);
 
 	static V2TIMElemType ToTIMElemType(const ETIMElemType& MessageSearchParam);
 
@@ -1042,4 +1060,6 @@ public:
 	static TArray<FTIMCreateGroupMemberInfo> ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector);
 	static V2TIMCreateGroupMemberInfoVector ToCreateGroupMemberInfoVector(const TArray<FTIMCreateGroupMemberInfo>& MemberInfoVector);
 };
+
+
 

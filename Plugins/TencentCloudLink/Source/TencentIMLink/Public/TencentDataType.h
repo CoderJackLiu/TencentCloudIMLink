@@ -236,6 +236,8 @@ enum class ETIMMessageStatus:uint8
 	V2TIM_MSG_STATUS_LOCAL_IMPORTED = 4,
 	///< 被撤销的消息
 	V2TIM_MSG_STATUS_LOCAL_REVOKED = 5,
+
+
 };
 
 /// 消息类型

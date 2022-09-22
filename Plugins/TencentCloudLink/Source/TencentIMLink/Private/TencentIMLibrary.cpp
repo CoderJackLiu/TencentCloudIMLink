@@ -156,7 +156,6 @@ FString UTencentIMLibrary::SendC2CTextMessage(FString text, FString userId, FIMM
 			UE_LOG(LogTemp, Log, TEXT("<== SendC2CTextMessage OnSuccess"));
 			// SendC2CTextMessage_Delegate.ExecuteIfBound();
 			SendC2CTextMessage_MessageDelegate.ExecuteIfBound(ToMessage(InStr));
-
 		};
 
 		void OnProgress(uint32_t progress) override
@@ -224,8 +223,10 @@ FString UTencentIMLibrary::SendC2CCustomMessage(const FBuffer& customData, const
 DECLARATION_MessageCALLBACK_DELEGATE(SendGroupTextMessage)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SendGroupTextMessage)
 DECLARATION_Progress_CALLBACK_DELEGATE(SendGroupTextMessage)
-FString UTencentIMLibrary::SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority, FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
-												FIMProgressCallback OnProgressDelegate)
+
+FString UTencentIMLibrary::SendGroupTextMessage(const FString& text, const FString& groupID, EIMMessagePriority priority, FIMMessageInfoCallback OnSuccessDelegate,
+                                                FIMFailureCallback OnFailureDelegate,
+                                                FIMProgressCallback OnProgressDelegate)
 {
 	SendGroupTextMessage_MessageDelegate = OnSuccessDelegate;
 	SendGroupTextMessage_FailureDelegate = OnFailureDelegate;
@@ -260,16 +261,55 @@ FString UTencentIMLibrary::SendGroupTextMessage(const FString& text, const FStri
 		};
 	};
 	SendGroupTextMessageCallback* SendGroupTextMessage_CallBack = new SendGroupTextMessageCallback();
-	return ToFString(Tencent_IM.GetInstance()->SendGroupTextMessage(ToIMString(text), ToIMString(groupID),GetMessagePriority( priority),SendGroupTextMessage_CallBack));
+	return ToFString(Tencent_IM.GetInstance()->SendGroupTextMessage(ToIMString(text), ToIMString(groupID), GetMessagePriority(priority), SendGroupTextMessage_CallBack));
 }
 
-FString UTencentIMLibrary::SendGroupCustomMessage(const V2TIMBuffer& customData, const FString& groupID, EIMMessagePriority priority)
+DECLARATION_MessageCALLBACK_DELEGATE(SendGroupCustomMessage)
+DECLARATION_FAILURE_CALLBACK_DELEGATE(SendGroupCustomMessage)
+DECLARATION_Progress_CALLBACK_DELEGATE(SendGroupCustomMessage)
+
+FString UTencentIMLibrary::SendGroupCustomMessage(const FBuffer& customData, const FString& groupID, EIMMessagePriority priority, FIMMessageInfoCallback OnSuccessDelegate,
+                                                  FIMFailureCallback OnFailureDelegate,
+                                                  FIMProgressCallback OnProgressDelegate)
 {
-	return "";
+	SendGroupCustomMessage_MessageDelegate = OnSuccessDelegate;
+	SendGroupCustomMessage_FailureDelegate = OnFailureDelegate;
+	SendGroupCustomMessage_ProgressDelegate = OnProgressDelegate;
+
+	class SendMessageCallback : public V2TIMSendCallback
+	{
+	public:
+		SendMessageCallback()
+		{
+		};
+
+
+		~SendMessageCallback()
+		{
+		};
+
+		void OnSuccess(const V2TIMMessage& InMessage) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== SendC2CTextMessage OnSuccess"));
+			SendGroupCustomMessage_MessageDelegate.ExecuteIfBound(ToMessage(InMessage));
+		};
+
+		void OnProgress(uint32_t progress) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== SendC2CTextMessage progress"));
+			SendGroupCustomMessage_ProgressDelegate.ExecuteIfBound(progress);
+		}
+
+		void OnError(int error_code, const V2TIMString& error_message) override
+		{
+			UE_LOG(LogTemp, Log, TEXT("<== logOut failed OnError ======: %d"), error_code);
+			SendGroupCustomMessage_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
+		};
+	};
+	SendMessageCallback* CallBack = new SendMessageCallback();
+	return ToFString(Tencent_IM.GetInstance()->SendGroupCustomMessage(ToTIMBuffer(customData), ToIMString(groupID), GetMessagePriority(priority), CallBack));
 }
 
-
-//todo create group
 
 DECLARATION_CALLBACK_DELEGATE(CreateGroup)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(CreateGroup)
@@ -278,7 +318,6 @@ void UTencentIMLibrary::CreateGroup(const FString& groupType, const FString& gro
 {
 	CreateGroup_Delegate = OnSuccessDelegate;
 	CreateGroup_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMString>
 	{
 	public:
@@ -496,17 +535,17 @@ FTIMMessage UTencentIMLibrary::CreateTextMessage(const FString& text)
 
 FTIMMessage UTencentIMLibrary::CreateTextAtMessage(const FString& text, const TArray<FString>& atUserList)
 {
-	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateTextAtMessage(ToIMString(text), ToIMStringArray(atUserList)));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateTextAtMessage(ToIMString(text), ToIMStringVector(atUserList)));
 }
 
-FTIMMessage UTencentIMLibrary::CreateCustomMessage(const V2TIMBuffer& data)
+FTIMMessage UTencentIMLibrary::CreateCustomMessage(const FBuffer& data)
 {
-	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateCustomMessage(data));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateCustomMessage(ToTIMBuffer(data)));
 }
 
-FTIMMessage UTencentIMLibrary::CreateCustomMessage(const V2TIMBuffer& data, const FString& description, const FString& extension)
+FTIMMessage UTencentIMLibrary::CreateCustomMessage_MultiPara(const FBuffer& data, const FString& description, const FString& extension)
 {
-	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateCustomMessage(data, ToIMString(description), ToIMString(extension)));
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateCustomMessage(ToTIMBuffer(data), ToIMString(description), ToIMString(extension)));
 }
 
 FTIMMessage UTencentIMLibrary::CreateImageMessage(const FString& imagePath)
@@ -543,7 +582,7 @@ FTIMMessage UTencentIMLibrary::CreateFaceMessage(int32 index, const FBuffer& dat
 
 FTIMMessage UTencentIMLibrary::CreateMergerMessage(const TArray<FTIMMessage>& messageList, const FString& title, const TArray<FString>& abstractList, const FString& compatibleText)
 {
-	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateMergerMessage(ToV2IMMessageArray(messageList), ToIMString(title), ToIMStringArray(abstractList),
+	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateMergerMessage(ToV2IMMessageArray(messageList), ToIMString(title), ToIMStringVector(abstractList),
 	                                                                                    ToIMString(compatibleText)));
 }
 
@@ -551,12 +590,14 @@ FTIMMessage UTencentIMLibrary::CreateForwardMessage(const FTIMMessage& message)
 {
 	return ToMessage(Tencent_IM.GetInstance()->GetMessageManager()->CreateForwardMessage(ToIMMessage(message)));
 }
+
 DECLARATION_MessageCALLBACK_DELEGATE(SendMessage)
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SendMessage)
 DECLARATION_Progress_CALLBACK_DELEGATE(SendMessage)
+
 FString UTencentIMLibrary::SendMessage(const FTIMMessage& message, const FString& receiver, const FString& groupID, EIMMessagePriority priority, bool onlineUserOnly,
-const FTIMOfflinePushInfo& offlinePushInfo,FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
-	   FIMProgressCallback OnProgressDelegate)
+                                       const FTIMOfflinePushInfo& offlinePushInfo, FIMMessageInfoCallback OnSuccessDelegate, FIMFailureCallback OnFailureDelegate,
+                                       FIMProgressCallback OnProgressDelegate)
 {
 	SendMessage_MessageDelegate = OnSuccessDelegate;
 	SendMessage_FailureDelegate = OnFailureDelegate;
@@ -591,10 +632,10 @@ const FTIMOfflinePushInfo& offlinePushInfo,FIMMessageInfoCallback OnSuccessDeleg
 			SendMessage_FailureDelegate.ExecuteIfBound(error_code, ToFString(error_message));
 		};
 	};
-	V2TIMMessage TimMessage=ToIMMessage(message);
+	V2TIMMessage TimMessage = ToIMMessage(message);
 	SendMessageCallback* SendMessage_Callback = new SendMessageCallback();
 	return ToFString(Tencent_IM.GetInstance()->GetMessageManager()->SendMessage(
-		TimMessage,ToIMString(receiver),ToIMString(groupID),GetMessagePriority(priority),onlineUserOnly,ToTIMOfflinePushInfo(offlinePushInfo),SendMessage_Callback));
+		TimMessage, ToIMString(receiver), ToIMString(groupID), GetMessagePriority(priority), onlineUserOnly, ToTIMOfflinePushInfo(offlinePushInfo), SendMessage_Callback));
 }
 
 DECLARATION_CALLBACK_DELEGATE(SetC2CReceiveMessageOpt)
@@ -629,7 +670,7 @@ void UTencentIMLibrary::SetC2CReceiveMessageOpt(const TArray<FString>& userIDLis
 	};
 	NormalCallback* Normal_callback_ = new NormalCallback();
 
-	Tencent_IM.GetInstance()->GetMessageManager()->SetC2CReceiveMessageOpt(ToIMStringArray(userIDList), ToTIMReceiveMessageOpt(opt), Normal_callback_);
+	Tencent_IM.GetInstance()->GetMessageManager()->SetC2CReceiveMessageOpt(ToIMStringVector(userIDList), ToTIMReceiveMessageOpt(opt), Normal_callback_);
 }
 
 DECLARATION_MessageOptCALLBACK_DELEGATE(GetC2CReceiveMessageOpt)
@@ -668,7 +709,7 @@ void UTencentIMLibrary::GetC2CReceiveMessageOpt(const TArray<FString>& userIDLis
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetMessageManager()->GetC2CReceiveMessageOpt(ToIMStringArray(userIDList), CallBack);
+	Tencent_IM.GetInstance()->GetMessageManager()->GetC2CReceiveMessageOpt(ToIMStringVector(userIDList), CallBack);
 }
 
 DECLARATION_CALLBACK_DELEGATE(SetGroupReceiveMessageOpt)
@@ -716,7 +757,6 @@ void UTencentIMLibrary::GetHistoryMessageList(const FTIMMessageListGetOption& op
 	GetHistoryMessageList_GroupMessageArrayDelegate = OnSuccessDelegate;
 	GetHistoryMessageList_FailureDelegate = OnFailureDelegate;
 
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMMessageVector>
 	{
 	public:
@@ -1117,7 +1157,7 @@ void UTencentIMLibrary::FindMessages(const TArray<FString>& messageIDList, FIMGr
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetMessageManager()->FindMessages(ToIMStringArray(messageIDList), CallBack);
+	Tencent_IM.GetInstance()->GetMessageManager()->FindMessages(ToIMStringVector(messageIDList), CallBack);
 }
 
 DECLARATION_FAILURE_CALLBACK_DELEGATE(SearchLocalMessages)
@@ -1208,7 +1248,6 @@ void UTencentIMLibrary::GetJoinedGroupList(FIMGroupInfoArrayCallback OnSuccessDe
 {
 	GetJoinedGroupList_GroupInfoArrayDelegate = OnSuccessDelegate;
 	GetJoinedGroupList_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMGroupInfoVector>
 	{
 	public:
@@ -1482,7 +1521,7 @@ void UTencentIMLibrary::GetGroupMembersInfo(const FString& groupID, const TArray
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupMembersInfo(ToIMString(groupID), ToIMStringArray(memberList), CallBack);
+	Tencent_IM.GetInstance()->GetGroupManager()->GetGroupMembersInfo(ToIMString(groupID), ToIMStringVector(memberList), CallBack);
 }
 
 V2TIMGroupMemberFullInfoVector UTencentIMLibrary::ToGroupMemberFullInfoVector(const TArray<FTIMGroupMemberFullInfo>& GPFullInfos)
@@ -1578,12 +1617,11 @@ void UTencentIMLibrary::InviteUserToGroup(const FString& groupID, const TArray<F
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetGroupManager()->InviteUserToGroup(ToIMString(groupID), ToIMStringArray(userList), CallBack);
+	Tencent_IM.GetInstance()->GetGroupManager()->InviteUserToGroup(ToIMString(groupID), ToIMStringVector(userList), CallBack);
 }
 
 TArray<FTIMGroupMemberOperationResult> UTencentIMLibrary::ToGPMemOpArray(const V2TIMGroupMemberOperationResultVector& GPMemOPVector)
 {
-	//todo finish
 	TArray<FTIMGroupMemberOperationResult> TIMGroupMemberOperationResult;
 
 	for (int i = 0; i < GPMemOPVector.Size(); ++i)
@@ -1635,7 +1673,6 @@ void UTencentIMLibrary::GetGroupApplicationList(FGroupAppRstCallback OnSuccessDe
 
 FTIMGroupApplicationResult UTencentIMLibrary::ToGroupAppResArray(const V2TIMGroupApplicationResult& GroupApplicationResult)
 {
-	//todo finish
 	FTIMGroupApplicationResult TIMGroupApplicationResult;
 	TIMGroupApplicationResult.unreadCount = FString::Printf(TEXT("%llu"), GroupApplicationResult.unreadCount);
 	// TIMGroupApplicationResult.applicationList=GroupApplicationResult.applicationList;
@@ -1645,17 +1682,21 @@ FTIMGroupApplicationResult UTencentIMLibrary::ToGroupAppResArray(const V2TIMGrou
 V2TIMGroupApplicationResult UTencentIMLibrary::ToTIMGroupAppRes(const FTIMGroupApplicationResult& GroupApplicationResult)
 {
 	//todo finish
+
 	return V2TIMGroupApplicationResult();
 }
 
 FTIMGroupApplication UTencentIMLibrary::ToGroupApp(const V2TIMGroupApplication& TIMGroupApplication)
 {
 	//todo finish
+
 	return FTIMGroupApplication();
 }
 
 V2TIMGroupApplication UTencentIMLibrary::ToTIMGroupApp(const FTIMGroupApplication& TIMGroupApplication)
 {
+	//todo finish
+
 	return V2TIMGroupApplication();
 }
 
@@ -1888,7 +1929,6 @@ void UTencentIMLibrary::GetConversationList(const FString& nextSeq, int32 count,
 {
 	GetConversationList_CsRstDelegate = OnSuccessDelegate;
 	GetConversationList_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMConversationResult>
 	{
 	public:
@@ -1948,16 +1988,150 @@ TArray<FTIMConversation> UTencentIMLibrary::ToTIMConversationArray(const V2TIMVC
 	return Conversation;
 }
 
-FTIMConversation UTencentIMLibrary::ToConversation(V2TIMConversation Conversation)
+FTIMConversation UTencentIMLibrary::ToConversation(const V2TIMConversation& Conversation)
 {
-	//todo
-	return FTIMConversation();
+	FTIMConversation conversation;
+	conversation.type = ToConversationType(Conversation.type);
+	conversation.conversationID = ToFString(Conversation.conversationID);
+	conversation.type = ToConversationType(Conversation.type);
+	conversation.userID = ToFString(Conversation.userID);
+	conversation.groupID = ToFString(Conversation.groupID);
+	conversation.groupType = ToFString(Conversation.groupType);
+	conversation.showName = ToFString(Conversation.showName);
+	conversation.faceUrl = ToFString(Conversation.faceUrl);
+	conversation.unreadCount = Conversation.unreadCount;
+	conversation.recvOpt = ToReceiveMessageOpt(Conversation.recvOpt);
+	conversation.lastMessage = ToMessage(*Conversation.lastMessage);
+	conversation.groupAtInfolist = ToGroupAtInfoArray(Conversation.groupAtInfolist);
+	conversation.draftText = ToFString(Conversation.draftText);
+	conversation.draftTimestamp = FString::Printf(TEXT("%lu"), Conversation.draftTimestamp);
+	conversation.isPinned = (Conversation.isPinned);
+	conversation.orderKey = FString::Printf(TEXT("%lu"), Conversation.orderKey);
+	return conversation;
+}
+
+TArray<FTIMGroupAtInfo> UTencentIMLibrary::ToGroupAtInfoArray(const V2TIMGroupAtInfoVector& GroupAtInfoVector)
+{
+	TArray<FTIMGroupAtInfo> Result;
+	for (int i = 0; i < GroupAtInfoVector.Size(); ++i)
+	{
+		Result.Add(ToGroupAtInfo(GroupAtInfoVector[i]));
+	}	
+	return TArray<FTIMGroupAtInfo>();
+}
+
+V2TIMGroupAtInfoVector UTencentIMLibrary::ToTIMGroupAtInfoVector(const TArray<FTIMGroupAtInfo>& GroupAtInfoVector)
+{
+	V2TIMGroupAtInfoVector TIMGroupAtInfoVector;
+	for (FTIMGroupAtInfo GroupAtInfo : GroupAtInfoVector)
+	{
+		TIMGroupAtInfoVector.PushBack(ToTIMGroupAtInfo(GroupAtInfo));
+	}
+	return TIMGroupAtInfoVector;
+}
+
+FTIMGroupAtInfo UTencentIMLibrary::ToGroupAtInfo(const V2TIMGroupAtInfo& GroupAtInfo)
+{
+	FTIMGroupAtInfo TimGroupInfo;
+	TimGroupInfo.seq=FString::Printf(TEXT("%lu"), GroupAtInfo.seq);
+	TimGroupInfo.atType=ToGroupAtType(GroupAtInfo.atType);
+	return TimGroupInfo;
+}
+
+V2TIMGroupAtInfo UTencentIMLibrary::ToTIMGroupAtInfo(const FTIMGroupAtInfo& GroupAtInfo)
+{
+	V2TIMGroupAtInfo TimGroupAtInfo;
+	TimGroupAtInfo.seq=FCString::Strtoui64(GetData(GroupAtInfo.seq),NULL, 10);
+	TimGroupAtInfo.atType=ToTIMGroupAtType(GroupAtInfo.atType);
+	return TimGroupAtInfo;
+}
+V2TIMGroupAtType UTencentIMLibrary::ToTIMGroupAtType(const ETIMGroupAtType& GroupType)
+{
+	switch (GroupType)
+	{
+	case V2TIM_AT_ME:
+		return V2TIMGroupAtType::V2TIM_AT_ME;
+		break;
+	case V2TIM_AT_ALL:
+		return V2TIMGroupAtType::V2TIM_AT_ALL;
+		break;
+	case V2TIM_AT_ALL_AT_ME:
+		return V2TIMGroupAtType::V2TIM_AT_ALL_AT_ME;
+		break;
+	default:
+		return V2TIMGroupAtType::V2TIM_AT_ME;
+	}
+	return V2TIMGroupAtType::V2TIM_AT_ME;
+}
+ETIMGroupAtType UTencentIMLibrary::ToGroupAtType(const V2TIMGroupAtType& GroupType)
+{
+	switch (GroupType)
+	{
+	case V2TIM_AT_ME:
+		return ETIMGroupAtType::V2TIM_AT_ME;
+		break;
+	case V2TIM_AT_ALL:
+		return ETIMGroupAtType::V2TIM_AT_ALL;
+		break;
+	case V2TIM_AT_ALL_AT_ME:
+		return ETIMGroupAtType::V2TIM_AT_ALL_AT_ME;
+		break;
+	default:
+		return ETIMGroupAtType::V2TIM_AT_ME;
+
+	}
+	return ETIMGroupAtType::V2TIM_AT_ME;
 }
 
 
-V2TIMConversation UTencentIMLibrary::ToTIMConversation(FTIMConversation Conversation)
+ETIMConversationType UTencentIMLibrary::ToConversationType(const V2TIMConversationType& ConvType)
+{
+	switch (ConvType)
+	{
+	case V2TIM_C2C:
+		return ETIMConversationType::V2TIM_C2C;
+	case V2TIM_GROUP:
+		return ETIMConversationType::V2TIM_GROUP;
+	default:
+		return ETIMConversationType::V2TIM_C2C;
+	}
+	return ETIMConversationType::V2TIM_C2C;
+}
+
+V2TIMConversationType UTencentIMLibrary::ToTimConversationType(const ETIMConversationType& ConvType)
+{
+	switch (ConvType)
+	{
+	case V2TIM_C2C:
+		return V2TIMConversationType::V2TIM_C2C;
+	case V2TIM_GROUP:
+		return V2TIMConversationType::V2TIM_GROUP;
+	default:
+		return V2TIMConversationType::V2TIM_C2C;
+	}
+	return V2TIMConversationType::V2TIM_C2C;
+}
+
+V2TIMConversation UTencentIMLibrary::ToTIMConversation(const FTIMConversation& Conversation)
 {
 	//todo
+	V2TIMConversation TimConversation;
+	TimConversation.type=ToTimConversationType(Conversation.type);
+	TimConversation.conversationID=ToIMString(Conversation.conversationID);
+	TimConversation.userID=ToIMString(Conversation.userID);
+	TimConversation.groupID=ToIMString(Conversation.groupID);
+	TimConversation.groupType=ToIMString(Conversation.groupType);
+	TimConversation.showName=ToIMString(Conversation.showName);
+	TimConversation.faceUrl=ToIMString(Conversation.faceUrl);
+	TimConversation.unreadCount=(Conversation.unreadCount);
+	TimConversation.recvOpt=ToTIMReceiveMessageOpt(Conversation.recvOpt);
+	V2TIMMessage lastMessage =ToIMMessage(Conversation.lastMessage);
+	TimConversation.lastMessage=&lastMessage;
+	TimConversation.groupAtInfolist=ToTIMGroupAtInfoVector(Conversation.groupAtInfolist);
+	TimConversation.draftText=ToIMString(Conversation.draftText);
+	TimConversation.draftTimestamp=FCString::Strtoui64(GetData(Conversation.draftTimestamp),NULL, 10);
+	TimConversation.isPinned=(Conversation.isPinned);
+	TimConversation.orderKey=FCString::Strtoui64(GetData(Conversation.orderKey),NULL, 10);
 	return V2TIMConversation();
 }
 
@@ -1968,7 +2142,6 @@ void UTencentIMLibrary::GetConversation(const FString& conversationID, FTIMConve
 {
 	GetConversation_ConversationDelegate = OnSuccessDelegate;
 	GetConversation_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMConversation>
 	{
 	public:
@@ -2006,7 +2179,6 @@ void UTencentIMLibrary::GetConversationListByIDList(const TArray<FString>& conve
 {
 	GetConversationListByIDList_ConversationVectorDelegate = OnSuccessDelegate;
 	GetConversationListByIDList_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMVConversationVector>
 	{
 	public:
@@ -2034,7 +2206,7 @@ void UTencentIMLibrary::GetConversationListByIDList(const TArray<FString>& conve
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(ToIMStringArray(conversationIDList), CallBack);
+	Tencent_IM.GetInstance()->GetConversationManager()->GetConversationList(ToIMStringVector(conversationIDList), CallBack);
 }
 
 DECLARATION_CALLBACK_DELEGATE(DeleteConversation)
@@ -2149,7 +2321,6 @@ void UTencentIMLibrary::GetTotalUnreadMessageCount(FTIMuint64Callback OnSuccessD
 {
 	GetTotalUnreadMessageCount_uint64Delegate = OnSuccessDelegate;
 	GetTotalUnreadMessageCount_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<uint64_t>
 	{
 	public:
@@ -2297,7 +2468,6 @@ void UTencentIMLibrary::GetFriendList(FTIMFriendInfoVectorCallback OnSuccessDele
 {
 	GetFriendList_TIMFriendInfoVectorDelegate = OnSuccessDelegate;
 	GetFriendList_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendInfoVector>
 	{
 	public:
@@ -2335,7 +2505,6 @@ void UTencentIMLibrary::GetFriendsInfo(const TArray<FString>& userIDList, FTIMFr
 {
 	GetFriendsInfo_TIMFriendInfoResultVectorDelegate = OnSuccessDelegate;
 	GetFriendsInfo_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendInfoResultVector>
 	{
 	public:
@@ -2363,7 +2532,7 @@ void UTencentIMLibrary::GetFriendsInfo(const TArray<FString>& userIDList, FTIMFr
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendsInfo(ToIMStringArray(userIDList), CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendsInfo(ToIMStringVector(userIDList), CallBack);
 }
 
 TArray<FTIMFriendInfoResult> UTencentIMLibrary::ToFriendInfoResultArray(const V2TIMFriendInfoResultVector& FriendInfoResultVector)
@@ -2416,7 +2585,7 @@ V2TIMFriendInfo UTencentIMLibrary::ToTIMFriendInfo(const FTIMFriendInfo& Info)
 	info.userID = ToIMString(Info.userID);
 	info.friendRemark = ToIMString(Info.friendRemark);
 	info.friendCustomInfo = ToV2TIMCustomInfo(Info.friendCustomInfo);
-	info.friendGroups = ToIMStringArray(Info.friendGroups);
+	info.friendGroups = ToIMStringVector(Info.friendGroups);
 	info.userFullInfo = ToV2TIMUserFullInfo(Info.userFullInfo);
 	info.modifyFlag = uint32_t(FCString::Atoi(GetData(Info.modifyFlag)));
 	return info;
@@ -2464,7 +2633,6 @@ void UTencentIMLibrary::SearchFriends(const FTIMFriendSearchParam& searchParam, 
 {
 	SearchFriends_TIMFriendInfoResultVectorDelegate = OnSuccessDelegate;
 	SearchFriends_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendInfoResultVector>
 	{
 	public:
@@ -2502,7 +2670,6 @@ void UTencentIMLibrary::AddFriend(const FTIMFriendAddApplication& application, F
 {
 	AddFriend_TIMFriendOperationResulDelegate = OnSuccessDelegate;
 	AddFriend_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResult>
 	{
 	public:
@@ -2541,7 +2708,6 @@ void UTencentIMLibrary::DeleteFromFriendList(const TArray<FString>& userIDList, 
 {
 	DeleteFromFriendList_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
 	DeleteFromFriendList_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResultVector>
 	{
 	public:
@@ -2569,7 +2735,7 @@ void UTencentIMLibrary::DeleteFromFriendList(const TArray<FString>& userIDList, 
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFromFriendList(ToIMStringArray(userIDList), ToTIMFriendType(deleteType), CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFromFriendList(ToIMStringVector(userIDList), ToTIMFriendType(deleteType), CallBack);
 }
 
 TArray<FTIMFriendOperationResult> UTencentIMLibrary::ToTIMFriendOperationResultArray(const V2TIMFriendOperationResultVector& TIMFriendOperationResultVector)
@@ -2591,7 +2757,6 @@ void UTencentIMLibrary::CheckFriend(const TArray<FString>& userIDList, ETIMFrien
 {
 	CheckFriend_TIMFriendCheckResultVectorDelegate = OnSuccessDelegate;
 	CheckFriend_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendCheckResultVector>
 	{
 	public:
@@ -2619,7 +2784,7 @@ void UTencentIMLibrary::CheckFriend(const TArray<FString>& userIDList, ETIMFrien
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->CheckFriend(ToIMStringArray(userIDList), ToTIMFriendType(checkType), CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->CheckFriend(ToIMStringVector(userIDList), ToTIMFriendType(checkType), CallBack);
 }
 
 DECLARATION_TIMFriendApplicationResult_DELEGATE(GetFriendApplicationList)
@@ -2629,7 +2794,6 @@ void UTencentIMLibrary::GetFriendApplicationList(FTIMFriendApplicationResultCall
 {
 	GetFriendApplicationList_TIMFriendApplicationResultDelegate = OnSuccessDelegate;
 	GetFriendApplicationList_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendApplicationResult>
 	{
 	public:
@@ -2668,7 +2832,6 @@ void UTencentIMLibrary::AcceptFriendApplication(const FTIMFriendApplication& app
 {
 	AcceptFriendApplication_TIMFriendOperationResulDelegate = OnSuccessDelegate;
 	AcceptFriendApplication_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResult>
 	{
 	public:
@@ -2706,7 +2869,6 @@ void UTencentIMLibrary::RefuseFriendApplication(const FTIMFriendApplication& app
 {
 	RefuseFriendApplication_TIMFriendOperationResulDelegate = OnSuccessDelegate;
 	RefuseFriendApplication_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResult>
 	{
 	public:
@@ -2814,7 +2976,6 @@ void UTencentIMLibrary::AddToBlackList(const TArray<FString>& userIDList, FTIMFr
 {
 	AddToBlackList_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
 	AddToBlackList_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResultVector>
 	{
 	public:
@@ -2842,7 +3003,7 @@ void UTencentIMLibrary::AddToBlackList(const TArray<FString>& userIDList, FTIMFr
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->AddToBlackList(ToIMStringArray(userIDList), CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->AddToBlackList(ToIMStringVector(userIDList), CallBack);
 }
 
 DECLARATION_TIMFriendOperationResultVector_DELEGATE(DeleteFromBlackList)
@@ -2852,7 +3013,6 @@ void UTencentIMLibrary::DeleteFromBlackList(const TArray<FString>& userIDList, F
 {
 	DeleteFromBlackList_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
 	DeleteFromBlackList_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResultVector>
 	{
 	public:
@@ -2880,7 +3040,7 @@ void UTencentIMLibrary::DeleteFromBlackList(const TArray<FString>& userIDList, F
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFromBlackList(ToIMStringArray(userIDList), CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFromBlackList(ToIMStringVector(userIDList), CallBack);
 }
 
 DECLARATION_TIMFriendInfoVector_DELEGATE(GetBlackList)
@@ -2890,7 +3050,6 @@ void UTencentIMLibrary::GetBlackList(FTIMFriendInfoVectorCallback OnSuccessDeleg
 {
 	GetBlackList_TIMFriendInfoVectorDelegate = OnSuccessDelegate;
 	GetBlackList_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendInfoVector>
 	{
 	public:
@@ -2928,7 +3087,6 @@ void UTencentIMLibrary::CreateFriendGroup(const FString& groupName, const TArray
 {
 	CreateFriendGroup_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
 	CreateFriendGroup_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResultVector>
 	{
 	public:
@@ -2956,7 +3114,7 @@ void UTencentIMLibrary::CreateFriendGroup(const FString& groupName, const TArray
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->CreateFriendGroup(ToIMString(groupName), ToIMStringArray(userIDList), CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->CreateFriendGroup(ToIMString(groupName), ToIMStringVector(userIDList), CallBack);
 }
 
 DECLARATION_TIMFriendGroupVector_DELEGATE(GetFriendGroups)
@@ -2966,7 +3124,6 @@ void UTencentIMLibrary::GetFriendGroups(const TArray<FString>& groupNameList, FT
 {
 	GetFriendGroups_TIMFriendGroupVectorDelegate = OnSuccessDelegate;
 	GetFriendGroups_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendGroupVector>
 	{
 	public:
@@ -2994,7 +3151,7 @@ void UTencentIMLibrary::GetFriendGroups(const TArray<FString>& groupNameList, FT
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendGroups(ToIMStringArray(groupNameList), CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->GetFriendGroups(ToIMStringVector(groupNameList), CallBack);
 }
 
 DECLARATION_CALLBACK_DELEGATE(DeleteFriendGroup)
@@ -3029,7 +3186,7 @@ void UTencentIMLibrary::DeleteFriendGroup(const TArray<FString>& groupNameList, 
 		};
 	};
 	NormalCallback* Callback = new NormalCallback();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendGroup(ToIMStringArray(groupNameList), Callback);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendGroup(ToIMStringVector(groupNameList), Callback);
 }
 
 DECLARATION_CALLBACK_DELEGATE(RenameFriendGroup)
@@ -3075,7 +3232,6 @@ void UTencentIMLibrary::AddFriendsToFriendGroup(const FString& groupName, const 
 {
 	AddFriendsToFriendGroup_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
 	AddFriendsToFriendGroup_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResultVector>
 	{
 	public:
@@ -3103,7 +3259,7 @@ void UTencentIMLibrary::AddFriendsToFriendGroup(const FString& groupName, const 
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->AddFriendsToFriendGroup(ToIMString(groupName), ToIMStringArray(userIDList), CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->AddFriendsToFriendGroup(ToIMString(groupName), ToIMStringVector(userIDList), CallBack);
 }
 
 DECLARATION_TIMFriendOperationResultVector_DELEGATE(DeleteFriendsFromFriendGroup)
@@ -3114,7 +3270,6 @@ void UTencentIMLibrary::DeleteFriendsFromFriendGroup(const FString& groupName, c
 {
 	DeleteFriendsFromFriendGroup_TIMFriendOperationResultVectorDelegate = OnSuccessDelegate;
 	DeleteFriendsFromFriendGroup_FailureDelegate = OnFailureDelegate;
-	//todo 做法探究；
 	class FValueCallBack : public V2TIMValueCallback<V2TIMFriendOperationResultVector>
 	{
 	public:
@@ -3142,7 +3297,7 @@ void UTencentIMLibrary::DeleteFriendsFromFriendGroup(const FString& groupName, c
 		}
 	};
 	FValueCallBack* CallBack = new FValueCallBack();
-	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendsFromFriendGroup(ToIMString(groupName), ToIMStringArray(userIDList), CallBack);
+	Tencent_IM.GetInstance()->GetFriendshipManager()->DeleteFriendsFromFriendGroup(ToIMString(groupName), ToIMStringVector(userIDList), CallBack);
 }
 
 DECLARATION_CALLBACK_DELEGATE(Invite)
@@ -3384,7 +3539,7 @@ V2TIMSignalingInfo UTencentIMLibrary::ToTIMSignalingInfo(const FTIMSignalingInfo
 	TIMSignalingInfo.inviteID = ToIMString(Info.inviteID);
 	TIMSignalingInfo.groupID = ToIMString(Info.groupID);
 	TIMSignalingInfo.inviter = ToIMString(Info.inviter);
-	TIMSignalingInfo.inviteeList = ToIMStringArray(Info.inviteeList);
+	TIMSignalingInfo.inviteeList = ToIMStringVector(Info.inviteeList);
 	TIMSignalingInfo.data = ToIMString(Info.data);
 	TIMSignalingInfo.actionType = ToV2TIMSignalingActionType(Info.actionType);
 	TIMSignalingInfo.timeout = Info.timeout;
@@ -3774,7 +3929,7 @@ V2TIMFriendAddApplication UTencentIMLibrary::ToTIMFriendAddApplication(const FTI
 V2TIMFriendSearchParam UTencentIMLibrary::ToTIMFriendSearchParam(const FTIMFriendSearchParam& FriendSearchParam)
 {
 	V2TIMFriendSearchParam TIMFriendSearchParam;
-	TIMFriendSearchParam.keywordList = ToIMStringArray(FriendSearchParam.keywordList);
+	TIMFriendSearchParam.keywordList = ToIMStringVector(FriendSearchParam.keywordList);
 	TIMFriendSearchParam.isSearchUserID = FriendSearchParam.isSearchUserID;
 	TIMFriendSearchParam.isSearchNickName = FriendSearchParam.isSearchNickName;
 	TIMFriendSearchParam.isSearchRemark = FriendSearchParam.isSearchRemark;
@@ -3785,7 +3940,7 @@ V2TIMFriendSearchParam UTencentIMLibrary::ToTIMFriendSearchParam(const FTIMFrien
 TArray<FTIMCreateGroupMemberInfo> UTencentIMLibrary::ToGroupMemberInfoArray(const V2TIMCreateGroupMemberInfoVector& MemberInfoVector)
 {
 	TArray<FTIMCreateGroupMemberInfo> GroupInfo;
-	for (int i =0;i<MemberInfoVector.Size();i++)
+	for (int i = 0; i < MemberInfoVector.Size(); i++)
 	{
 		GroupInfo.Add(ToGroupMemberInfo(MemberInfoVector[i]));
 	}
@@ -3798,73 +3953,73 @@ V2TIMCreateGroupMemberInfoVector UTencentIMLibrary::ToCreateGroupMemberInfoVecto
 	for (FTIMCreateGroupMemberInfo InfoVector : MemberInfoVector)
 	{
 		GroupMemberInfoVector.PushBack(ToIMGroupMemberInfo(InfoVector));
-	} 
+	}
 	return GroupMemberInfoVector;
 }
 
 FTIMGroupInfo UTencentIMLibrary::ToGroupInfo(const V2TIMGroupInfo& GroupInfo)
 {
 	FTIMGroupInfo TIMGroupInfo;
-	TIMGroupInfo.groupID=ToFString(GroupInfo.groupID);
-	TIMGroupInfo.groupType=ToFString(GroupInfo.groupType);
-	TIMGroupInfo.groupName=ToFString(GroupInfo.groupName);
-	TIMGroupInfo.notification=ToFString(GroupInfo.notification);
-	TIMGroupInfo.introduction=ToFString(GroupInfo.introduction);
-	TIMGroupInfo.faceURL=ToFString(GroupInfo.faceURL);
-	TIMGroupInfo.allMuted=GroupInfo.allMuted;
-	TIMGroupInfo.owner=ToFString(GroupInfo.owner);
-	TIMGroupInfo.createTime=(GroupInfo.createTime);
-	TIMGroupInfo.groupAddOpt=ToGroupAddOpt(GroupInfo.groupAddOpt);
-	TIMGroupInfo.lastInfoTime=(GroupInfo.lastInfoTime);
-	TIMGroupInfo.lastMessageTime=(GroupInfo.lastMessageTime);
-	TIMGroupInfo.memberCount=(GroupInfo.memberCount);
-	TIMGroupInfo.onlineCount=(GroupInfo.onlineCount);
-	TIMGroupInfo.memberMaxCount=(GroupInfo.memberMaxCount);
-	TIMGroupInfo.role=GroupInfo.role;
-	TIMGroupInfo.recvOpt=ToReceiveMessageOpt(GroupInfo.recvOpt);
-	TIMGroupInfo.joinTime=GroupInfo.joinTime;
-	TIMGroupInfo.modifyFlag=GroupInfo.modifyFlag;
+	TIMGroupInfo.groupID = ToFString(GroupInfo.groupID);
+	TIMGroupInfo.groupType = ToFString(GroupInfo.groupType);
+	TIMGroupInfo.groupName = ToFString(GroupInfo.groupName);
+	TIMGroupInfo.notification = ToFString(GroupInfo.notification);
+	TIMGroupInfo.introduction = ToFString(GroupInfo.introduction);
+	TIMGroupInfo.faceURL = ToFString(GroupInfo.faceURL);
+	TIMGroupInfo.allMuted = GroupInfo.allMuted;
+	TIMGroupInfo.owner = ToFString(GroupInfo.owner);
+	TIMGroupInfo.createTime = (GroupInfo.createTime);
+	TIMGroupInfo.groupAddOpt = ToGroupAddOpt(GroupInfo.groupAddOpt);
+	TIMGroupInfo.lastInfoTime = (GroupInfo.lastInfoTime);
+	TIMGroupInfo.lastMessageTime = (GroupInfo.lastMessageTime);
+	TIMGroupInfo.memberCount = (GroupInfo.memberCount);
+	TIMGroupInfo.onlineCount = (GroupInfo.onlineCount);
+	TIMGroupInfo.memberMaxCount = (GroupInfo.memberMaxCount);
+	TIMGroupInfo.role = GroupInfo.role;
+	TIMGroupInfo.recvOpt = ToReceiveMessageOpt(GroupInfo.recvOpt);
+	TIMGroupInfo.joinTime = GroupInfo.joinTime;
+	TIMGroupInfo.modifyFlag = GroupInfo.modifyFlag;
 	return TIMGroupInfo;
 }
 
 V2TIMGroupInfo UTencentIMLibrary::ToTIMGroupInfo(const FTIMGroupInfo& GroupInfo)
 {
 	V2TIMGroupInfo TIMGroupInfo;
-	TIMGroupInfo.groupID=ToIMString(GroupInfo.groupID);
-	TIMGroupInfo.groupType=ToIMString(GroupInfo.groupType);
-	TIMGroupInfo.groupName=ToIMString(GroupInfo.groupName);
-	TIMGroupInfo.notification=ToIMString(GroupInfo.notification);
-	TIMGroupInfo.introduction=ToIMString(GroupInfo.introduction);
-	TIMGroupInfo.faceURL=ToIMString(GroupInfo.faceURL);
-	TIMGroupInfo.allMuted=GroupInfo.allMuted;
-	TIMGroupInfo.owner=ToIMString(GroupInfo.owner);
-	TIMGroupInfo.createTime=(GroupInfo.createTime);
-	TIMGroupInfo.groupAddOpt=ToTIMGroupAddOpt(GroupInfo.groupAddOpt);
-	TIMGroupInfo.lastInfoTime=(GroupInfo.lastInfoTime);
-	TIMGroupInfo.lastMessageTime=(GroupInfo.lastMessageTime);
-	TIMGroupInfo.memberCount=(GroupInfo.memberCount);
-	TIMGroupInfo.onlineCount=(GroupInfo.onlineCount);
-	TIMGroupInfo.memberMaxCount=(GroupInfo.memberMaxCount);
-	TIMGroupInfo.role=GroupInfo.role;
-	TIMGroupInfo.recvOpt=ToTIMReceiveMessageOpt(GroupInfo.recvOpt);
-	TIMGroupInfo.joinTime=GroupInfo.joinTime;
-	TIMGroupInfo.modifyFlag=GroupInfo.modifyFlag;
+	TIMGroupInfo.groupID = ToIMString(GroupInfo.groupID);
+	TIMGroupInfo.groupType = ToIMString(GroupInfo.groupType);
+	TIMGroupInfo.groupName = ToIMString(GroupInfo.groupName);
+	TIMGroupInfo.notification = ToIMString(GroupInfo.notification);
+	TIMGroupInfo.introduction = ToIMString(GroupInfo.introduction);
+	TIMGroupInfo.faceURL = ToIMString(GroupInfo.faceURL);
+	TIMGroupInfo.allMuted = GroupInfo.allMuted;
+	TIMGroupInfo.owner = ToIMString(GroupInfo.owner);
+	TIMGroupInfo.createTime = (GroupInfo.createTime);
+	TIMGroupInfo.groupAddOpt = ToTIMGroupAddOpt(GroupInfo.groupAddOpt);
+	TIMGroupInfo.lastInfoTime = (GroupInfo.lastInfoTime);
+	TIMGroupInfo.lastMessageTime = (GroupInfo.lastMessageTime);
+	TIMGroupInfo.memberCount = (GroupInfo.memberCount);
+	TIMGroupInfo.onlineCount = (GroupInfo.onlineCount);
+	TIMGroupInfo.memberMaxCount = (GroupInfo.memberMaxCount);
+	TIMGroupInfo.role = GroupInfo.role;
+	TIMGroupInfo.recvOpt = ToTIMReceiveMessageOpt(GroupInfo.recvOpt);
+	TIMGroupInfo.joinTime = GroupInfo.joinTime;
+	TIMGroupInfo.modifyFlag = GroupInfo.modifyFlag;
 	return TIMGroupInfo;
 }
 
 FTIMCreateGroupMemberInfo UTencentIMLibrary::ToGroupMemberInfo(const V2TIMCreateGroupMemberInfo& GroupMemberInfo)
 {
 	FTIMCreateGroupMemberInfo GroupMemInfo;
-	GroupMemInfo.role=GroupMemberInfo.role;
-	GroupMemInfo.userID=ToFString(GroupMemberInfo.userID);
+	GroupMemInfo.role = GroupMemberInfo.role;
+	GroupMemInfo.userID = ToFString(GroupMemberInfo.userID);
 	return GroupMemInfo;
 }
 
 V2TIMCreateGroupMemberInfo UTencentIMLibrary::ToIMGroupMemberInfo(const FTIMCreateGroupMemberInfo& GroupMemberInfo)
 {
 	V2TIMCreateGroupMemberInfo GroupMemInfo;
-	GroupMemInfo.role=GroupMemberInfo.role;
-	GroupMemInfo.userID=ToIMString(GroupMemberInfo.userID);
+	GroupMemInfo.role = GroupMemberInfo.role;
+	GroupMemInfo.userID = ToIMString(GroupMemberInfo.userID);
 	return GroupMemInfo;
 }
 
@@ -3890,7 +4045,7 @@ FString UTencentIMLibrary::ToFString(const V2TIMString& InStr)
 	return UTF8_TO_TCHAR(msgEle);
 }
 
-V2TIMStringVector UTencentIMLibrary::ToIMStringArray(TArray<FString> InStrArray)
+V2TIMStringVector UTencentIMLibrary::ToIMStringVector(TArray<FString> InStrArray)
 {
 	V2TIMStringVector StrVector;
 	for (FString Str : InStrArray)
@@ -3916,7 +4071,7 @@ TMap<FString, FString> UTencentIMLibrary::ToFStringMap(V2TIMGroupAttributeMap TI
 	TMap<FString, FString> OutMap;
 	for (int i = 0; i < TIMStringVector.Size(); i++)
 	{
-		OutMap.Add(ToFString(TIMStringVector.AllKeys()[i]),ToFString(TIMStringVector.Get(TIMStringVector.AllKeys()[i])));
+		OutMap.Add(ToFString(TIMStringVector.AllKeys()[i]), ToFString(TIMStringVector.Get(TIMStringVector.AllKeys()[i])));
 	}
 	return OutMap;
 }
@@ -4139,21 +4294,32 @@ V2TIMMessage UTencentIMLibrary::ToIMMessage(const FTIMMessage& TimMessage)
 	OutTimMessage.groupID = ToIMString(TimMessage.groupID);
 	OutTimMessage.userID = ToIMString(TimMessage.userID);
 	OutTimMessage.seq = FCString::Strtoui64(GetData(TimMessage.seq),NULL, 10);
-	//todo finish
-	// OutTimMessage.status =((uint8)TimMessage.status+1);
+	OutTimMessage.random = FCString::Strtoui64(GetData(TimMessage.random),NULL, 10);
+	OutTimMessage.status = ToTimMessageStatus(TimMessage.status);
 	OutTimMessage.isSelf = TimMessage.isSelf;
 	OutTimMessage.isRead = TimMessage.isRead;
 	OutTimMessage.isPeerRead = TimMessage.isPeerRead;
-	//todo finish
-
-
+	OutTimMessage.groupAtUserList = ToIMStringVector(TimMessage.groupAtUserList);
+	OutTimMessage.elemList = ToElemVector(TimMessage.elemList);
+	OutTimMessage.localCustomData = ToTIMBuffer(TimMessage.localCustomData);
+	OutTimMessage.localCustomInt = TimMessage.localCustomInt;
+	OutTimMessage.cloudCustomData = ToTIMBuffer(TimMessage.cloudCustomData);
+	OutTimMessage.isExcludedFromUnreadCount = TimMessage.isExcludedFromUnreadCount;
+	OutTimMessage.isExcludedFromLastMessage = TimMessage.isExcludedFromLastMessage;
+	OutTimMessage.targetGroupMemberList = ToIMStringVector(TimMessage.targetGroupMemberList);
 	return OutTimMessage;
 }
 
+V2TIMMessageStatus UTencentIMLibrary::ToTimMessageStatus(const ETIMMessageStatus& MessageStatus)
+{
+	//todo 
+	
+	return V2TIMMessageStatus();
+}
 
 FTIMMessage UTencentIMLibrary::ToMessage(const V2TIMMessage& TimMessage)
 {
-	FTIMMessage OutTIMMessage=FTIMMessage();
+	FTIMMessage OutTIMMessage = FTIMMessage();
 	OutTIMMessage.msgID = ToFString(TimMessage.msgID);
 	OutTIMMessage.timestamp = TimMessage.timestamp;
 	OutTIMMessage.sender = ToFString(TimMessage.sender);
@@ -4182,7 +4348,6 @@ FTIMMessage UTencentIMLibrary::ToMessage(const V2TIMMessage& TimMessage)
 
 TArray<FTIMMessage> UTencentIMLibrary::ToMessageArray(const V2TIMMessageVector& MessageVector)
 {
-	//todo
 	TArray<FTIMMessage> IMMessages;
 	for (int32 i = 0; i < MessageVector.Size(); i++)
 	{
@@ -4306,9 +4471,9 @@ V2TIMMessageGetType UTencentIMLibrary::ToTIMMessageGetType(const ETIMMessageGetT
 V2TIMMessageSearchParam UTencentIMLibrary::ToTIMessageSearchParam(const FTIMMessageSearchParam& MessageSearchParam)
 {
 	V2TIMMessageSearchParam OutParam = V2TIMMessageSearchParam();
-	OutParam.keywordList = ToIMStringArray(MessageSearchParam.keywordList);
+	OutParam.keywordList = ToIMStringVector(MessageSearchParam.keywordList);
 	OutParam.keywordListMatchType = ToTIMKeywordListMatchType(MessageSearchParam.keywordListMatchType);
-	OutParam.senderUserIDList = ToIMStringArray(MessageSearchParam.senderUserIDList);
+	OutParam.senderUserIDList = ToIMStringVector(MessageSearchParam.senderUserIDList);
 	OutParam.messageTypeList = ToTIMElemTypeVector(MessageSearchParam.messageTypeList);
 	OutParam.conversationID = ToIMString(MessageSearchParam.conversationID);
 	OutParam.searchTimePosition = MessageSearchParam.searchTimePosition;
@@ -4344,39 +4509,52 @@ V2TIMKeywordListMatchType UTencentIMLibrary::ToTIMKeywordListMatchType(const ETI
 	}
 }
 
-FTIMElem UTencentIMLibrary::ToTIMElem(const V2TIMElem& TimElem)
+FTIMElem UTencentIMLibrary::ToElem(const V2TIMElem& TimElem)
 {
 	FTIMElem Element;
 	Element.elemType = ToElemType(TimElem.elemType);
 	return Element;
 }
 
-TArray<FTIMElem> UTencentIMLibrary::ToTIMElemArray(const V2TIMElemVector& ElementVector)
+V2TIMElem UTencentIMLibrary::ToTIMElem(const FTIMElem& TimElem)
 {
-	TArray<FTIMElem> ElementArray;
-	for (int i = 0; i < ElementVector.Size(); i++)
-	{
-		ElementArray.Add(ToTIMElem(*ElementVector[i]));
-	}
-	return ElementArray;
+	V2TIMElem Element;
+	Element.elemType = ToTIMElemType(TimElem.elemType);
+	return Element;
 }
+
+// TArray<FTIMElem> UTencentIMLibrary::ToTIMElemArray(const V2TIMElemVector& ElementVector)
+// {
+// 	TArray<FTIMElem> ElementArray;
+// 	for (int i = 0; i < ElementVector.Size(); i++)
+// 	{
+// 		ElementArray.Add(ToElem(*ElementVector[i]));
+// 	}
+// 	return ElementArray;
+// }
 
 TArray<FString> UTencentIMLibrary::ToTIMElemStringArray(const V2TIMElemVector& ElementVector)
 {
 	TArray<FString> OutMessages;
 	for (int i = 0; i < ElementVector.Size(); i++)
 	{
-		const char* msgEle=((V2TIMTextElem*)ElementVector[i])->text.CString();
+		const char* msgEle = ((V2TIMTextElem*)ElementVector[i])->text.CString();
 		FString ele = UTF8_TO_TCHAR(msgEle);
 		OutMessages.Add(ele);
 	}
-	
+
 	return OutMessages;
 }
 
-V2TIMElemVector UTencentIMLibrary::ToElemVector(const TArray<FTIMElem>& ElementVector)
+V2TIMElemVector UTencentIMLibrary::ToElemVector(const TArray<FString>& ElementVector)
 {
-	//todo??
+	V2TIMElemVector ElemVector;
+	for (FString ele : ElementVector)
+	{
+		//todo
+		// ElemVector.PushBack(&ToTIMElem(ele));
+	}
+
 	return V2TIMElemVector();
 }
 
@@ -4494,14 +4672,14 @@ ETIMGroupAddOpt UTencentIMLibrary::ToGroupAddOpt(const V2TIMGroupAddOpt& GroupAd
 {
 	switch (GroupAddOpt)
 	{
-		case V2TIM_GROUP_ADD_FORBID:
-			return ETIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
-		case V2TIM_GROUP_ADD_AUTH:
-			return ETIMGroupAddOpt::V2TIM_GROUP_ADD_AUTH;
-		case V2TIM_GROUP_ADD_ANY:
-			return ETIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
-		default:
-			return ETIMGroupAddOpt::V2TIM_GROUP_ADD_AUTH;
+	case V2TIM_GROUP_ADD_FORBID:
+		return ETIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+	case V2TIM_GROUP_ADD_AUTH:
+		return ETIMGroupAddOpt::V2TIM_GROUP_ADD_AUTH;
+	case V2TIM_GROUP_ADD_ANY:
+		return ETIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+	default:
+		return ETIMGroupAddOpt::V2TIM_GROUP_ADD_AUTH;
 	}
 }
 
@@ -4509,13 +4687,13 @@ V2TIMGroupAddOpt UTencentIMLibrary::ToTIMGroupAddOpt(const ETIMGroupAddOpt& Grou
 {
 	switch (GroupAddOpt)
 	{
-		case ETIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID:
-			return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
-		case ETIMGroupAddOpt::V2TIM_GROUP_ADD_AUTH: 
-			return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
-		case ETIMGroupAddOpt::V2TIM_GROUP_ADD_ANY: 
-			return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
-		default: 
-			return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+	case ETIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID:
+		return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+	case ETIMGroupAddOpt::V2TIM_GROUP_ADD_AUTH:
+		return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+	case ETIMGroupAddOpt::V2TIM_GROUP_ADD_ANY:
+		return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
+	default:
+		return V2TIMGroupAddOpt::V2TIM_GROUP_ADD_FORBID;
 	}
 }
