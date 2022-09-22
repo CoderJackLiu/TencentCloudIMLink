@@ -2114,7 +2114,6 @@ V2TIMConversationType UTencentIMLibrary::ToTimConversationType(const ETIMConvers
 
 V2TIMConversation UTencentIMLibrary::ToTIMConversation(const FTIMConversation& Conversation)
 {
-	//todo
 	V2TIMConversation TimConversation;
 	TimConversation.type=ToTimConversationType(Conversation.type);
 	TimConversation.conversationID=ToIMString(Conversation.conversationID);
